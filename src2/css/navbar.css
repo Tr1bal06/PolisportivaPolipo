@@ -1,0 +1,184 @@
+ body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+  }
+
+
+
+  .user-info {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .my-icon {
+    color: white;
+    transition: color 0.3s ease;
+  }
+
+  .my-icon:hover {
+    color: rgb(110, 165, 255);
+  }
+
+
+  .user-info img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+
+    margin-bottom: 0.5rem;
+  }
+
+  .user-info p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .navbar {
+    background: linear-gradient(135deg, #4c5c96, #3a4a7d);
+    color: white;
+    width: 250px;
+    height: 100vh;
+    padding: 1rem;  
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: fixed;
+    overflow: auto;
+  }
+
+  .footer {
+    display: flex;
+    margin: 15px;
+  }
+  
+
+  .navbar .profile {
+    margin-bottom: 2rem;
+  }
+
+  .navbar .nav-links a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem;
+    margin: 0.25rem 0;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+
+  .navbar .nav-links a:hover,
+  .navbar .nav-links a.active {
+    background-color: #2e3a63;
+  }
+
+  .navbar .footer {
+    text-align: center;
+  }
+
+
+
+  .navbar .footer img {
+    width: 50px;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Mobile */
+  .mobile-navbar {
+    display: none;
+    background: linear-gradient(135deg, #4c5c96, #3a4a7d);
+    color: white;
+    padding: 1rem;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .hamburger {
+    cursor: pointer;
+    font-size: 2rem;
+  }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .mobile-menu-content {
+    background: #4c5c96;
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .logout-btn {
+    background-color: #3a4a7d;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  .logout-btn:hover {
+    background-color: #2e3a63;
+    transform: scale(1.05);
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
+  .mobile-menu-content a {
+    display: block;
+    margin: 1rem 0;
+    color: white;
+    text-decoration: none;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+  }
+
+  .footer {
+    align-self: end;
+  }
+  
+
+  @media (max-width: 768px) {
+    .mobileNome{
+        display: flex;
+
+    }
+
+    body{
+        flex-direction: column;
+        overflow: auto !important;
+    }
+    .navbar {
+      display: none;
+    }
+
+    .mobile-navbar {
+      display: flex;
+    }
+    .container{
+        margin: auto;
+    }
+    label{ 
+        flex: initial !important;
+    }
+  }

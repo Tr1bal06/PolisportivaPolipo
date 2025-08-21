@@ -1,0 +1,31 @@
+estensione sftp;
+
+>sftp config;
+
+si modifica il file json cosi:
+
+{
+    "name": "Altervista",
+    "host": "ftp.uda5idpolisportiva.altervista.org",
+    "protocol": "ftp",
+    "port": 21,
+    "username": "uda5idpolisportiva",
+    "password": "Polipo5id",
+    "remotePath": "/ProgettoUDA",
+    "uploadOnSave": true,
+    "syncMode": "full",
+    "connectTimeout": 10000,
+    "autoConnect": true,
+    "secure": false,
+    "ignore": [
+        "vendor/**",
+        "index/**"
+    ]
+   
+}
+
+>sftp sync remote -> local  <---- !!!!COMMANDO DA ESEQUIRE OGNI VOLTA CHE SI ENTRA SU VISUAL STUDIO!!!!
+
+se su visual studio appaiono tutte le cartelle funziona
+
+CONTTATARE MAGRINI PER ULTERIORI INFORMAZIONI

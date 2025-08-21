@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="it">
+<? $numero = 1 ?>
+<?php
+
+  include '../../back/connessione.php';
+  include '../../back/function.php';
+  session_start();
+
+  $permessi = ['admin'];
+
+  //consigliere può vedere, modificare e aggiungere atti
+  //socio e allenatore possono vedere gli atti
+  //admin può fare tutto
+
+  if(!controllo($_SESSION['ruolo'], $permessi)) {
+      header("location: ../404.php");
+      exit();
+  }
+
+?>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../css/navbar.css">
+  <script src="https://kit.fontawesome.com/e97255b1a1.js" crossorigin="anonymous"></script>
+  <title>PERSONE</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #4c5c96, #3a4a7d);
+      color: white;
+      display: flex;
+    }
+
+    #selectRuoli {
+      padding: 0.6rem;
+      border: none;
+      border-radius: 5px;
+
+
+
+    }
+
+
+
+    .bottoniElimina {
+      background-color: red;
+      transition: background-color 0.3s ease;
+    }
+
+    .bottoniElimina:hover {
+      background-color: darkred
+    }
+
+    .blocco {
+      flex-shrink: 0;
+      color: white;
+      width: 300px;
+      height: 100vh;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .container {
+      width: 80%;
+      margin-left: auto;
+      padding: 2rem;
+    }
+
+    h1,
+    h2 {
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      border-bottom: 2px solid #88bde9;
+      padding-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      color: #aadfff;
+      margin-top: 2rem;
+    }
+
+    form:not(.logout) {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 10px;
+    }
+
+    label {
+      flex: 1 1 calc(50% - 1rem);
+      display: flex;
+      flex-direction: column;
+      color: #fff;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"],
+    input[type="file"] {
+      padding: 0.6rem;
+      border: none;
+      border-radius: 5px;
+      margin-top: 0.3rem;
+      background-color: #ffffffcc;
+      color: #000;
+      font-size: 1rem;
+    }
+
+    input::placeholder {
+      color: #666;
+    }
+
+
+    button {
+      background-color: #3a4a7d;
+      color: white;
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-weight: bold;
+
+    }
+
+    button:hover {
+      background-color: #5c7ae3;
+    }
+
+
+
+
+    .table-container {
+      overflow-x: auto;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: white;
+    }
+
+    th,
+    td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #ffffff33;
+      text-align: left;
+    }
+
+    th {
+      background-color: #3a4a7d;
+    }
+
+    @media (max-width: 768px) {
+      .blocco {
+        display: none;
+      }
+
+      form:not(.logout) {
+        flex-direction: column;
+      }
+
+      label {
+        width: 100%;
+      }
+    }
+
+    /* MODALE */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 1rem;
+    }
+
+    .popup-content {
+      background-color: #3a4a7d;
+      color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 500px;
+      position: relative;
+
+    }
+
+
+
+    .popup-content h2 {
+      margin-top: 0;
+      color: #aadfff;
+    }
+
+    .close-popup {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: white;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .popup-content {
+        width: 95%;
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<? include "../navbar.php"; ?>
+
+<body>
+  <? include "../"; ?>
+  <div class="blocco"></div>
+
+  <div class="container">
+    <h1>PERSONE</h1>
+<? session_start();
+     if(isset($_SESSION['error_message'])){
+          echo $_SESSION['error_message'];
+          $_SESSION['error_message'] = NULL ;
+         } 
+         
+
+         if(isset($_SESSION['success_message'])){
+          echo $_SESSION['success_message'];
+          $_SESSION['success_message'] = NULL ;
+         }
+      ?>
+    <h2>Gestione Persone</h2>
+    <form action="../../back/gestione_utenti/aggiungi_persona.php" method="POST" enctype="multipart/form-data">
+      <label>Codice Fiscale:
+        <input type="text" name="cf" placeholder="Codice Fiscale" maxlength="16" minlength="16" required>
+      </label>
+      <label>Email:
+        <input type="email" name="email" placeholder="Email" required>
+      </label>
+      <label>Nome:
+        <input type="text" name="nome" placeholder="Nome" required>
+      </label>
+      <label>Cognome:
+        <input type="text" name="cognome" placeholder="Cognome" required>
+      </label>
+      <label>Telefono:
+        <input type="tel" name="telefono" id="telefono" placeholder="Numero di Telefono" maxlength="10" minlength="10">
+      </label>
+      <label>Password:
+        <input type="password" name="password1" id="password1" placeholder="Password" required>
+      </label>
+      <button type="submit" style="margin:auto;">Inserisci</button>
+    </form>
+
+    <h1>ASSEGNA CARICA</h1>
+    <h2>Assegna carica</h2>
+    <form action="../../back/gestione_utenti/assegna_carica.php" method="POST" enctype="multipart/form-data">
+      <label>Codice Fiscale:
+        <input type="text" name="cf" placeholder="Codice Fiscale" maxlength="16" minlength="16" required>
+      </label>
+      <label>Tipo carica:
+        <select name="carica" id="selectRuoli" class="input-style" required style=" margin-top: 0.3rem;
+      background-color: #ffffffcc;
+      color: #000;
+      font-size: 1rem;">
+          <option value="">Seleziona Carica</option>
+          <option value="Presidente">Presidente</option>
+          <option value="Consigliere">Consigliere</option>
+          <option value="Allenatore">Allenatore</option>
+          <option value="Atleta">Atleta</option>
+          <option value="Medico">Medico</option>
+          <option value="Socio">Socio</option>
+          <option value="Altro_Personale">Altro_Personale</option>
+          <option value="Sponsor">Sponsor</option>
+        </select>
+        <div id="sponsorFields" style="display:none; margin-top: 1rem;">
+  <label for="nomeSponsor">Nome Sponsor</label>
+  <input type="text" id="nomeSponsor" name="nome" class="input-style" />
+
+  <label for="tipoAttivitaSponsor" style="margin-top:5px">Tipo Attività Sponsor</label>
+  <input type="text" id="tipoAttivitaSponsor" name="attivita" class="input-style" />
+</div>
+
+<div id="altroPersonaleField" style="display:none; margin-top: 1rem;">
+  <label for="tipoCarica">Tipo di Carica</label>
+  <input type="text" id="tipoCarica" name="tipo" class="input-style" />
+</div>
+      </label>
+      <button type="submit" style="margin:auto;">Inserisci</button>
+    </form>
+
+    <h2>Visualizza Persone</h2>
+    <form id="filtroForm">
+      <input type="text" id="ricerca" placeholder="Cerca nelle Persone" style="width:100%; margin-bottom: 10px; padding: 5px;">
+    </form>
+
+    <div class="table-container">
+      <table id="tabellaAtti">
+        <thead>
+          <tr>
+            <th>CF</th>
+            <th>Nome</th>
+            <th>Cognome</th>
+            <th>Email</th>
+            <th>Telefono</th>
+            <th>Elimina</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    
+  </div>
+
+  <!-- Popup Modifica -->
+  <div id="popupModifica" style="display:none;" class="popup-overlay">
+    <div class="popup-content">
+      <button class="close-popup" onclick="chiudiPopup()">✕</button>
+      <h2>Modifica Persona</h2>
+      <form action="../../back/gestione_utenti/modifica_persona.php" method="POST" id="forModifica">
+        <label>Codice Fiscale:
+          <input type="text" name="cf" id="popup-cf" readonly>
+        </label>
+        <label>Nome:
+          <input type="text" name="nome" id="popup-nome" required>
+        </label>
+        <label>Cognome:
+          <input type="text" name="cognome" id="popup-cognome" required>
+        </label>
+        <label>Email:
+          <input type="email" name="email" id="popup-email" required>
+        </label>
+        <label>Telefono:
+          <input type="tel" name="telefono" id="popup-telefono">
+        </label>
+        <input type="hidden" name="path" value="../../front/persone/persone.php">
+
+      </form>
+      <div style="display: flex; justify-content: space-around;">
+        <button type="submit" form="forModifica" style="background-color:#4c5c96" class="btn-modifica">Modifica</button>
+        <form class="logout" action="../../back/gestione_utenti/elimina_persona.php" method="POST">
+          <input type="hidden" id="BottoneElimina" name="cf" value=""><button class="bottoniElimina" type="submit">elimina</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let ordineData = 'DESC';
+
+    document.addEventListener('DOMContentLoaded', function() {
+      caricaDati();
+
+      document.getElementById('filtroForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        caricaDati();
+      });
+
+      window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+          window.scrollTo(0, 0);
+        }
+      });
+    });
+
+    function caricaDati() {
+      fetch(`../../back/gestione_utenti/get_persone.php`)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector('#tabellaAtti tbody');
+          tbody.innerHTML = '';
+
+          data.forEach(persona => {
+            
+            const row = `
+              <tr>
+                <td>${persona.CF}</td>
+                <td>${persona.Nome}</td>
+                <td>${persona.Cognome}</td>
+                <td>${persona.Email}</td>
+                <td>${persona.Numero}</td>
+                <td>
+                  <button type="button" id="bottone${persona.CF}" class="" onclick='apriPopup(${JSON.stringify(persona)})'>Modifica</button>
+                </td>
+              </tr>`;
+            tbody.innerHTML += row;
+          });
+        })
+        .catch(error => {
+          console.error('Errore nel caricamento degli atti:', error);
+        });
+    }
+
+    function apriPopup(persona) {
+      document.getElementById('popup-cf').value = persona.CF;
+      document.getElementById('popup-nome').value = persona.Nome;
+      document.getElementById('popup-cognome').value = persona.Cognome;
+      document.getElementById('popup-email').value = persona.Email;
+      document.getElementById('BottoneElimina').value = persona.CF;
+      document.getElementById('popup-telefono').value = persona.Numero || '';
+      document.getElementById('popupModifica').style.display = 'flex';
+    }
+
+    function chiudiPopup() {
+      document.getElementById('popupModifica').style.display = 'none';
+    }
+
+    document.getElementById('ricerca').addEventListener('input', function() {
+      const ricerca = this.value.toLowerCase();
+      const rows = document.querySelectorAll('#tabellaAtti tbody tr');
+
+      rows.forEach(row => {
+        let testoRiga = row.textContent.toLowerCase();
+        if (ricerca === '') {
+          row.innerHTML = row.innerHTML.replace(/<mark>(.*?)<\/mark>/g, '$1');
+          row.style.display = '';
+          return;
+        }
+
+        let match = false;
+
+        row.querySelectorAll('td').forEach((td, index) => {
+          if (index === row.cells.length - 1) return;
+          const text = td.textContent;
+          const lowerText = text.toLowerCase();
+
+          if (lowerText.includes(ricerca)) {
+            match = true;
+            const regex = new RegExp(`(${ricerca})`, 'gi');
+            td.innerHTML = text.replace(regex, `<mark>$1</mark>`);
+          } else {
+            td.innerHTML = text;
+          }
+        });
+
+        row.style.display = match ? '' : 'none';
+      });
+    });
+
+    const selectRuoli = document.getElementById('selectRuoli');
+  const sponsorFields = document.getElementById('sponsorFields');
+  const altroPersonaleField = document.getElementById('altroPersonaleField');
+
+  selectRuoli.addEventListener('change', function () {
+    const selected = this.value;
+
+    sponsorFields.style.display = selected === 'Sponsor' ? 'block' : 'none';
+    altroPersonaleField.style.display = selected === 'Altro_Personale' ? 'block' : 'none';
+  }); 
+  </script>
+</body>
+
+</html>

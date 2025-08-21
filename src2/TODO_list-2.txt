@@ -1,0 +1,26 @@
+TODO list:
+
+
+-pagina della prenotazione: back/front; back iniziato
+-pagina delle disponibilità: back/front; fatto
+-pagina dei tornei: back/front;
+-pagine dei sponsor: back/front;
+-pagina per l'inscrizione ai sport degli atleti: back/front; fatto, lato grafico da sistemare
+-pagina per la registrazione dei sport che un allenatore può insegnare: back/front; fatto , lato grafico da sistemare
+-integrazione di tutte le pagine fatte dagli altri; lo farà Callegaro
+-pop up per la modifica dei propri dati tramite la rotellina: front; fatto
+
+AGGIUNTE DA PARTE DEL FRONT:
+
+-serve nel file persone.php che nell'aggiunta di un atto quando si premano nel menu a tendina i valori: 'altro_personale' , 'sponsor' appaiano dei campi extra
+	sponsor: nome dello sponsor (nome usato lato back: nome) , tipo di attività svolto (nome usato lato back: attività)
+	altro_personale: tipo di carica (nome usato lato back: tipo)
+-per gli atti servirebbe che un consigliere possa eliminare solo gli atti che ha aggiunto lui, se riesci fai in modo che il bottone elimina si veda solo sui suoi atti grazie;
+-manca la grafica alla pagina home.php;
+-le pagine non mostrano all'utente gli errori che commette
+
+
+AGGIUNTE PER PRENOTAZIONI
+
+-per la prenotazione i campi input dovrebbero essere caricati dinamicamente in base al tipo di attività scelto.
+
