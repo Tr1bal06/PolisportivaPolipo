@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  php-apache:
+    image: php:8.2-apache
+    container_name: php-apache
+    volumes:
+      - ./src2:/var/www/html
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: mydb
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydb
+    volumes:
+      - ./db:/var/lib/mysql
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql:ro
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: root
