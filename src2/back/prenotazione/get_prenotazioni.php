@@ -15,22 +15,10 @@
   if(!controllo($_SESSION['ruolo'], $permessi)) { 
       error('../../front/404.php', 'Accesso negato');
   }
-
-
-
-  if($_GET['prenotante']){
-    $sqlProprie = "";
-    if(!in_array("admin", $_SESSION['ruolo'])){
-        if(in_array("Atleta", $_SESSION['ruolo'])){
-        
-            $codiceAtleta = $_SESSION['caricheCodici']['Atleta'];
-            $sqlProprie = "AND R.Atleta = $codiceAtleta";
-        } else {
-            $codicePrenotante = $_SESSION["pren"];
-            $sqlProprie = "AND P.Prenotante = $codicePrenotante";
-        }
-    }
-  }
+  
+  
+  
+ 
 
   // Query SQL con placeholders
   $query = "SELECT C.TipoCampo, C.NomeCampo, P.DataTimeInizio, P.DataTimeFine, R.Stato, T.TIPO_ATTIVITA , T_O.Nome as NomeTorneo, AL.Tipo , P_U.Arbitro , E_S.Causale as CausaleEvento , R_T.Causale as CausaleRiunione 
@@ -43,7 +31,7 @@
             LEFT JOIN EVENTO_SPECIALE E_S ON E_S.CodiceAttivita = T.Codice
             LEFT JOIN RIUNIONE_TECNICA R_T ON R_T.CodiceAttivita = T.Codice
                                 LEFT JOIN RICHIESTA R ON R.IDCampo = P.IDCampo AND R.DataTimeInizio = P.DataTimeInizio 
-            WHERE P.DataTimeInizio BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL 31 DAY  $sqlProprie
+            WHERE P.DataTimeInizio BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL 31 DAY
             ORDER BY DataTimeInizio;";
 
 
