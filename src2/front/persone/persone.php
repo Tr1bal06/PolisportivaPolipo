@@ -240,7 +240,7 @@
 <? include "../navbar.php"; ?>
 
 <body>
-  <? include "../"; ?>
+  
   <div class="blocco"></div>
 
   <div class="container">
