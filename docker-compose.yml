@@ -22,7 +22,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mydb
+      MYSQL_DATABASE: my_uda5idpolisportiva.sql
     volumes:
       - ./db:/var/lib/mysql
       - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql:ro
