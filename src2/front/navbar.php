@@ -32,14 +32,14 @@ $ruoli = $_SESSION['ruolo'];
 <div class="navbar">
   <div>
     <div class="user-info">
-      <form action="/ProgettoUDA/back/log_reg/handler_logout.php" method="post" class="logout " style=" margin: 8px 0px ;">
+      <form action="/back/log_reg/handler_logout.php" method="post" class="logout " style=" margin: 8px 0px ;">
         <button type="submit" class="logout-btn">Logout</button>
       </form>
-      <img src="/ProgettoUDA/assets/IconaPolipo.png" alt="Polipo">
-      <p>WELCOME:<br><strong><?php echo $nome . ' ' . $cognome; ?></strong>&nbsp;<a href="/ProgettoUDA/front/persone/utente.php"><i class="fa-solid fa-gear my-icon"></i></a></p>
+      <img src="/assets/IconaPolipo.png" alt="Polipo">
+      <p>WELCOME:<br><strong><?php echo $nome . ' ' . $cognome; ?></strong>&nbsp;<a href="/front/persone/utente.php"><i class="fa-solid fa-gear my-icon"></i></a></p>
     </div>
     <div class="nav-links">
-      <a href="/ProgettoUDA/front/home.php" class="<?= ($numero == 0) ? "active" : "" ?>">Home</a>
+      <a href="/front/home.php" class="<?= ($numero == 0) ? "active" : "" ?>">Home</a>
       <?php
       // Mappa: link => [ruoli ammessi, numero, etichetta]
       $menu = [
@@ -73,11 +73,11 @@ $ruoli = $_SESSION['ruolo'];
         }
       }
       ?>
-      <a href="/ProgettoUDA/front/tornei/tornei.php" class="<?= ($numero == 9) ? "active" : "" ?>">Partecipa Torneo</a>
+      <a href="/front/tornei/tornei.php" class="<?= ($numero == 9) ? "active" : "" ?>">Partecipa Torneo</a>
     </div>
   </div>
   <div class="footer">
-    <img src="/ProgettoUDA/assets/polipo.png" alt="Polipo" style="padding-right:5px ;">
+    <img src="/assets/polipo.png" alt="Polipo" style="padding-right:5px ;">
     <p>&copy;PolipoPolisportivaSRL</p>
   </div>
 
