@@ -1,17 +1,7 @@
 <html>
 <!DOCTYPE html>
 <html lang="it">
-  <?$numero = 6;
-
-if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
-  
-include "../connessione.php";
-include '../function.php';
-
-  ?>
+ 
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../../css/navbar.css">
@@ -486,35 +476,3 @@ include '../function.php';
 
 </body>
 </html>
-<?php
-// TODO DA rigurdare la logica di sta roba da problemi  
-
-// Recupero delle persone registrate
-/*$stmt=$conn->prepare("SELECT email, nome, cognome FROM utenti");
-$stmt->execute();
-$result = $stmt->get_result();
-$array_query = $result->fetch_all(MYSQLI_ASSOC);*/
-
-// Verifica se ci sono utenti nel database
-if ($result->num_rows > 0) {
-    echo '<h2>Lista delle persone registrate</h2>';
-    echo '<table border="1">';
-    echo '<thead><tr><th>Nome</th><th>Cognome</th><th>Email</th><th>Azioni</th></tr></thead>';
-    echo '<tbody>';
-
-    // Ciclo su ogni risultato per creare le righe della tabella
-    foreach ($array_query as $mail) {
-        echo '<tr id="row-' . $row['id'] . '">';
-        echo '<td>' . $row['nome'] . '</td>';
-        echo '<td>' . $row['cognome'] . '</td>';
-        echo '<td>' . $row['email'] . '</td>';
-        echo '<td><button  class="" data-id="' . $row['id'] . '">Rimuovi</button></td>';
-        echo '</tr>';
-    }
-
-    echo '</tbody>';
-    echo '</table>';
-  } else {
-    
-  }
-?>

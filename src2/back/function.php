@@ -2,9 +2,9 @@
 // Avvia la sessione subito, prima di qualsiasi output
     if (session_status() === PHP_SESSION_NONE) {
         if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}    
+            // Avvia la sessione
+            session_start();
+        }    
     }
 
 // Funzione per messaggi di successo
