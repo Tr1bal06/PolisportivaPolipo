@@ -19,7 +19,7 @@ $permessi = ['Atleta','Allenatore','Socio', 'admin'];
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="../../css/navbar.css">
+  <link rel="stylesheet" href="/css/navbar.css">
   <script src="https://kit.fontawesome.com/e97255b1a1.js" crossorigin="anonymous"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calendario Prenotazioni</title>
