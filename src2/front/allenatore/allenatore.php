@@ -195,7 +195,6 @@
   include "../navbar.php";
 ?>
 <body>
-    <? include "../";?>
     <div class="blocco"></div>
     <div class="container">
       <h1>Gli Sport che insegno </h1>
