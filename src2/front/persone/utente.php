@@ -332,7 +332,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
 <? include "../navbar.php"; ?>
 
 <body>
-  <? include "../"; ?>
+  
   <div class="blocco"></div>
 
   <div class="container">
