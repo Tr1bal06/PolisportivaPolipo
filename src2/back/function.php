@@ -1,39 +1,37 @@
 <?php
-    //TODO fare una funzione success che fa come error per i colori più belli :D
-   session_start();
-    function success($path , $success) {
-        session_start();
-        $_SESSION['success_message'] = '<div style="color:#00ff00;"><h3>'.$success.'</h3></div>';
-        header('location: '. $path);
-        exit;
-    }
-    //funzione per gli errori
-    function error($path , $errore) {
-        session_start();
-        $_SESSION['error_message'] = '<div style="color:red;"><h3>'.$errore.'</h3></div>';
-        header('location: '. $path);
-        exit;
+// Avvia la sessione subito, prima di qualsiasi output
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();    
     }
 
-    //funzione per controllo pagine
+// Funzione per messaggi di successo
+function success($path, $success) {
+    $_SESSION['success_message'] = '<div style="color:#00ff00;"><h3>'.$success.'</h3></div>';
+    header('Location: ' . $path);
+    exit;
+}
 
-    /** 
-     * Input: $ruoli-> array degli ruoli che possiede , $permessi-> array degli ruoli che possono accedere alla pagina 
-     * Output: true se almeno un permesso è stato soddisfatto : false se nessun permesso sia stato soddisfato
-     
-     */
-    function controllo($ruoli , $permessi) {
+// Funzione per gli errori
+function error($path, $errore) {
+    $_SESSION['error_message'] = '<div style="color:red;"><h3>'.$errore.'</h3></div>';
+    header('Location: ' . $path);
+    exit;
+}
 
-        foreach($permessi as $permesso) {
-
-            foreach($ruoli as $ruolo) {
-                if($permesso == $ruolo) {// alla prima carica che l'utente possiede sia presente tra i permessi neccessari la funzione termina dando true
-                   return true;
-                }
+// Funzione per controllo pagine
+/**
+ * Input: $ruoli -> array dei ruoli posseduti
+ *        $permessi -> array dei ruoli ammessi
+ * Output: true se almeno un permesso è soddisfatto, false altrimenti
+ */
+function controllo($ruoli, $permessi) {
+    foreach ($permessi as $permesso) {
+        foreach ($ruoli as $ruolo) {
+            if ($permesso === $ruolo) {
+                // trovato un match → l’utente ha il permesso
+                return true;
             }
-    
         }
-        return false;
-
     }
-?>
+    return false;
+}

@@ -2,7 +2,10 @@
     //includo la connesione e apro la sessione
     include "../connessione.php";
     include "../function.php";
-    session_start();
+    if (session_status() === PHP_SESSION_NONE) {
+    session_start();    
+    }
+
 
     //Sanificazione input
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {

@@ -1,4 +1,4 @@
-<?
+<?php
 
 session_start();
 // $_SESSION['error_message'] = "Si è verificato un errore!"; // Per test
@@ -7,9 +7,8 @@ $_SESSION['error_message'] = null;
 
 
 ?>
-<!DOCTYPE html>
-<html lang="it">
 
+<html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -204,16 +203,15 @@ $_SESSION['error_message'] = null;
 
 <body>
 
-    <?php
+<?php
     
-    session_start();
-
+   
     if(isset($_SESSION['log'])){
       header('Location: home.php');
       exit();
     }
 
-    ?>
+?>
 
   <div>
     <h1> POLISPORTIVA POLIPO</h1>

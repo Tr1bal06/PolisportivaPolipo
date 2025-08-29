@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="it">
-<?
+<?php
 include "../back/connessione.php";
         include "../back/function.php";
 session_start(); 

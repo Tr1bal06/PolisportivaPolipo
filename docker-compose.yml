@@ -2,10 +2,12 @@ version: '3.9'
 
 services:
   php-apache:
-    image: php:8.2-apache
+    build: .
     container_name: php-apache
     volumes:
-      - ./src2:/var/www/html
+      - ./src2:/var/www/html   # cartella dei tuoi file PHP
+      - ./sessions:/var/lib/php/sessions # sessioni persistenti
+      - ./docker-php-output.ini:/usr/local/etc/php/conf.d/docker-php-output.ini
     ports:
       - "8080:80"
     depends_on:
@@ -24,7 +26,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: my_uda5idpolisportiva
     volumes:
-      - ./db:/var/lib/mysql
+      - ./db:/var/lib/mysql   # dati persistenti del DB
       - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql:ro
     ports:
       - "3306:3306"
