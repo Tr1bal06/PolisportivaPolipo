@@ -5,7 +5,10 @@
 
   include '../../back/connessione.php';
   include '../../back/function.php';
-  session_start();
+  if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
 
   $permessi = ['admin'];
 
@@ -242,7 +245,10 @@
 
   <div class="container">
     <h1>PERSONE</h1>
-<? session_start();
+<? if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
      if(isset($_SESSION['error_message'])){
           echo $_SESSION['error_message'];
           $_SESSION['error_message'] = NULL ;

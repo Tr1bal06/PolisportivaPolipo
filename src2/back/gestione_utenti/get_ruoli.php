@@ -7,7 +7,10 @@ include '../function.php';
 
 header('Content-Type: application/json');
 
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
             
 $permessi = [ 'admin'];
 

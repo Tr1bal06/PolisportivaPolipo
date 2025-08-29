@@ -3,7 +3,10 @@
 <html lang="it">
   <?$numero = 6;
 
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
   
 include "../connessione.php";
 include '../function.php';
@@ -223,7 +226,10 @@ include '../function.php';
 
   include '../../back/connessione.php';
   include '../../back/function.php';
-  session_start();
+  if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
 
   $permessi = ['Consigliere', 'Socio', 'Allenatore', 'admin'];
 

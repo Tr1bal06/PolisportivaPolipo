@@ -2,7 +2,10 @@
     include '../connessione.php';
     include '../function.php';
     require '../../vendor/autoload.php';  
+    if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
     session_start();
+}
 
     $permessi = ['Consigliere', 'admin'];
     if(!controllo($_SESSION['ruolo'], $permessi)) {

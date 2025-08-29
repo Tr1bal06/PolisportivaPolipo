@@ -4,7 +4,10 @@
 
     header('Content-Type: application/json');
 
+    if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
     session_start();
+}
     error_log('RUOLO SESSIONE: ' . print_r($_SESSION['ruolo'], true)); 
     $permessi = [ 'user'];
 

@@ -143,7 +143,10 @@
 include '../../back/connessione.php'; // Connessione al database
 include '../../back/function.php';
 
-session_start(); // Avvia la sessione per accedere a $_SESSION
+if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+} // Avvia la sessione per accedere a $_SESSION
 
 $permessi = ['Sponsor', 'admin']; // Ruoli autorizzati ad accedere a questa pagina
 

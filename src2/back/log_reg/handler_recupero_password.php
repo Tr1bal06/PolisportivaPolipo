@@ -3,7 +3,10 @@
     include '../connessione.php';
     include '../function.php';
 
+    if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
     session_start();
+}
 
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
         //Salvo le variabili che mi interessano

@@ -1,4 +1,7 @@
-<? session_start();
+<? if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
 // $_SESSION['error_message'] = "Si è verificato un errore!"; // Per test
 $errorMessage = isset($_SESSION['error_message']) ? $_SESSION['error_message'] : null;
 $_SESSION['error_message'] = null;

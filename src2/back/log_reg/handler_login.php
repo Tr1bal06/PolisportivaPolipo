@@ -3,7 +3,10 @@
     include "../connessione.php";
     include "../function.php";
     if (session_status() === PHP_SESSION_NONE) {
-    session_start();    
+    if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}    
     }
 
 

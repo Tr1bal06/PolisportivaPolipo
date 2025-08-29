@@ -631,7 +631,10 @@ transition: background-color 0.3s, transform 0.3s;
             <?
               include "../../back/connessione.php";
               include "../../back/function.php";
-              session_start();
+              if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
               $allenatore = 'Allenatore';
               $atleta = 'Atleta';
               if(!controllo($_SESSION['ruolo'], $allenatore)) {

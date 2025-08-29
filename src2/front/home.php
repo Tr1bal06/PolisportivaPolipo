@@ -1,7 +1,17 @@
 <?php
 include "../back/connessione.php";
-        include "../back/function.php";
-session_start(); 
+include "../back/function.php";
+  
+// Controlla se la sessione non è già avviata
+if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
+}
+
+
 $numero = 0;
         
 

@@ -91,7 +91,10 @@ abstract class Random
             session_id(1);
             ini_set('session.use_cookies', 0);
             session_cache_limiter('');
-            session_start();
+            if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
 
             $v = (isset($_SERVER) ? self::safe_serialize($_SERVER) : '') .
                  (isset($_POST) ? self::safe_serialize($_POST) : '') .
@@ -114,7 +117,10 @@ abstract class Random
             // restore old session data
             if ($old_session_id != '') {
                 session_id($old_session_id);
-                session_start();
+                if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
                 ini_set('session.use_cookies', $old_use_cookies);
                 session_cache_limiter($old_session_cache_limiter);
             } else {

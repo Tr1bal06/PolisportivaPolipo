@@ -3,7 +3,10 @@ $numero=3;
 include "../navbar.php";
 include "../../back/connessione.php";
 include "../../back/function.php";
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
 $permessi = ['Atleta','Allenatore','Socio', 'admin'];
 
   if(!controllo($_SESSION['ruolo'], $permessi)) {

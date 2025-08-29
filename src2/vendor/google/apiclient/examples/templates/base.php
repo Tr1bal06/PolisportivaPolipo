@@ -22,7 +22,10 @@ function pageHeader($title)
 
     // Start the session (for storing access tokens and things)
     if (!headers_sent()) {
-        session_start();
+        if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
     }
 
     return $ret;

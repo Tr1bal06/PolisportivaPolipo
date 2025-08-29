@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="it">
   <?$numero = 5;
-  session_start();
+  if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
   
   ?>
 <head>
@@ -178,7 +181,10 @@
 
   include '../../back/connessione.php';
   include '../../back/function.php';
-  session_start();
+  if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
 
   $permessi = ['Allenatore', 'admin'];
 
@@ -208,7 +214,10 @@
     
         </form>
         <? 
-          session_start();
+          if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
         if(isset($_SESSION['error_message'])){
           echo $_SESSION['error_message'];
           $_SESSION['error_message'] = NULL ;

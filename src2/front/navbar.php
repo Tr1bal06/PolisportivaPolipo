@@ -1,6 +1,16 @@
 <?php
 
-session_start();
+
+// Controlla se la sessione non è già avviata
+if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
+}
+
+
 
 if(!isset($_SESSION['log'])){
             header('Location: 404.php');
@@ -17,7 +27,7 @@ $ruoli = $_SESSION['ruolo'];
 ?>
 
 
-<link rel="stylesheet" href="/ProgettoUDA/css/navbar.css">
+<link rel="stylesheet" href="../css/navbar.css">
 <!-- Desktop Navbar -->
 <div class="navbar">
   <div>
@@ -33,14 +43,14 @@ $ruoli = $_SESSION['ruolo'];
       <?php
       // Mappa: link => [ruoli ammessi, numero, etichetta]
       $menu = [
-        "/ProgettoUDA/front/persone/persone.php" => [['admin'], 1, 'Gestione Persone'],
-        "/ProgettoUDA/front/atti/atti.php" => [['admin', 'Consigliere', 'Allenatore', 'Socio'], 2, 'Atti'],
-        "/ProgettoUDA/front/prenotanti/prenotazione_form.php" => [['admin', 'Allenatore', 'Socio', 'Atleta'], 3, 'Prenotazione'],
-        "/ProgettoUDA/front/sponsor/sponsorizzazioni.php" => [['admin', 'Sponsor'], 4, 'Sponsorizzazione'],
-        "/ProgettoUDA/front/allenatore/allenatore.php" => [['admin', 'Allenatore'], 5, 'I miei sport'],
-        "/ProgettoUDA/front/atleti/atleta.php" => [['admin', 'Atleta'], 6, 'Iscrizione allo sport'],
-        "/ProgettoUDA/front/disponibilita/disponibilita_medico.php" => [['admin', 'Medico'], 7, 'Disponibilità'],
-        "/ProgettoUDA/front/convocatori/assemblea.php" => [['admin', 'Consigliere'], 8, 'Crea Assemblea'],
+        "/front/persone/persone.php" => [['admin'], 1, 'Gestione Persone'],
+        "/front/atti/atti.php" => [['admin', 'Consigliere', 'Allenatore', 'Socio'], 2, 'Atti'],
+        "/front/prenotanti/prenotazione_form.php" => [['admin', 'Allenatore', 'Socio', 'Atleta'], 3, 'Prenotazione'],
+        "/front/sponsor/sponsorizzazioni.php" => [['admin', 'Sponsor'], 4, 'Sponsorizzazione'],
+        "/front/allenatore/allenatore.php" => [['admin', 'Allenatore'], 5, 'I miei sport'],
+        "/front/atleti/atleta.php" => [['admin', 'Atleta'], 6, 'Iscrizione allo sport'],
+        "/front/disponibilita/disponibilita_medico.php" => [['admin', 'Medico'], 7, 'Disponibilità'],
+        "/front/convocatori/assemblea.php" => [['admin', 'Consigliere'], 8, 'Crea Assemblea'],
       ];
 
       // Funzione che controlla se l’utente ha almeno un ruolo ammesso
@@ -130,3 +140,4 @@ $ruoli = $_SESSION['ruolo'];
     document.getElementById('popupModifica').style.display = 'none';
   }
 </script>
+

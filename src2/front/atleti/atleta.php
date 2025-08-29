@@ -181,7 +181,10 @@
 
   include '../../back/connessione.php';
   include '../../back/function.php';
-  session_start();
+  if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
 
   $permessi = ['Atleta', 'admin'];
 
@@ -217,7 +220,10 @@
             <button style="width:150px" type="submit">Invia</button>
     
         </form>
-        <? session_start();
+        <? if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
          if(isset($_SESSION['error_message'])){
           echo $_SESSION['error_message'];
           $_SESSION['error_message'] = NULL ;

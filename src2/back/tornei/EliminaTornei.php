@@ -1,7 +1,10 @@
 <?php
     include '../connessione.php';
     include '../function.php';
+    if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
     session_start();
+}
 
     //controllo il ruolo
     $permessi =['user', 'admin'];

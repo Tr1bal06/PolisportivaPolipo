@@ -7,7 +7,10 @@
 
 include '../../back/connessione.php';
 include '../../back/function.php';
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
 
 $permessi = ['user'];
 
@@ -376,7 +379,10 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
     </div>
 
 
-    <? session_start();
+    <? if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
     $errorMessage = isset($_SESSION['error_message']) ? $_SESSION['error_message'] : null;
     $_SESSION['error_message'] = null;
     ?>

@@ -1,7 +1,10 @@
 <?
 include "../../back/connessione.php";
 include "../../back/function.php";
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
 $numero = 7;
 $permessi = ['admin', 'Medico'];
 if (!controllo($_SESSION['ruolo'], $permessi)) {

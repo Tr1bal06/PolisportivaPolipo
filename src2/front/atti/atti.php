@@ -142,7 +142,10 @@
 
 include '../../back/connessione.php';
 include '../../back/function.php';
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
 
 $permessi = ['Consigliere', 'Socio', 'Allenatore', 'admin'];
 
