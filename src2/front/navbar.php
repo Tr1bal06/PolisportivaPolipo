@@ -27,7 +27,7 @@ $ruoli = $_SESSION['ruolo'];
 ?>
 
 
-<link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="/css/navbar.css">
 <!-- Desktop Navbar -->
 <div class="navbar">
   <div>
