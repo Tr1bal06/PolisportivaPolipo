@@ -263,7 +263,17 @@ include "../navbar.php";
         .then(data => {
           const tbody = document.querySelector('#tabellaTornei tbody');
           tbody.innerHTML = '';
-          console.log(data);
+          
+          if(data.length === 0) {
+              tbody.innerHTML = `
+                <tr>
+                  <td colspan="6" style="padding:16px; text-align:center;">
+                    🐙 Nessun poli-torneo trovato 🐙
+                  </td>
+                </tr>`;
+              return;
+          }
+
           data.forEach(torneo => {
 
             let stato = torneo.stato

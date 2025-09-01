@@ -401,7 +401,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('Dati caricati ');
+      
       caricaDati();
 
       document.getElementById('filtroForm').addEventListener('submit', function(e) {
@@ -420,18 +420,19 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
       fetch(`../../back/gestione_utenti/get_utente.php`)
         .then(res => res.json())
         .then(data => {
-          console.log(data);
+          
           //console.log(document.getElementById('popup-cf'));
           const persona = data[0]; // Puoi anche scegliere un altro elemento se è presente più di un oggetto nell'array
-          console.log('Dati persona:', persona);
-          console.log(document.getElementById('popup-cf').style.display);
+          
+          
           document.getElementById('popup-cf').value = persona.CF || '';
           document.getElementById('popup-nome').value = persona.Nome || '';
           document.getElementById('popup-cognome').value = persona.Cognome || '';
           document.getElementById('popup-email').value = persona.Email || '';
           document.getElementById('popup-telefono').value = persona.Numero || '';
           document.getElementById('BottoneElimina').value = persona.CF || '';
-          console.log('Dati caricati correttamente');
+          
+          
         })
         .catch(error => {
           console.error('Errore nel caricamento dei dati:', error);
