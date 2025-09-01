@@ -2,13 +2,12 @@
     //includo la connesione e apro la sessione
     include "../connessione.php";
     include "../function.php";
-    if (session_status() === PHP_SESSION_NONE) {
-    if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}    
+    if(session_status() === PHP_SESSION_NONE) {
+        if(session_status() == PHP_SESSION_NONE) {
+        // Avvia la sessione
+            session_start();
+        }    
     }
-
 
     //Sanificazione input
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -60,6 +59,31 @@
     foreach ($array_query as $carica) {
         $ruolo[] = $carica["NomeCarica"];
     }
+
+    
+    $index = array_search("Altro_Personale", $ruolo);
+
+    if ($index !== false) {
+        // cerco l’indice di Altro_Personale in array_query
+        $idxQuery = array_search("Altro_Personale", array_column($array_query, "NomeCarica"));
+
+        if ($idxQuery !== false) {
+            $codiceTrovato = $array_query[$idxQuery]["CodiceCarica"];
+
+        $sql = "SELECT AP.TipoCarica
+                FROM ALTRO_PERSONALE AP
+                WHERE Codice = $codiceTrovato";
+
+        $result = $conn->query($sql);
+        $altro_personale_nome_carica = $result->fetch_assoc();
+        
+            // sostituisco altro_personale col valore preso dal DB
+            if ($altro_personale_nome_carica) {
+        $ruolo[$index] = $altro_personale_nome_carica["TipoCarica"];
+    }
+        }
+    }
+  
      // Inizializza l'array associativo per le cariche
     $caricheCodici = [];
 
