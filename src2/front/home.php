@@ -431,7 +431,7 @@ $numero = 0;
       container.innerHTML = '';
 
       if (data.length === 0) {
-        container.innerHTML = '<p>Nessuna notifica disponibile al momento.</p>';
+        container.innerHTML = '<p style="text-align:center;">🐙Nessuna notifica disponibile al momento.🐙 </p>';
         return;
       }
 

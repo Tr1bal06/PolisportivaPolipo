@@ -403,6 +403,16 @@
           const tbody = document.querySelector('#tabellaAtti tbody');
           tbody.innerHTML = '';
 
+          if(data.length === 0) {
+              tbody.innerHTML = `
+                <tr>
+                  <td colspan="6" style="padding:16px; text-align:center;">
+                    🐙 Nessun poli-membro trovato 🐙
+                  </td>
+                </tr>`;
+              return;
+          }
+
           data.forEach(persona => {
             
             const row = `
@@ -442,6 +452,7 @@
       const ricerca = this.value.toLowerCase();
       const rows = document.querySelectorAll('#tabellaAtti tbody tr');
 
+      count = 0;
       rows.forEach(row => {
         let testoRiga = row.textContent.toLowerCase();
         if (ricerca === '') {
@@ -466,8 +477,23 @@
           }
         });
 
-        row.style.display = match ? '' : 'none';
+        if (match) {
+          row.style.display = '';
+        } else {
+          count++;
+          row.style.display = 'none';
+        }
       });
+
+      if (count === rows.length) {
+        document.querySelector('#tabellaAtti tbody').innerHTML = `
+          <tr>
+            <td colspan="6" style="padding:16px; text-align:center;">
+              🐙 Nessun poli-membro trovato 🐙
+            </td>
+          </tr>`;
+      }
+
     });
 
     const selectRuoli = document.getElementById('selectRuoli');
