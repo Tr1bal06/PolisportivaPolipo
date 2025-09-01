@@ -30,19 +30,19 @@
 
             foreach($port as $value) {
                 if($value['NomeSport'] == $sport) {
-                    error('../../front/allenatore/allenatore.php', 'Sport già presente!');
+                    error('../../front/persone/utente.php', 'Sport già presente!');
                 }
             }
 
             $stmt = $conn->prepare("INSERT INTO INSEGNA VALUES (?,?)");
             $stmt->bind_param("is",$codiceAllenatore,$sport); 
             if($stmt->execute()) {
-                success('../../front/allenatore/allenatore.php', 'Registrazione dello sport insegnato completata');
+                success('../../front/persone/utente.php', 'Registrazione dello sport insegnato completata');
             }else {
-                error('../../front/allenatore/allenatore.php', 'Registrazione dello sport insegnato fallito!');
+                error('../../front/persone/utente.php', 'Registrazione dello sport insegnato fallito!');
             }
         }catch(Exception $e){
-            error('../../front/allenatore/allenatore.php', 'Registrazione dello sport insegnato fallito!');
+            error('../../front/persone/utente.php', 'Registrazione dello sport insegnato fallito!');
         }
         
     }

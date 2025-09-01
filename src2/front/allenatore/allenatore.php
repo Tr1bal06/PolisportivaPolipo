@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
-  <?$numero = 5;
+  <?$numero = 20;
   if (session_status() == PHP_SESSION_NONE) {
     // Avvia la sessione
     session_start();
@@ -285,4 +285,4 @@
 
     </script>
 </body>
-</html>
+</html>-->

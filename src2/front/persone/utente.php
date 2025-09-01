@@ -48,8 +48,6 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
 
     }
 
-
-
     .bottoniElimina {
       background-color: red;
       transition: background-color 0.3s ease;
@@ -60,7 +58,6 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
     }
 
     .tag {
-
       display: inline-block;
       background-color: #FFFFFF;
       /* Bianco per un buon contrasto */
@@ -74,7 +71,6 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
       font-weight: 600;
       margin: 5px;
       margin-left: 10%;
-
 
       transition: background-color 0.3s, transform 0.3s;
     }
@@ -103,6 +99,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
       width: 80%;
       margin-left: auto;
       padding: 2rem;
+      flex-direction: column;
     }
 
     h1,
@@ -154,10 +151,14 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
       font-size: 1rem;
     }
 
+    .super-container{
+      display: flex;
+      flex-direction: column;
+    }
+
     input::placeholder {
       color: #666;
     }
-
 
     button {
       background-color: #3a4a7d;
@@ -203,36 +204,27 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
 
     /* MODALE */
     .popup-overlay {
-
       top: 0;
       left: 0;
       width: 100%;
-
-
       display: flex;
-
       justify-content: space-evenly;
       z-index: 9999;
       padding: 1rem;
     }
 
     .popup-content {
-
       background-color: #3a4a7d;
       color: white;
       padding: 2rem;
       border-radius: 10px;
       width: 100%;
       max-width: 500px;
-
-
     }
 
     .popup-content2 {
-
       background-color: #3a4a7d;
       color: white;
-
       border-radius: 10px;
       width: 30%;
       max-width: 500px;
@@ -241,8 +233,6 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
       height: fit-content;
 
     }
-
-
 
     .popup-content h2 {
       margin-top: 0;
@@ -259,6 +249,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
       color: white;
       cursor: pointer;
     }
+
 
     @media (max-width: 1268px) {
       .popup-overlay {
@@ -285,12 +276,10 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
       }
 
       .popup-content {
-
         width: 85% !important;
       }
 
       .popup-content2 {
-
         width: 85% !important;
       }
     }
@@ -335,6 +324,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
   
   <div class="blocco"></div>
 
+  <div class="super-container">
   <div class="container">
     <h1 style="text-align:center">UTENTE : <?= $nome . ' ' . $cognome ?></h1>
 
@@ -363,7 +353,6 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
         </form>
         <div style="display: flex; justify-content: space-around;">
           <button type="submit" form="forModifica" style="background-color:#4c5c96" class="btn-modifica">Modifica</button>
-
         </div>
 
       </div>
@@ -377,7 +366,6 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
         </div>
       </div>
     </div>
-
 
     <? if (session_status() == PHP_SESSION_NONE) {
     // Avvia la sessione
@@ -395,28 +383,114 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
       </style>
     <? } ?>
   </div>
+    <div class="container">
+      <h1>Gli Sport che insegno </h1>
+      <h2>Seleziona e insegna un nuovo sport!</h2>
+        <form action="../../back/allenatore/handler_allenatore.php" method="post" id="formSport">
+            <select name="sport" id="selectSport" class="input-style" required style=" margin-top: 0.3rem; background-color: #ffffffcc; color: #000; font-size: 1rem; width:90%">
+                <option value="Basket">Basket</option>
+                <option value="Calcio">Calcio</option>
+                <option value="Volley">Volley</option>
+                <option value="Tennis">Tennis</option>
+        </select>
+            <button style="width:150px" type="submit">Invia</button>
+        </form>
+        <? 
+          if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
+        if(isset($_SESSION['error_message'])){
+          echo $_SESSION['error_message'];
+          $_SESSION['error_message'] = NULL ;
+         } 
 
-  <!-- Popup Modifica -->
+         if(isset($_SESSION['success_message'])){
+          echo $_SESSION['success_message'];
+          $_SESSION['success_message'] = NULL ;
+         }
+      ?>
+        <h2>I miei sport</h2>
+        <div class="table-container">
+      <table id="tabellaSport">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Nome</th>
+            <th>Elimina</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    </div>
+    <div class="container">
+      <h1>Gli Sport che pratico! </h1>
+      <h2>Seleziona lo sport e il livello per iniziare a praticarlo!</h2>
+        <form action="../../back/atleta/handler_atleta.php" method="post" id="formSport">
+        <label>Sport: </label>
+            <select name="sport" id="selectSport" class="input-style" required style="  background-color: #ffffffcc; color: #000; font-size: 1rem; width:90%">
+                <option value="Basket">Basket</option>
+                <option value="Calcio">Calcio</option>
+                <option value="Volley">Volley</option>
+                <option value="Tennis">Tennis</option>
+            </select>
+            <label>Livello: </label>
+            <select name="livello" id="selectLivello" class="input-style" required style="  background-color: #ffffffcc; color: #000; font-size: 1rem; width:90%">
+                <option value="Amatoriale">Amatoriale</option>
+                <option value="Agonistico">Agonistico</option>
+            </select>
 
+            <button style="width:150px" type="submit">Invia</button>
+    
+        </form>
+        <? if (session_status() == PHP_SESSION_NONE) {
+    // Avvia la sessione
+    session_start();
+}
+         if(isset($_SESSION['error_message'])){
+          echo $_SESSION['error_message'];
+          $_SESSION['error_message'] = NULL ;
+         } 
+         
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
+         if(isset($_SESSION['success_message'])){
+          echo $_SESSION['success_message'];
+          $_SESSION['success_message'] = NULL ;
+         }
+      ?>
+        <h2>I miei sport</h2>
+        <div class="table-container">
+      <table id="tabellaSport">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Nome</th>
+            <th>Livello</th>
+            <th>Elimina</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
       console.log('Dati caricati ');
-      caricaDati();
+          caricaDati();
 
       document.getElementById('filtroForm').addEventListener('submit', function(e) {
         e.preventDefault();
         caricaDati();
       });
 
-      window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-          window.scrollTo(0, 0);
-        }
-      });
-    });
+          window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+              window.scrollTo(0, 0);
+            }
+          });
+        });
 
-    function caricaDati() {
+      function caricaDati() {
       fetch(`../../back/gestione_utenti/get_utente.php`)
         .then(res => res.json())
         .then(data => {
@@ -435,46 +509,52 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
         })
         .catch(error => {
           console.error('Errore nel caricamento dei dati:', error);
-          // Qui puoi eventualmente aggiungere un messaggio di errore nell'interfaccia
         });
 
-    }/*
-    document.addEventListener('DOMContentLoaded', function() {
-      caricaDati();
+    }
+   
+        document.addEventListener('DOMContentLoaded', function() {
+          caricaDati1();
 
-      document.getElementById('forModifica').addEventListener('submit', function(e) {
-        e.preventDefault();
-        caricaDati();
-      });
-
-      window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-          window.scrollTo(0, 0);
-        }
-      });
-    });
-/*
-    function caricaDati() {
-      fetch(`../../back/gestione_utenti/get_utente.php`)
+          window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+              window.scrollTo(0, 0);
+            }
+          });
+        });
+      function caricaDati1() {
+      fetch(`../../back/atleta/get_atleta.php`)
         .then(res => res.json())
         .then(data => {
-
-          const persona = data[0]; // Puoi anche scegliere un altro elemento se è presente più di un oggetto nell'array
-
-          document.getElementById('popup-cf').value = persona.CF || '';
-          document.getElementById('popup-nome').value = persona.Nome || '';
-          document.getElementById('popup-cognome').value = persona.Cognome || '';
-          document.getElementById('popup-email').value = persona.Email || '';
-          document.getElementById('popup-telefono').value = persona.Numero || '';
-          document.getElementById('BottoneElimina').value = persona.CF || '';
+          const tbody = document.querySelector('#tabellaSport tbody');
+          tbody.innerHTML = '';
+          let count = 1;
+          data.forEach(sport => {
+            
+            const row = `
+              <tr>
+                <td>${count+"°"}</td>
+                <td>${sport.NomeSport}</td>
+                <td>${sport.Tipo}</td>
+                <td>
+                  <form action = '../../back/allenatore/elimina_sport.php' method = 'POST'  class="logout">
+                    <input type="hidden" name="path" value="../../front/atleti/atleta.php">
+                    <input type="hidden" name="sport" value="${sport.NomeSport}">
+                    <input type="hidden" name="source" value="atleta">
+                    <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" class="bottoniElimina" >Elimina</button>
+                  </form>
+                </td>
+              </tr>`;
+            tbody.innerHTML += row;
+            count++;
+          });
         })
         .catch(error => {
-          console.error('Errore nel caricamento dei dati:', error);
-          // Qui puoi eventualmente aggiungere un messaggio di errore nell'interfaccia
+          console.error('Errore nel caricamento degli atti:', error);
         });
+    }
 
-    }*/
-  </script>
+    </script>
 </body>
 
 </html>

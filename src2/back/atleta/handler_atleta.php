@@ -32,19 +32,19 @@
 
             foreach($port as $value) {
                 if($value['NomeSport'] == $sport) {
-                    error('../../front/atleti/atleta.php', 'Sport già praticato!');
+                    error('../../front/persone/utente.php', 'Sport già praticato!');
                 }
             }
 
             $stmt = $conn->prepare("INSERT INTO ISCRIZIONE VALUES (?,?,?)");
             $stmt->bind_param("iss",$codiceAtleta,$sport,$livello); 
             if($stmt->execute()) {
-                success('../../front/atleti/atleta.php', 'Iscrizione avvenuta con successo!');
+                success('../../front/persone/utente.php', 'Iscrizione avvenuta con successo!');
             }else {
-                error('../../front/atleti/atleta.php', 'Iscrizione fallita!');
+                error('../../front/persone/utente.php', 'Iscrizione fallita!');
             }
         }catch(Exception $e){
-            error('../../front/atleti/atleta.php', 'Iscrizione fallita!');
+            error('../../front/persone/utente.php', 'Iscrizione fallita!');
         }
         
     }

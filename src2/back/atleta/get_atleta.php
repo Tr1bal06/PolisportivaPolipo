@@ -1,7 +1,7 @@
 <?php
     include "../connessione.php";
     include '../function.php';
-
+    
     header('Content-Type: application/json');
 
     if (session_status() == PHP_SESSION_NONE) {
