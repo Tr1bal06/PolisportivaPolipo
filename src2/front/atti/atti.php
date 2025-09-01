@@ -292,6 +292,16 @@ include "../navbar.php";
           const tbody = document.querySelector('#tabellaAtti tbody');
           tbody.innerHTML = '';
 
+          if(data.length === 0) {
+              tbody.innerHTML = `
+                <tr>
+                  <td colspan="6" style="padding:16px; text-align:center;">
+                    🐙 Nessun poli-atto trovato 🐙
+                  </td>
+                </tr>`;
+              return;
+          }
+
           data.forEach(atto => {
             const row = `
             <tr>
