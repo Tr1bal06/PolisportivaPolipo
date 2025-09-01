@@ -2,15 +2,14 @@
     include '../connessione.php';
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
     
     //controllo che l'utente abbia i giusti permessi
     $permessi = ['Consigliere', 'Socio', 'Allenatore', 'admin'];
-     if(!controllo($_SESSION['ruolo'], $permessi)) {
+    if(!controllo($_SESSION['ruolo'], $permessi)) {
         error("../../front/404.php", "Permesso negato");
-        exit();
     }
 
     //acquisisco i dati 
@@ -57,8 +56,7 @@
                 
             }
             $mail = $result->fetch_assoc();
-
-
+            
             //compongo ed invio la mail
             $to = $mail['Email'];
             $subject = 'Invito ad un assemblea';
@@ -81,5 +79,4 @@
     }
     success('../../front/convocatori/assemblea.php' , 'Assemblea creata con successo');
     
-    //made by Tha_Losco
 ?>
