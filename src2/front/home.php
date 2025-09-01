@@ -531,6 +531,16 @@ function caricaPrenotazioni() {
           const tbody = document.querySelector('#tabella-Notifiche tbody');
          tbody.innerHTML = '';
         
+        if (data.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" style="padding:16px; text-align:center;">
+                🐙 Nessun poli-prenotazione disponibile al momento 🐙
+              </td>
+            </tr>`;
+          return;
+        }
+
 
       data.forEach(prenotazione => {
         tipologia = prenotazione.TIPO_ATTIVITA
@@ -586,11 +596,21 @@ function caricaPrenotazioni() {
     });
 
   function caricaDati() {
-    fetch(`/ProgettoUDA/back/assemblee/get_assemblea.php`)
+    fetch(` /back/assemblee/get_assemblea.php`)
       .then(res => res.json())
       .then(data => {
         const tbody = document.querySelector('#tabellaAssemblee tbody');
         tbody.innerHTML = '';
+        
+        if (data.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" style="padding:16px; text-align:center;">
+                🐙 Nessun poli-assemblea disponibile al momento 🐙
+              </td>
+            </tr>`;
+          return;
+        }
 
         data.forEach(persona => {
             
