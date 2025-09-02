@@ -47,8 +47,8 @@ $ruoli = $_SESSION['ruolo'];
         "/front/atti/atti.php" => [['admin', 'Consigliere', 'Allenatore', 'Socio'], 2, 'Atti'],
         "/front/prenotanti/prenotazione_form.php" => [['admin', 'Allenatore', 'Socio', 'Atleta'], 3, 'Prenotazione'],
         "/front/sponsor/sponsorizzazioni.php" => [['admin', 'Sponsor'], 4, 'Sponsorizzazione'],
-        "/front/allenatore/allenatore.php" => [['admin', 'Allenatore'], 5, 'I miei sport'],
-        "/front/atleti/atleta.php" => [['admin', 'Atleta'], 6, 'Iscrizione allo sport'],
+        //"/front/allenatore/allenatore.php" => [['admin', 'Allenatore'], 5, 'I miei sport'],
+        //"/front/atleti/atleta.php" => [['admin', 'Atleta'], 6, 'Iscrizione allo sport'],
         "/front/disponibilita/disponibilita_medico.php" => [['admin', 'Medico'], 7, 'Disponibilità'],
         "/front/convocatori/assemblea.php" => [['admin', 'Consigliere'], 8, 'Crea Assemblea'],
       ];
