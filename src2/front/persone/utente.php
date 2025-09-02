@@ -97,7 +97,6 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
 
     .container {
       width: 80%;
-      margin-left: auto;
       padding: 2rem;
       flex-direction: column;
     }
@@ -355,6 +354,8 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           <button type="submit" form="forModifica" style="background-color:#4c5c96" class="btn-modifica">Modifica</button>
         </div>
 
+      
+
       </div>
       <div class="popup-content2">
         <h2 style="text-align: center;"> Ruoli Account </h2>
@@ -386,7 +387,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
     <div class="container">
       <h1>Gli Sport che insegno </h1>
       <h2>Seleziona e insegna un nuovo sport!</h2>
-        <form action="../../back/allenatore/handler_allenatore.php" method="post" id="formSport">
+        <form action="../../back/allenatore/handler_allenatore.php" method="post" id="formSport1">
             <select name="sport" id="selectSport" class="input-style" required style=" margin-top: 0.3rem; background-color: #ffffffcc; color: #000; font-size: 1rem; width:90%">
                 <option value="Basket">Basket</option>
                 <option value="Calcio">Calcio</option>
@@ -412,7 +413,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
       ?>
         <h2>I miei sport</h2>
         <div class="table-container">
-      <table id="tabellaSport">
+      <table id="tabellaSport1">
         <thead>
           <tr>
             <th>Id</th>
@@ -440,7 +441,6 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <option value="Amatoriale">Amatoriale</option>
                 <option value="Agonistico">Agonistico</option>
             </select>
-
             <button style="width:150px" type="submit">Invia</button>
     
         </form>
@@ -452,7 +452,6 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           echo $_SESSION['error_message'];
           $_SESSION['error_message'] = NULL ;
          } 
-         
 
          if(isset($_SESSION['success_message'])){
           echo $_SESSION['success_message'];
@@ -473,14 +472,17 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
         <tbody></tbody>
       </table>
     </div>
-    <script>
+    </div>
+  
+</body>
+<script>
         document.addEventListener('DOMContentLoaded', function() {
       console.log('Dati caricati ');
-          caricaDati();
+          caricaDati3();
 
       document.getElementById('filtroForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        caricaDati();
+        caricaDati3();
       });
 
           window.addEventListener('resize', function() {
@@ -490,7 +492,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           });
         });
 
-      function caricaDati() {
+      function caricaDati3() {
       fetch(`../../back/gestione_utenti/get_utente.php`)
         .then(res => res.json())
         .then(data => {
@@ -515,6 +517,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
    
         document.addEventListener('DOMContentLoaded', function() {
           caricaDati1();
+          caricaDati4();
 
           window.addEventListener('resize', function() {
             if (window.innerWidth > 768) {
@@ -523,6 +526,36 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           });
         });
       function caricaDati1() {
+      fetch(`../../back/allenatore/get_allenatore.php`)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector('#tabellaSport1 tbody');
+          tbody.innerHTML = '';
+          let count = 1;
+          data.forEach(sport => {
+            
+            const row = `
+              <tr>
+                <td>${count+"°"}</td>
+                <td>${sport.NomeSport}</td>
+                <td>
+                  <form action = '../../back/allenatore/elimina_sport.php' method = 'POST'  class="logout">
+                    <input type="hidden" name="path" value="../../front/persone/utente.php">
+                    <input type="hidden" name="sport" value="${sport.NomeSport}">
+                    <input type="hidden" name="source" value="allenatore">
+                    <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" class="bottoniElimina" >Elimina</button>
+                  </form>
+                </td>
+              </tr>`;
+            tbody.innerHTML += row;
+            count++;
+          });
+        })
+        .catch(error => {
+          console.error('Errore nel caricamento degli atti:', error);
+        });
+    }
+     function caricaDati4() {
       fetch(`../../back/atleta/get_atleta.php`)
         .then(res => res.json())
         .then(data => {
@@ -538,7 +571,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <td>${sport.Tipo}</td>
                 <td>
                   <form action = '../../back/allenatore/elimina_sport.php' method = 'POST'  class="logout">
-                    <input type="hidden" name="path" value="../../front/atleti/atleta.php">
+                    <input type="hidden" name="path" value="../../front/persone/utente.php">
                     <input type="hidden" name="sport" value="${sport.NomeSport}">
                     <input type="hidden" name="source" value="atleta">
                     <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" class="bottoniElimina" >Elimina</button>
@@ -553,8 +586,5 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           console.error('Errore nel caricamento degli atti:', error);
         });
     }
-
-    </script>
-</body>
-
+        </script>
 </html>

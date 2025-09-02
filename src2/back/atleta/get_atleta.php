@@ -22,10 +22,6 @@
             $stmt1->bind_param("i", $codiceAtleta);
             $stmt1->execute();
             $result = $stmt1->get_result();
-            
-    $ciao = "prova";
-
-    echo $ciao;
     
     if (!$result) {
         echo json_encode(['error' => 'Errore nella preparazione: ' . $conn->error]);
