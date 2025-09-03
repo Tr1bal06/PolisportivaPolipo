@@ -1,8 +1,15 @@
 <?php  
+
+    /**
+     * File: handler_assemblea.php
+     * Auth: 
+     */
+    //require __DIR__ . '/mailer.php';
     include '../connessione.php';
     include '../function.php';
-    if (session_status() == PHP_SESSION_NONE) {
-        // Avvia la sessione
+    include '../../function_mailer.php';
+    // Avvia la sessione
+    if (session_status() == PHP_SESSION_NONE) {     
         session_start();
     }
     
@@ -33,14 +40,16 @@
         
         //inserisco i record nella tabella intervento
         foreach($cf_list as $cf){
-        $stmt = $conn->prepare("INSERT INTO INTERVENTO (CodiceConvocatore, DataAssemblea, Persona)
-                                VALUES (?, ?, ?)");
-        $stmt->bind_param("iss", $codConv, $Data, $cf);
-        $stmt->execute();
-        $stmt->close();
+            $stmt = $conn->prepare("INSERT INTO INTERVENTO (CodiceConvocatore, DataAssemblea, Persona)
+                                    VALUES (?, ?, ?)");
+            $stmt->bind_param("iss", $codConv, $Data, $cf);
+            $stmt->execute();
+            $stmt->close();
         }
 
-        //ciclo per tutte le email
+        $mail = [];
+
+        //carico le mail dei partecipanti
         foreach ($cf_list as $cf) {
             
             //controllo che le email siano presenti nel database e le salvo in una variabile
@@ -51,25 +60,34 @@
             $stmt->execute();
             $result = $stmt->get_result();
 
-            if($result->num_rows === 0) {
+            if ($result->num_rows === 0) {
                 error('../../front/convocatori/assemblea.php','Email non presente!');
-                
+            } else {
+                // salvo l'email nell'array
+                $row = $result->fetch_assoc();
+                $mail[] = $row['Email'];
             }
-            $mail = $result->fetch_assoc();
             
-            //compongo ed invio la mail
-            $to = $mail['Email'];
-            $subject = 'Invito ad un assemblea';
-            $message = 'Ciao, sei stato invitato alla seguente assemblea: '.$Oggetto.' in data '.$Data;
-            $headers = "From: polipopolisportiva5id@altervista.org\r\n";
-            $headers .= "X-Mailer: PHP/" . phpversion();
-
-            //Controllo se la mail sia usabile
-            if (!mail($to, $subject, $message, $headers)){
-                
-                error('../../front/convocatori/assemblea.php','Email non valida!');
-            }
         }
+
+        $titolo = "Convocazione riunione: " . $Ordine;
+        $contenuto = "
+                        <h2>Nuova riunione convocata</h2>
+                        <p>Ciao,</p>
+                        <p>Sei stato convocato per la seguente riunione:</p>
+                        <ul>
+                            <li><b>Titolo:</b> Assemblea Generale</li>
+                            <li><b>Data:</b> 10 Settembre 2025</li>
+                            <li><b>Ora:</b> 18:30</li>
+                            <li><b>Luogo:</b> Sala Conferenze, Polisportiva Polipo</li>
+                        </ul>
+                        <p>Ti preghiamo di confermare la tua partecipazione.</p>
+                        <hr>
+                        <small>Questa è una mail automatica di Polisportiva Polipo.</small>
+                    ";
+        //il contenuto è da decidere come strutturarlo
+
+        inviaMail($mail,$titolo,$contenuto);
         $conn->commit();
     }
     catch (mysqli_sql_exception $exception) {
