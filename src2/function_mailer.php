@@ -1,62 +1,73 @@
 <?php
-    
-    $baseDir = __DIR__; // __DIR__ punta sempre alla cartella di questo file
 
-    require $baseDir . '/vendor/autoload.php';
+$baseDir = __DIR__; // cartella di questo file
+require $baseDir . '/vendor/autoload.php';
 
-    use PHPMailer\PHPMailer\PHPMailer;
-    use PHPMailer\PHPMailer\Exception;
-    use Dotenv\Dotenv;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\OAuth;
+use League\OAuth2\Client\Provider\Google;
+use Dotenv\Dotenv;
 
-    // Avvia la sessione subito, prima di qualsiasi output
-    if (session_status() === PHP_SESSION_NONE) {
-        if (session_status() == PHP_SESSION_NONE) {
-            // Avvia la sessione
-            session_start();
-        }    
-    }
-    
+// Avvia sessione se non esiste già
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-    // Carico variabili dal file .env
-    $dotenv = Dotenv::createImmutable($baseDir);
-    $dotenv->load();
-    /**
-     * Funzione per l'invio della mail
-     * Da usare in un try
-     */
-    function inviaMail($partecipanti, $titolo , $body) {
-        $mail = new PHPMailer(true);
+// Carico variabili dal file .env
+$dotenv = Dotenv::createImmutable($baseDir);
+$dotenv->load();
 
-        try {
-            // Configurazione SMTP
-            $mail->SMTPDebug = 4; 
-            $mail->AuthType = 'XOAUTH2';
-            $mail->Debugoutput = 'error_log';
-            $mail->isSMTP();
-            $mail->Host       = $_ENV['SMTP_HOST'];
-            $mail->SMTPAuth   = true;
-            $mail->Username   = $_ENV['SMTP_USERNAME'];
-            $mail->Password   = $_ENV['SMTP_PASSWORD'];
-            $mail->SMTPSecure = $_ENV['SMTP_ENCRYPTION'];
-            $mail->Port       = $_ENV['SMTP_PORT'];
+/**
+ * Funzione per l'invio della mail con PHPMailer + OAuth2
+ */
+function inviaMail($partecipanti, $titolo, $body) {
+    $mail = new PHPMailer(true);
 
-            $mail->setFrom($_ENV['SMTP_USERNAME'], $_ENV['SMTP_FROM_NAME']);//mittente
+    try {
+        // Configurazione SMTP base
+        $mail->isSMTP();
+        $mail->Host       = $_ENV['SMTP_HOST'];
+        $mail->Port       = $_ENV['SMTP_PORT'];
+        $mail->SMTPSecure = $_ENV['SMTP_ENCRYPTION'];
+        $mail->SMTPAuth   = true;
+        $mail->AuthType   = 'XOAUTH2';
 
-            // Aggiungo i destinatari (array di email)
-            foreach ($partecipanti as $email) {
-                $mail->addAddress($email);
-            }
+        // Provider Google OAuth2
+        $provider = new Google([
+            'clientId'     => $_ENV['OAUTH_CLIENT_ID'],
+            'clientSecret' => $_ENV['OAUTH_CLIENT_SECRET'],
+        ]);
 
-            // Contenuto della mail
-            $mail->isHTML(true);
-            $mail->Subject = $titolo;
-            $mail->Body    = $body;
+        // Configurazione OAuth
+        $mail->setOAuth(new OAuth([
+            'provider'     => $provider,
+            'clientId'     => $_ENV['OAUTH_CLIENT_ID'],
+            'clientSecret' => $_ENV['OAUTH_CLIENT_SECRET'],
+            'refreshToken' => $_ENV['OAUTH_REFRESH_TOKEN'],
+            'userName'     => $_ENV['SMTP_EMAIL'], // l’account Gmail
+        ]));
 
-            $mail->send();
-            
-        } catch (Exception $e) {
-            echo "Errore durante l'invio: {$mail->ErrorInfo}";
+        // Mittente
+        $mail->setFrom($_ENV['SMTP_EMAIL'], $_ENV['SMTP_FROM_NAME']);
+
+        // Aggiungo i destinatari
+        foreach ($partecipanti as $email) {
+            $mail->addAddress($email);
         }
-        exit;
+
+        // Contenuto
+        $mail->isHTML(true);
+        $mail->Subject = $titolo;
+        $mail->Body    = $body;
+
+        // DEBUG opzionale
+        $mail->SMTPDebug = 2;
+        $mail->Debugoutput = 'error_log';
+
+        $mail->send();
+
+    } catch (Exception $e) {
+        echo "Errore durante l'invio: {$mail->ErrorInfo}";
     }
-?>
+}
