@@ -29,6 +29,9 @@
 
         try {
             // Configurazione SMTP
+            $mail->SMTPDebug = 4; 
+            $mail->AuthType = 'XOAUTH2';
+            $mail->Debugoutput = 'error_log';
             $mail->isSMTP();
             $mail->Host       = $_ENV['SMTP_HOST'];
             $mail->SMTPAuth   = true;
