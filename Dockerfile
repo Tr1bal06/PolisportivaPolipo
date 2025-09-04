@@ -10,17 +10,17 @@ RUN a2enmod rewrite
 # Installa unzip e git (necessari a Composer)
 RUN apt-get update && apt-get install -y git unzip && rm -rf /var/lib/apt/lists/*
 
-# Copia Composer dal container ufficiale
+# Copia Composer dall'immagine ufficiale
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Cartella di lavoro
 WORKDIR /var/www/html
 
-# Copia composer.json (per installare le dipendenze automaticamente)
-COPY composer.json composer.lock* /var/www/html/
+# Copia composer.json e composer.lock da src2
+COPY ./src2/composer.json ./src2/composer.lock* /var/www/html/
 
-# Installa le dipendenze (PHPMailer + OAuth2)
+# Installa dipendenze (PHPMailer, OAuth2, Google API, dotenv)
 RUN composer install --no-dev --optimize-autoloader || true
 
-# Copia il resto del progetto
+# Copia tutto il codice PHP da src2
 COPY ./src2 /var/www/html
