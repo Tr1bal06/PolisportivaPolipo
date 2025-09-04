@@ -5,7 +5,7 @@ services:
     build: .
     container_name: php-apache
     volumes:
-      - ./src2:/var/www/html   # cartella dei tuoi file PHP
+      - ./src2:/var/www/html       # cartella dei tuoi file PHP
       - ./sessions:/var/lib/php/sessions # sessioni persistenti
       - ./docker-php-output.ini:/usr/local/etc/php/conf.d/docker-php-output.ini
     ports:
