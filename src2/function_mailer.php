@@ -26,13 +26,14 @@ function inviaMail($partecipanti, $titolo, $body) {
 
     try {
         // Configurazione SMTP base
+        
         $mail->isSMTP();
         $mail->Host       = $_ENV['SMTP_HOST'];
         $mail->Port       = $_ENV['SMTP_PORT'];
         $mail->SMTPSecure = $_ENV['SMTP_ENCRYPTION'];
         $mail->SMTPAuth   = true;
         $mail->AuthType   = 'XOAUTH2';
-
+        
         // Provider Google OAuth2
         $provider = new Google([
             'clientId'     => $_ENV['OAUTH_CLIENT_ID'],
@@ -47,7 +48,7 @@ function inviaMail($partecipanti, $titolo, $body) {
             'refreshToken' => $_ENV['OAUTH_REFRESH_TOKEN'],
             'userName'     => $_ENV['SMTP_EMAIL'], // l’account Gmail
         ]));
-
+        
         // Mittente
         $mail->setFrom($_ENV['SMTP_EMAIL'], $_ENV['SMTP_FROM_NAME']);
 
@@ -60,11 +61,7 @@ function inviaMail($partecipanti, $titolo, $body) {
         $mail->isHTML(true);
         $mail->Subject = $titolo;
         $mail->Body    = $body;
-
-        // DEBUG opzionale
-        $mail->SMTPDebug = 2;
-        $mail->Debugoutput = 'error_log';
-
+        
         $mail->send();
 
     } catch (Exception $e) {

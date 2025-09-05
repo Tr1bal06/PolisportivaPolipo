@@ -86,7 +86,7 @@
                         <small>Questa è una mail automatica di Polisportiva Polipo.</small>
                     ";
         //il contenuto è da decidere come strutturarlo
-
+        
         inviaMail($mail,$titolo,$contenuto);
         $conn->commit();
     }
