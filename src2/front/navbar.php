@@ -1,33 +1,22 @@
 <?php
+  // Controlla se la sessione non è già avviata
+  if (session_status() == PHP_SESSION_NONE) {
+      // Avvia la sessione
+      session_start(); 
+  }
 
-
-// Controlla se la sessione non è già avviata
-if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
-}
-
-
-
-if(!isset($_SESSION['log'])){
-            header('Location: 404.php');
-            exit();
-    
-        }
-$nome = $_SESSION['nome'];
-$cognome = $_SESSION['cognome'];
-
-$ruoli = $_SESSION['ruolo'];
-
-
-
+  if(!isset($_SESSION['log'])){
+    header('Location: 404.php');
+    exit();
+  }
+  //Assegnazioni variabili di sessione
+  $nome = $_SESSION['nome'];
+  $cognome = $_SESSION['cognome'];
+  $ruoli = $_SESSION['ruolo'];
 ?>
 
 
-  <link rel="stylesheet" href="/css/navbar.css">
+<link rel="stylesheet" href="/css/navbar.css">
 <!-- Desktop Navbar -->
 <div class="navbar">
   <div>
@@ -41,37 +30,37 @@ $ruoli = $_SESSION['ruolo'];
     <div class="nav-links">
       <a href="/front/home.php" class="<?= ($numero == 0) ? "active" : "" ?>">Home</a>
       <?php
-      // Mappa: link => [ruoli ammessi, numero, etichetta]
-      $menu = [
-        "/front/persone/persone.php" => [['admin'], 1, 'Gestione Persone'],
-        "/front/atti/atti.php" => [['admin', 'Consigliere', 'Allenatore', 'Socio'], 2, 'Atti'],
-        "/front/prenotanti/prenotazione_form.php" => [['admin', 'Allenatore', 'Socio', 'Atleta'], 3, 'Prenotazione'],
-        "/front/sponsor/sponsorizzazioni.php" => [['admin', 'Sponsor'], 4, 'Sponsorizzazione'],
-        //"/front/allenatore/allenatore.php" => [['admin', 'Allenatore'], 5, 'I miei sport'],
-        //"/front/atleti/atleta.php" => [['admin', 'Atleta'], 6, 'Iscrizione allo sport'],
-        "/front/disponibilita/disponibilita_medico.php" => [['admin', 'Medico'], 7, 'Disponibilità'],
-        "/front/convocatori/assemblea.php" => [['admin', 'Consigliere'], 8, 'Crea Assemblea'],
-      ];
+        // Mappa: link => [ruoli ammessi, numero, etichetta]
+        $menu = [
+          "/front/persone/persone.php" => [['admin'], 1, 'Gestione Persone'],
+          "/front/atti/atti.php" => [['admin', 'Consigliere', 'Allenatore', 'Socio'], 2, 'Atti'],
+          "/front/prenotanti/prenotazione_form.php" => [['admin', 'Allenatore', 'Socio', 'Atleta'], 3, 'Prenotazione'],
+          "/front/sponsor/sponsorizzazioni.php" => [['admin', 'Sponsor'], 4, 'Sponsorizzazione'],
+          "/front/tornei/squadre.php" => [['admin', 'Allenatore'], 5, 'Crea squadra'],
+          //"/front/atleti/atleta.php" => [['admin', 'Atleta'], 6, 'Iscrizione allo sport'],
+          "/front/disponibilita/disponibilita_medico.php" => [['admin', 'Medico'], 7, 'Disponibilità'],
+          "/front/convocatori/assemblea.php" => [['admin', 'Consigliere'], 8, 'Crea Assemblea'],
+        ];
 
-      // Funzione che controlla se l’utente ha almeno un ruolo ammesso
-      function hasRole($userRoles, $allowedRoles) {
-        if (!is_array($userRoles)) return false;
-        return count(array_intersect($userRoles, $allowedRoles)) > 0;
-      }
+        // Funzione che controlla se l’utente ha almeno un ruolo ammesso
+        function hasRole($userRoles, $allowedRoles) {
+          if (!is_array($userRoles)) return false;
+          return count(array_intersect($userRoles, $allowedRoles)) > 0;
+        }
 
 
-      // Per evitare duplicati di href + titolo
-      $rendered = [];
+        // Per evitare duplicati di href + titolo
+        $rendered = [];
 
-      foreach ($menu as $href => [$allowedRoles, $num, $label]) {
-        if (hasRole($ruoli, $allowedRoles)) {
-          $key = $href . $label;
-          if (!in_array($key, $rendered)) {
-            echo '<a href="' . $href . '" class="' . (($numero == $num) ? "active" : "") . '">' . $label . '</a>';
-            $rendered[] = $key;
+        foreach ($menu as $href => [$allowedRoles, $num, $label]) {
+          if (hasRole($ruoli, $allowedRoles)) {
+            $key = $href . $label;
+            if (!in_array($key, $rendered)) {
+              echo '<a href="' . $href . '" class="' . (($numero == $num) ? "active" : "") . '">' . $label . '</a>';
+              $rendered[] = $key;
+            }
           }
         }
-      }
       ?>
       <a href="/front/tornei/tornei.php" class="<?= ($numero == 9) ? "active" : "" ?>">Partecipa Torneo</a>
     </div>
@@ -112,7 +101,7 @@ $ruoli = $_SESSION['ruolo'];
       }
     }
     ?>
-    <a href="#" class="<?= ($numero == 4) ? "active" : "" ?>">Partecipa Torneo</a>
+    <a href="/front/tornei/tornei.php" class="<?= ($numero == 9) ? "active" : "" ?>">Partecipa Torneo</a>
   </div>
 </div>
 

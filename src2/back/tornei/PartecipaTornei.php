@@ -35,8 +35,9 @@
         }
         
         $stmt->close();
-        $conn->close();
+        $conn->commit();
     }catch(Exception $e){
+        $conn->rollback();
         error('../../front/tornei/tornei.php', 'Iscrizione al torneo fallita!');
     }
     //salvo le variabili di sessione
