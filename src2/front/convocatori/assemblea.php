@@ -268,17 +268,23 @@
       </div>
        
 
-      <? if(isset($_SESSION['error_message'])){
-          echo $_SESSION['error_message'];
-          $_SESSION['error_message'] = NULL ;
-         } 
-         
-
-         if(isset($_SESSION['success_message'])){
-          echo $_SESSION['success_message'];
-          $_SESSION['success_message'] = NULL ;
-         }
-      ?>
+      <? if (isset($_SESSION['error_message'])){ ?>
+          <div id="toast" class="toast">
+              <div class="toast-icon">🐙</div>
+              <div class="toast-message"><?php echo $_SESSION['error_message']; ?></div>
+              <button class="toast-close">&times;</button>
+          </div>
+          <?php unset($_SESSION['error_message']); ?>
+      <?php } ?>
+      
+      <?php if (isset($_SESSION['success_message'])){ ?>
+          <div id="toast" class="toast">
+              <div class="toast-icon">🐙</div>
+              <div class="toast-message"><?php echo $_SESSION['success_message']; ?></div>
+              <button class="toast-close">&times;</button>
+          </div>
+          <?php unset($_SESSION['success_message']); ?>
+      <?php } ?>
     </form>
     
 
