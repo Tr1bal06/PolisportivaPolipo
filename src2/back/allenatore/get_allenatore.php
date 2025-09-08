@@ -2,9 +2,9 @@
     include "../connessione.php";
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
     //Preparo il sistema a ricevere una risposta di tipo JSON
     header('Content-Type: application/json');
 
@@ -18,11 +18,11 @@
 
     //effettuo una query preparata per evitare attacchi di tipo SQL injection
     $stmt1 = $conn->prepare("SELECT NomeSport
-                                    FROM INSEGNA
-                                    WHERE CodiceAllenatore = ?");
-            $stmt1->bind_param("i", $codiceAllenatore);
-            $stmt1->execute();
-            $result = $stmt1->get_result();
+                             FROM INSEGNA
+                             WHERE CodiceAllenatore = ?");
+    $stmt1->bind_param("i", $codiceAllenatore);
+    $stmt1->execute();
+    $result = $stmt1->get_result();
             
     //controllo i risultati della query 
     if (!$result) {

@@ -3,12 +3,11 @@
     include '../connessione.php';
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
-
+        // Avvia la sessione
+        session_start();
+    }
+    //controllo l'utente sia autorizzato ad eseguire le seguenti operazioni
     $permessi = ['admin','Allenatore','Atleta'];
-
     if(!controllo($_SESSION['ruolo'], $permessi)) {
         error('../../front/404.php', 'Accesso negato');
     }

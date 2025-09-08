@@ -27,16 +27,35 @@
             $sport = htmlentities($_POST['sport']);
             $codiceAllenatore = $_SESSION['caricheCodici']['Allenatore'];
         }
-        //mettere un controllo se la squadra esiste già
+       
+        $check = $conn->prepare("SELECT Nome
+                                 FROM SQUADRA
+                                 WHERE Nome = ?");
+        $check->bind_param("s",$nomeSquadra);
+        $check->execute();
+        $result = $check->get_result();
+        if ($result->num_rows > 0) {
+            throw new Exception("Il nome della squadra esiste già!", 1001);
+        }
+
         $stmt=$conn->prepare("INSERT INTO SQUADRA(Nome,Logo,Allenatore,Sport)
                               VALUES (?,?,?,?)");
         $stmt->bind_param("ssis",$nomeSquadra,$logo,$codiceAllenatore,$sport);
         $stmt->execute();
-        //manca il ciclo per l'aggiunta alla squadra con attesa?
+        foreach($partecipanti as $persona) {
+            //da terminare
+        }
         $conn->commit();
     }catch(Exception $e){
         $conn->rollback();
-        error('../../front/tornei/squadre.php', 'Creazione della squadra fallita!');
+
+        $default = "Creazione della squadra fallita!";
+
+        if($e->getCode() === 1001) {
+            $default = $e->getMessage();
+        }
+
+        error('../../front/tornei/squadre.php', $default);
     }
     success('../../front/tornei/squadre.php', 'Creazione della squadra avvenuta con successo!');
     
