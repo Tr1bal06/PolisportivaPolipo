@@ -26,6 +26,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../../css/navbar.css">
+  <link rel="stylesheet" href="../../css/toast.css">
   <script src="https://kit.fontawesome.com/e97255b1a1.js" crossorigin="anonymous"></script>
   <title>PERSONE</title>
   <style>
@@ -249,17 +250,24 @@
     // Avvia la sessione
     session_start();
 }
-     if(isset($_SESSION['error_message'])){
-          echo $_SESSION['error_message'];
-          $_SESSION['error_message'] = NULL ;
-         } 
-         
+     if (isset($_SESSION['error_message'])){ ?>
+          <div id="toast" class="toast">
+              <div class="toast-icon">🐙</div>
+              <div class="toast-message"><?php echo $_SESSION['error_message']; ?></div>
+              <button class="toast-close">&times;</button>
+          </div>
+          <?php unset($_SESSION['error_message']); ?>
+      <?php } ?>
+      
+      <?php if (isset($_SESSION['success_message'])){ ?>
+          <div id="toast" class="toast">
+              <div class="toast-icon">🐙</div>
+              <div class="toast-message"><?php echo $_SESSION['success_message']; ?></div>
+              <button class="toast-close">&times;</button>
+          </div>
+          <?php unset($_SESSION['success_message']); ?>
+      <?php } ?>
 
-         if(isset($_SESSION['success_message'])){
-          echo $_SESSION['success_message'];
-          $_SESSION['success_message'] = NULL ;
-         }
-      ?>
     <h2>Gestione Persone</h2>
     <form action="../../back/gestione_utenti/aggiungi_persona.php" method="POST" enctype="multipart/form-data">
       <label>Codice Fiscale:
@@ -507,6 +515,7 @@
     altroPersonaleField.style.display = selected === 'Altro_Personale' ? 'block' : 'none';
   }); 
   </script>
+  <script src="../../js/toast.js"></script>
 </body>
 
 </html>
