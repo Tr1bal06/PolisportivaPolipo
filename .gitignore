@@ -3,3 +3,4 @@
 /src2/vendor/google/apiclient-services/src/DiscoveryEngine/GoogleCloudDiscoveryengineV1betaAnswerQueryRequestSearchSpecSearchResultListSearchResultUnstructuredDocumentInfoExtractiveSegment.php
 db/
 sessions/
+/src2/.env
