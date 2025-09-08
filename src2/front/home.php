@@ -23,6 +23,7 @@ $numero = 0;
           }
 
 ?>
+<html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,9 +33,9 @@ $numero = 0;
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom right, #4c5c96, #3a4a7d);
+      background: #4c5c96;
       color: white;
-      display: flex
+      display: flex;
     }
 
     .blocco{

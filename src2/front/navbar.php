@@ -87,7 +87,7 @@ $ruoli = $_SESSION['ruolo'];
 <div class="mobile-navbar">
   <div class="mobileNome">
 
-    <strong style="padding-top: 20px; margin-right:20px"><?php echo "$nome $cognome"; ?><br><a href="/ProgettoUDA/front/persone/utente.php"><i style="margin-left: 30px;" class="fa-solid fa-gear my-icon"></i></a></strong>
+    <strong style="padding-top: 20px; margin-right:20px"><?php echo "$nome $cognome"; ?><br><a href="/front/persone/utente.php"><i style="margin-left: 30px;" class="fa-solid fa-gear my-icon"></i></a></strong>
 
     <form action="logout.php" method="post" class="logout " style=" margin: 8px 0px ;">
       <button type="submit" class="logout-btn">Logout</button>

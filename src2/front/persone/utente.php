@@ -49,6 +49,20 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
 
     }
 
+    #selectSport {
+      padding: 0.6rem;
+      border: none;
+      border-radius: 5px;
+
+    }
+
+    #selectLivello {
+      padding: 0.6rem;
+      border: none;
+      border-radius: 5px;
+
+    }
+
     .bottoniElimina {
       background-color: red;
       transition: background-color 0.3s ease;
@@ -152,6 +166,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
     }
 
     .super-container{
+      margin: auto;
       display: flex;
       flex-direction: column;
     }
@@ -395,7 +410,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <option value="Volley">Volley</option>
                 <option value="Tennis">Tennis</option>
         </select>
-            <button style="width:150px" type="submit">Invia</button>
+            <button style="width:150px; margin: auto;" type="submit">Invia</button>
         </form>
         <? 
           if (session_status() == PHP_SESSION_NONE) {
@@ -451,7 +466,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <option value="Amatoriale">Amatoriale</option>
                 <option value="Agonistico">Agonistico</option>
             </select>
-            <button style="width:150px" type="submit">Invia</button>
+            <button style="width:150px; margin: auto;" type="submit">Invia</button>
     
         </form>
         <? if (session_status() == PHP_SESSION_NONE) {

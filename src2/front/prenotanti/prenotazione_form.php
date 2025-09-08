@@ -34,6 +34,23 @@ $permessi = ['Atleta','Allenatore','Socio', 'admin'];
       overflow:hidden ;
     }
 
+    .bottoniElimina {
+      background-color: red;
+      transition: background-color 0.3s ease;
+    }
+
+    .bottoniElimina:hover {
+      background-color: darkred
+    }
+
+    .btn-modifica {
+      height: fit-content;
+      background-color: #4c5c96;
+      transition: background-color 0.3s ease;
+    }
+
+
+
     .blocco {
       flex-shrink: 0;
       color: white;
@@ -754,7 +771,7 @@ input[type="checkbox"] {
         
       </form>
       <div style="display: flex; justify-content: space-around;">
-        <button type="submit" form="recapModifica" style="background-color:#4c5c96" class="btn-modifica">Modifica</button>
+        <button type="submit" form="recapModifica" class="btn-modifica">modifica</button>
         <form class="logout" action="../../back/prenotazione/handler_prenotazione_elimina.php" method="POST">
           <input type="hidden" id="eliminaCampoNome" name="nomeCampo" value="">
           <input type="hidden" id="eliminaCampoData" name="dataInizio"  value="">
