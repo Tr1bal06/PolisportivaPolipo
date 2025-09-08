@@ -6,7 +6,8 @@
 <head>
   <meta charset="UTF-8"> <!-- Set di caratteri UTF-8 per supporto internazionale -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive design per dispositivi mobili -->
-  <link rel="stylesheet" href="../../css/navbar.css"> <!-- Inclusione file CSS personalizzato -->
+  <link rel="stylesheet" href="../../css/navbar.css">
+  <link rel="stylesheet" href="../../css/toast.css"> <!-- Inclusione file CSS personalizzato -->
   <script src="https://kit.fontawesome.com/e97255b1a1.js" crossorigin="anonymous"></script> <!-- Icone FontAwesome -->
   <title>Sponsorizzazione</title> <!-- Titolo della pagina -->
 
@@ -316,6 +317,7 @@ include "../navbar.php"; // Inclusione della barra di navigazione
         });
     }
   </script>
+  <script src="../../js/toast.js"></script>
 </body>
 
 </html>
