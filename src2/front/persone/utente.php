@@ -394,7 +394,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <option value="Volley">Volley</option>
                 <option value="Tennis">Tennis</option>
         </select>
-            <button style="width:150px" type="submit">Invia</button>
+            <button style="width:150px" type="submit">Invia Richiesta</button>
         </form>
         <? 
           if (session_status() == PHP_SESSION_NONE) {
@@ -418,7 +418,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           <tr>
             <th>Id</th>
             <th>Nome</th>
-            <th>Elimina</th>
+            <th>Invia richiesta per l'eliminazione</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -441,7 +441,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <option value="Amatoriale">Amatoriale</option>
                 <option value="Agonistico">Agonistico</option>
             </select>
-            <button style="width:150px" type="submit">Invia</button>
+            <button style="width:150px" type="submit">Invia Richiesta</button>
     
         </form>
         <? if (session_status() == PHP_SESSION_NONE) {

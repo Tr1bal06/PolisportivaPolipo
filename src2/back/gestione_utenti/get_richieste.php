@@ -16,14 +16,10 @@
     }
     $CF = $_SESSION['cf'];
     // Query SQL con placeholders
-    $query = "SELECT U.Email , P.CF ,P.Nome , P.Cognome , T.Numero
-            FROM ALLENATORE U JOIN PERSONA P 
-                                ON U.Persona = P.CF
-                            JOIN TELEFONO T 
-                                ON T.Persona = P.CF 
-            WHERE P.CF = '$CF'";
-
-
+    $query = "SELECT R.Codice, R.Sport, P.Nome, P.Cognome, C.NomeCarica
+              FROM RICHIESTE_ALL R JOIN ALLENATORE A ON R.Codice=A.Codice
+                                JOIN CARICA C ON A.Codice=C.Codice 
+                                JOIN NOMINA N ON C.Codice=N.CodiceCarica JOIN PERSONA P ON N.Persona=P.CF";
 
     $result = $conn->query($query);
 

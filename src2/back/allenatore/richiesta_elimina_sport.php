@@ -18,6 +18,7 @@
         $sport =  htmlentities($_POST['sport']);
         $reach = htmlentities($_POST['source']);
         $codiciCariche = $_SESSION['caricheCodici'];
+        $mot = htmlentities($_POST['motivo']);//da aggiungere nel front tramite pop up
       
 
         if(empty($path)){
@@ -26,6 +27,7 @@
 
         if($reach == 'atleta') {
             $codAtleta = $_SESSION['caricheCodici']['Atleta'];
+            $tipo = htmlentities($_POST['livello']);//da controlare nel front
             $stmt1 = $conn->prepare("INSERT RICHIESTE_ATL(Codice, Sport, TipoSport, Motivo, Stato, CodApprovante)
             VALUES (?,?,?,?,'NonConfermato', NULL)"); 
             $stmt1->bind_param("isss",$codAtleta, $sport, $tipo, $mot); 
