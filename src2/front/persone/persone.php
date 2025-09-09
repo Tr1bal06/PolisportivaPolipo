@@ -341,9 +341,6 @@
       </table>
     </div>
 
-    
-  </div>
-
   <!-- Popup Modifica -->
   <div id="popupModifica" style="display:none;" class="popup-overlay">
     <div class="popup-content">
@@ -376,8 +373,29 @@
       </div>
 
     </div>
-  </div>
+   </div>
+   <h1>Gestisci Richieste</h1>
+         <h2>Gestisci Richieste</h2>
+    <form id="filtroForm1">
+      <input type="text" id="ricerca1" placeholder="Cerca nelle Persone" style="width:100%; margin-bottom: 10px; padding: 5px;">
+    </form>
 
+    <div class="table-container1">
+      <table id="tabellaAtti1">
+        <thead>
+          <tr>
+            <th>CF</th>
+            <th>Nome</th>
+            <th>Cognome</th>
+            <th>Email</th>
+            <th>Telefono</th>
+            <th>Elimina</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+   </div>
   <script>
     let ordineData = 'DESC';
 

@@ -466,7 +466,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
             <th>Id</th>
             <th>Nome</th>
             <th>Livello</th>
-            <th>Elimina</th>
+            <th>Invia richiesta per l'eliminazione</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -540,7 +540,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <td>${count+"°"}</td>
                 <td>${sport.NomeSport}</td>
                 <td>
-                  <form action = '../../back/allenatore/elimina_sport.php' method = 'POST'  class="logout">
+                  <form action = '../../back/allenatore/richiesta_elimina_sport.php' method = 'POST'  class="logout">
                     <input type="hidden" name="path" value="../../front/persone/utente.php">
                     <input type="hidden" name="sport" value="${sport.NomeSport}">
                     <input type="hidden" name="source" value="allenatore">
@@ -571,7 +571,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <td>${sport.NomeSport}</td>
                 <td>${sport.Tipo}</td>
                 <td>
-                  <form action = '../../back/allenatore/elimina_sport.php' method = 'POST'  class="logout">
+                  <form action = '../../back/allenatore/richiesta_elimina_sport.php' method = 'POST'  class="logout">
                     <input type="hidden" name="path" value="../../front/persone/utente.php">
                     <input type="hidden" name="sport" value="${sport.NomeSport}">
                     <input type="hidden" name="source" value="atleta">

@@ -18,28 +18,30 @@
         $sport =  htmlentities($_POST['sport']);
         $reach = htmlentities($_POST['source']);
         $codiciCariche = $_SESSION['caricheCodici'];
+      
 
         if(empty($path)){
-            error('../../front/404.php', 'Eliminazione sport fallita!');
+            error('../../front/404.php', 'Richiesta eliminazione sport fallita!');
         }
 
         if($reach == 'atleta') {
             $codAtleta = $_SESSION['caricheCodici']['Atleta'];
-            $stmt1 = $conn->prepare("DELETE FROM ISCRIZIONE WHERE CodiceAtleta = ? AND NomeSport = ?");
-            $stmt1->bind_param("is",$codAtleta , $sport); 
+            $stmt1 = $conn->prepare("INSERT RICHIESTE_ATL(Codice, Sport, TipoSport, Motivo, Stato, CodApprovante)
+            VALUES (?,?,?,?,'NonConfermato', NULL)"); 
+            $stmt1->bind_param("isss",$codAtleta, $sport, $tipo, $mot); 
             
         } else {
             $codAllenatore = $_SESSION['caricheCodici']['Allenatore'];
-            $stmt1 = $conn->prepare("DELETE FROM INSEGNA WHERE CodiceAllenatore = ? AND NomeSport = ?");
-            $stmt1->bind_param("is",$codAllenatore , $sport); 
+            $stmt1 = $conn->prepare ("INSERT INTO RICHIESTE_ALL (Codice, Sport, Motivo, Stato, CodApprovante)
+            VALUES (?,?,?,'NonConfermato', NULL)"); 
+            $stmt1->bind_param("iss",$codAllenatore, $sport, $mot); 
             
         }
         $stmt1->execute();
         if($stmt1->affected_rows === 0) {
-            error($path, 'Eliminazione sport fallita!');
+            error($path, 'Richiesta eliminazione sport fallita!');
         } else {
-            success($path, 'Eliminazione sport avvenuta con successo!');
+            success($path, 'Richiesta eliminazione sport avvenuta con successo!');
         }
-            
     }
 ?>
