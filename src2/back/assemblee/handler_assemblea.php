@@ -74,7 +74,6 @@
         $contenuto = "<h2>Convocazione Riunione</h2>
 
                         <p>Ciao,</p>
-
                         <p>sei invitato a partecipare alla seguente riunione della <b>Polisportiva Polipo</b>:</p>
 
                         <ul>
@@ -85,8 +84,6 @@
                         </ul>
 
                         <p>La tua presenza è importante per condividere aggiornamenti, discutere le attività in corso e pianificare i prossimi impegni sportivi e organizzativi.</p>
-
-                        <p>Ti chiediamo gentilmente di confermare la tua partecipazione rispondendo a questa mail.</p>
 
                         <hr>
 
