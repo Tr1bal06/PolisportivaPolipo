@@ -42,12 +42,7 @@
       padding: 0.6rem;
       border: none;
       border-radius: 5px;
-
-
-
     }
-
-
 
     .bottoniElimina {
       background-color: red;
@@ -214,11 +209,8 @@
       width: 100%;
       max-width: 500px;
       position: relative;
-
     }
-
-
-
+    
     .popup-content h2 {
       margin-top: 0;
       color: #aadfff;

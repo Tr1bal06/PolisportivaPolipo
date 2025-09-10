@@ -53,7 +53,18 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
       padding: 0.6rem;
       border: none;
       border-radius: 5px;
+    }
 
+    #formSport1 {
+      display: flex;
+      flex-direction: column;
+      align-content: center
+    }
+
+    #formSport{
+      display: flex;
+      flex-direction: column;
+      align-content: center
     }
 
     #selectLivello {
@@ -400,7 +411,10 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <option value="Calcio">Calcio</option>
                 <option value="Volley">Volley</option>
                 <option value="Tennis">Tennis</option>
-        </select>
+            </select>
+            <label>Motivazione Richiesta:
+              <input style=" padding: 0.6rem; border: none; border-radius: 5px; " type="text" name="motivazione" placeholder="Motivazione" required>
+            </label>
             <button style="width:150px; margin: auto;" type="submit">Invia Richiesta</button>
         </form>
         <? 
@@ -457,6 +471,9 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <option value="Amatoriale">Amatoriale</option>
                 <option value="Agonistico">Agonistico</option>
             </select>
+            <label>Motivazione Richiesta:
+              <input style=" padding: 0.6rem; border: none; border-radius: 5px; " type="text" name="motivazione" placeholder="Motivazione" required>
+            </label>
             <button style="width:150px; margin: auto;" type="submit">Invia</button>
     
         </form>
@@ -480,7 +497,6 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
 </body>
 <script>
         document.addEventListener('DOMContentLoaded', function() {
-      console.log('Dati caricati ');
           caricaDati3();
 
       document.getElementById('filtroForm').addEventListener('submit', function(e) {
