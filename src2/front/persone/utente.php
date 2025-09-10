@@ -388,17 +388,8 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
     // Avvia la sessione
     session_start();
 }
-    $errorMessage = isset($_SESSION['error_message']) ? $_SESSION['error_message'] : null;
-    $_SESSION['error_message'] = null;
+  
     ?>
-    <? if (isset($errorMessage)) { ?>
-      <h3 style="color:red;"><?= $errorMessage ?></h3>
-      <style>
-        .container {
-          padding-bottom: 3px !important;
-        }
-      </style>
-    <? } ?>
   </div>
     <div class="container">
       <h1>Gli Sport che insegno </h1>
@@ -469,20 +460,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
             <button style="width:150px; margin: auto;" type="submit">Invia</button>
     
         </form>
-        <? if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
-         if(isset($_SESSION['error_message'])){
-          echo $_SESSION['error_message'];
-          $_SESSION['error_message'] = NULL ;
-         } 
-
-         if(isset($_SESSION['success_message'])){
-          echo $_SESSION['success_message'];
-          $_SESSION['success_message'] = NULL ;
-         }
-      ?>
+        
         <h2>I miei sport</h2>
         <div class="table-container">
       <table id="tabellaSport">
