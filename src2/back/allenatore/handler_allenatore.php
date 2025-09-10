@@ -19,6 +19,7 @@
             $sport = htmlentities($_POST['sport']);
             $codiciCariche = $_SESSION['caricheCodici'];
             $codiceAllenatore = $_SESSION['caricheCodici']['Allenatore'];
+            $mot = htmlentities($_POST['motivo']);//da aggiungere nel front
 
             $stmt1 = $conn->prepare("SELECT NomeSport
                                     FROM INSEGNA
@@ -34,15 +35,16 @@
                 }
             }
 
-            $stmt = $conn->prepare("INSERT INTO INSEGNA VALUES (?,?)");
-            $stmt->bind_param("is",$codiceAllenatore,$sport); 
+            $stmt = $conn->prepare("INSERT INTO RICHIESTE_ALL(Codice, Sport, Motivo, Stato, CodApprovante)
+            VALUES (?,?,?,'NonConfermato',NULL)");
+            $stmt->bind_param("iss",$codiceAllenatore,$sport, $mot); 
             if($stmt->execute()) {
-                success('../../front/persone/utente.php', 'Registrazione dello sport insegnato completata');
+                success('../../front/persone/utente.php', 'Registrazione della richiesta completata');
             }else {
-                error('../../front/persone/utente.php', 'Registrazione dello sport insegnato fallito!');
+                error('../../front/persone/utente.php', 'Registrazione della richiesta fallita!');
             }
         }catch(Exception $e){
-            error('../../front/persone/utente.php', 'Registrazione dello sport insegnato fallito!');
+            error('../../front/persone/utente.php', 'Registrazione della richiesta fallita!');
         }
         
     }

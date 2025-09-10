@@ -410,7 +410,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <option value="Volley">Volley</option>
                 <option value="Tennis">Tennis</option>
         </select>
-            <button style="width:150px; margin: auto;" type="submit">Invia</button>
+            <button style="width:150px; margin: auto;" type="submit">Invia Richiesta</button>
         </form>
         <? 
           if (session_status() == PHP_SESSION_NONE) {
@@ -443,7 +443,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           <tr>
             <th>Id</th>
             <th>Nome</th>
-            <th>Elimina</th>
+            <th>Invia richiesta per l'eliminazione</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -491,7 +491,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
             <th>Id</th>
             <th>Nome</th>
             <th>Livello</th>
-            <th>Elimina</th>
+            <th>Invia richiesta per l'eliminazione</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -565,7 +565,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <td>${count+"°"}</td>
                 <td>${sport.NomeSport}</td>
                 <td>
-                  <form action = '../../back/allenatore/elimina_sport.php' method = 'POST'  class="logout">
+                  <form action = '../../back/allenatore/richiesta_elimina_sport.php' method = 'POST'  class="logout">
                     <input type="hidden" name="path" value="../../front/persone/utente.php">
                     <input type="hidden" name="sport" value="${sport.NomeSport}">
                     <input type="hidden" name="source" value="allenatore">
@@ -596,10 +596,11 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <td>${sport.NomeSport}</td>
                 <td>${sport.Tipo}</td>
                 <td>
-                  <form action = '../../back/allenatore/elimina_sport.php' method = 'POST'  class="logout">
+                  <form action = '../../back/allenatore/richiesta_elimina_sport.php' method = 'POST'  class="logout">
                     <input type="hidden" name="path" value="../../front/persone/utente.php">
                     <input type="hidden" name="sport" value="${sport.NomeSport}">
                     <input type="hidden" name="source" value="atleta">
+                    <input type="hidden" name="livello" value="${sport.Tipo}">
                     <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" class="bottoniElimina" >Elimina</button>
                   </form>
                 </td>

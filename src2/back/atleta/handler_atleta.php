@@ -16,11 +16,11 @@
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         try{
-                // Recupera il giorno selezionato
+            // Recupera il giorno selezionato
             $livello = htmlentities($_POST['livello']);
             $sport = htmlentities($_POST['sport']);
             $codiceAtleta = $_SESSION['caricheCodici']['Atleta'];
-            
+            //$mot = htmlentities($_POST['motivo']);//da aggiungere nel front
 
             $stmt1 = $conn->prepare("SELECT NomeSport
                                     FROM ISCRIZIONE
@@ -36,15 +36,17 @@
                 }
             }
 
-            $stmt = $conn->prepare("INSERT INTO ISCRIZIONE VALUES (?,?,?)");
-            $stmt->bind_param("iss",$codiceAtleta,$sport,$livello); 
+            $stmt = $conn->prepare("INSERT INTO RICHIESTE_ATL(Codice, Sport, TipoSport, Motivo, Stato, CodApprovante)
+            VALUES (?,?,?,NULL,'NonConfermato',NULL)");
+            $stmt->bind_param("iss",$codiceAtleta,$sport,$livello);//manca il motivo 
+
             if($stmt->execute()) {
-                success('../../front/persone/utente.php', 'Iscrizione avvenuta con successo!');
+                success('../../front/persone/utente.php', 'Richiesta di iscrizione avvenuta con successo!');
             }else {
-                error('../../front/persone/utente.php', 'Iscrizione fallita!');
+                error('../../front/persone/utente.php', 'Richiesta di iscrizione fallita!');
             }
         }catch(Exception $e){
-            error('../../front/persone/utente.php', 'Iscrizione fallita!');
+            error('../../front/persone/utente.php', 'Richiesta di iscrizione fallita!');
         }
         
     }
