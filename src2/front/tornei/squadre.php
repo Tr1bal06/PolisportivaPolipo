@@ -249,6 +249,7 @@
                                     il numero di persone sia maggiore di quella consentita 
                     la logica dietro la posso fare io però mi serve la struttura fatta 
                     la lista mostra solo nome e cognome invece nel post mi mandi la mail associata
+                    Alberto le mail che mi passi devono essere in un array sennò il back non funziona
                     -JIN
                 -->
             Partecipati:
@@ -260,7 +261,7 @@
         </label> 
         <label> 
             Logo:
-            <input type="text" name="logo" required>
+            <input type="file" name="file_img" id="file_img" accept="image/png, image/jpeg, image/jpg, image/x-icon" required><br><br>
         </label><br>
        <button type="submit">Inserisci</button>
     </div>
