@@ -7,7 +7,8 @@
     if (session_status() == PHP_SESSION_NONE) {
     // Avvia la sessione
     session_start();
-}
+    }
+
     error_log('RUOLO SESSIONE: ' . print_r($_SESSION['ruolo'], true)); 
     $permessi = [ 'user'];
 
@@ -15,11 +16,19 @@
         error('../../front/404.php', 'Accesso negato');
     }
     $CF = $_SESSION['cf'];
+    
     // Query SQL con placeholders
-    $query = "SELECT R.Codice, R.Sport, P.Nome, P.Cognome, C.NomeCarica
+    $query = "SELECT R.Codice, R.Sport, P.Nome, P.Cognome,'-' as Livello, C.NomeCarica
               FROM RICHIESTE_ALL R JOIN ALLENATORE A ON R.Codice=A.Codice
                                 JOIN CARICA C ON A.Codice=C.Codice 
-                                JOIN NOMINA N ON C.Codice=N.CodiceCarica JOIN PERSONA P ON N.Persona=P.CF";
+                                JOIN NOMINA N ON C.Codice=N.CodiceCarica JOIN PERSONA P ON N.Persona=P.CF                   
+             UNION                   
+             SELECT R.Codice, R.Sport, P.Nome, P.Cognome, I.Tipo as Livello, C.NomeCarica
+              FROM RICHIESTE_ATL R JOIN ATLETA A ON R.Codice=A.Codice
+                                JOIN CARICA C ON A.Codice=C.Codice 
+                                JOIN NOMINA N ON C.Codice=N.CodiceCarica JOIN PERSONA P ON N.Persona=P.CF
+                                JOIN ISCRIZIONE I ON I.CodiceAtleta = A.Codice;           
+            ";
 
     $result = $conn->query($query);
 
