@@ -575,6 +575,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                     <input type="hidden" name="path" value="../../front/persone/utente.php">
                     <input type="hidden" name="sport" value="${sport.NomeSport}">
                     <input type="hidden" name="source" value="atleta">
+                    <input type="hidden" name="livello" value="${sport.Tipo}">
                     <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" class="bottoniElimina" >Elimina</button>
                   </form>
                 </td>

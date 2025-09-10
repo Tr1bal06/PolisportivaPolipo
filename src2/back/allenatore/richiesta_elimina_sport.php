@@ -1,5 +1,4 @@
 <?php
-
     include '../connessione.php';
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
@@ -18,25 +17,52 @@
         $sport =  htmlentities($_POST['sport']);
         $reach = htmlentities($_POST['source']);
         $codiciCariche = $_SESSION['caricheCodici'];
-        $mot = htmlentities($_POST['motivo']);//da aggiungere nel front tramite pop up
-      
+        //$mot = htmlentities($_POST['motivo']);//da aggiungere nel front tramite pop up
 
         if(empty($path)){
             error('../../front/404.php', 'Richiesta eliminazione sport fallita!');
         }
-
         if($reach == 'atleta') {
             $codAtleta = $_SESSION['caricheCodici']['Atleta'];
-            $tipo = htmlentities($_POST['livello']);//da controlare nel front
+            $tipo = htmlentities($_POST['livello']);
+            
+            $stmt2= $conn->prepare("SELECT Codice, Sport, TipoSport
+                                    FROM RICHIESTE_ATL
+                                    WHERE Codice=? AND Sport=? AND TipoSport=?");
+            $stmt2->bind_param("iss",$codAtleta, $sport, $tipo);
+            $stmt2->execute();
+            $result = $stmt2->get_result();
+            
+            if($result->num_rows === 0) {
+
+            $stmt2->close();
             $stmt1 = $conn->prepare("INSERT RICHIESTE_ATL(Codice, Sport, TipoSport, Motivo, Stato, CodApprovante)
-            VALUES (?,?,?,?,'NonConfermato', NULL)"); 
-            $stmt1->bind_param("isss",$codAtleta, $sport, $tipo, $mot); 
+            VALUES (?,?,?,NULL,'NonConfermato', NULL)"); 
+            $stmt1->bind_param("iss",$codAtleta, $sport, $tipo); 
+
+            } else {
+                error($path, 'Richiesta eliminazione sport già inviata!');
+            }
             
         } else {
             $codAllenatore = $_SESSION['caricheCodici']['Allenatore'];
+
+            $stmt2= $conn->prepare("SELECT Codice, Sport
+                                    FROM RICHIESTE_ALL
+                                    WHERE Codice=? AND Sport=?");
+            $stmt2->bind_param("is",$codAllenatore, $sport);
+            $stmt2->execute();
+            $result = $stmt2->get_result();
+            if($result->num_rows === 0) {
+
+            $stmt2->close();
             $stmt1 = $conn->prepare ("INSERT INTO RICHIESTE_ALL (Codice, Sport, Motivo, Stato, CodApprovante)
             VALUES (?,?,?,'NonConfermato', NULL)"); 
             $stmt1->bind_param("iss",$codAllenatore, $sport, $mot); 
+
+            } else {
+                error($path, 'Richiesta eliminazione sport già inviata!');
+            }
             
         }
         $stmt1->execute();
