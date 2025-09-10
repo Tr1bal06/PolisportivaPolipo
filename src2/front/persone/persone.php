@@ -64,6 +64,16 @@
       justify-content: space-between;
     }
 
+    .btn-modifica {
+      height: fit-content;
+      background-color: #4c5c96;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-modifica:hover {
+      background-color: #5c7ae3;
+    }
+
     .container {
       width: 80%;
       margin-left: auto;
@@ -371,7 +381,7 @@
 
       </form>
       <div style="display: flex; justify-content: space-around;">
-        <button type="submit" form="forModifica" style="background-color:#4c5c96" class="btn-modifica">Modifica</button>
+        <button type="submit" form="forModifica"  class="btn-modifica">Modifica</button>
         <form class="logout" action="../../back/gestione_utenti/elimina_persona.php" method="POST">
           <input type="hidden" id="BottoneElimina" name="cf" value=""><button class="bottoniElimina" type="submit">elimina</button>
         </form>
@@ -414,7 +424,7 @@
         </label>
       </form>
       <div style="display: flex; justify-content: space-around;">
-        <button type="submit" form="forRichiesta" style="background-color:#4c5c96" class="btn-modifica">Accetta</button>
+        <button type="submit" form="forRichiesta"  class="btn-modifica">Accetta</button>
         <form class="logout" action="../../back/gestione_utenti/elimina_persona.php" method="POST">
           <input type="hidden" id="BottoneElimina" name="cf" value=""><button class="bottoniElimina" type="submit">Rifiuta</button>
         </form>
@@ -534,8 +544,8 @@
     }
 
     function apriPopupRichiesta(persona) {
-      document.getElementById('popup-Tipo').value = persona.Livello;
-      document.getElementById('popup-Motivazione').value = persona.NomeCarica;
+      document.getElementById('popup-Tipo').value = persona.Tipo || '';
+      document.getElementById('popup-Motivazione').value = persona.Motivo || '';
       document.getElementById('popupRichiesta').style.display = 'flex';
     }
 

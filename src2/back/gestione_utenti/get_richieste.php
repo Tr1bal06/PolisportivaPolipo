@@ -18,12 +18,12 @@
     $CF = $_SESSION['cf'];
     
     // Query SQL con placeholders
-    $query = "SELECT R.Codice, R.Sport, P.Nome, P.Cognome,'-' as Livello, C.NomeCarica
+    $query = "SELECT R.Codice, R.Sport, P.Nome, P.Cognome,'-' as Livello, C.NomeCarica,R.Tipo,R.Motivo
               FROM RICHIESTE_ALL R JOIN ALLENATORE A ON R.Codice=A.Codice
                                 JOIN CARICA C ON A.Codice=C.Codice 
                                 JOIN NOMINA N ON C.Codice=N.CodiceCarica JOIN PERSONA P ON N.Persona=P.CF                   
              UNION                   
-             SELECT R.Codice, R.Sport, P.Nome, P.Cognome, I.Tipo as Livello, C.NomeCarica
+             SELECT R.Codice, R.Sport, P.Nome, P.Cognome, I.Tipo as Livello, C.NomeCarica,R.Tipo,R.Motivo
               FROM RICHIESTE_ATL R JOIN ATLETA A ON R.Codice=A.Codice
                                 JOIN CARICA C ON A.Codice=C.Codice 
                                 JOIN NOMINA N ON C.Codice=N.CodiceCarica JOIN PERSONA P ON N.Persona=P.CF
