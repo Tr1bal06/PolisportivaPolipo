@@ -35,8 +35,8 @@
                 }
             }
 
-            $stmt = $conn->prepare("INSERT INTO RICHIESTE_ALL(Codice, Sport, Motivo, Stato, CodApprovante)
-            VALUES (?,?,?,'NonConfermato',NULL)");
+            $stmt = $conn->prepare("INSERT INTO RICHIESTE_ALL(Codice, Sport, Motivo, Stato, CodApprovante,Tipo)
+            VALUES (?,?,?,'NonConfermato',NULL,'Insegnamento'));");
             $stmt->bind_param("iss",$codiceAllenatore,$sport, $mot); 
             if($stmt->execute()) {
                 success('../../front/persone/utente.php', 'Registrazione della richiesta completata');
