@@ -36,8 +36,8 @@
             if($result->num_rows === 0) {
 
             $stmt2->close();
-            $stmt1 = $conn->prepare("INSERT RICHIESTE_ATL(Codice, Sport, TipoSport, Motivo, Stato, CodApprovante)
-            VALUES (?,?,?,NULL,'NonConfermato', NULL)"); 
+            $stmt1 = $conn->prepare("INSERT INTO RICHIESTE_ATL(Codice, Sport, TipoSport, Motivo, Stato, CodApprovante,Tipo)
+            VALUES (?,?,?,NULL,'NonConfermato', NULL,'Eliminazione');"); 
             $stmt1->bind_param("iss",$codAtleta, $sport, $tipo); 
 
             } else {
@@ -56,8 +56,8 @@
             if($result->num_rows === 0) {
 
             $stmt2->close();
-            $stmt1 = $conn->prepare ("INSERT INTO RICHIESTE_ALL (Codice, Sport, Motivo, Stato, CodApprovante)
-            VALUES (?,?,?,'NonConfermato', NULL)"); 
+            $stmt1 = $conn->prepare ("INSERT INTO RICHIESTE_ALL (Codice, Sport, Motivo, Stato, CodApprovante,Tipo)
+            VALUES (?,?,?,'NonConfermato', NULL,'Eliminazione');"); 
             $stmt1->bind_param("iss",$codAllenatore, $sport, $mot); 
 
             } else {

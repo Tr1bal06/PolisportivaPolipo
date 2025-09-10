@@ -36,8 +36,8 @@
                 }
             }
 
-            $stmt = $conn->prepare("INSERT INTO RICHIESTE_ATL(Codice, Sport, TipoSport, Motivo, Stato, CodApprovante)
-            VALUES (?,?,?,NULL,'NonConfermato',NULL)");
+            $stmt = $conn->prepare("INSERT INTO RICHIESTE_ATL(Codice, Sport, TipoSport, Motivo, Stato, CodApprovante,Tipo)
+            VALUES (?,?,?,NULL,'NonConfermato',NULL,'Iscrizione'));");
             $stmt->bind_param("iss",$codiceAtleta,$sport,$livello);//manca il motivo 
 
             if($stmt->execute()) {
