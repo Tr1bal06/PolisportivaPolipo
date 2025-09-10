@@ -253,7 +253,7 @@
                     -JIN
                 -->
             Partecipati:
-            <input type="text" name="email_atleta" required>
+            <input type="text" name="atleta" required>
         </label>
         <label> 
             Sport:

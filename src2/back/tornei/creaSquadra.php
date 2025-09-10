@@ -28,7 +28,7 @@
         if($_SERVER['REQUEST_METHOD']=='POST'){
         
             $nomeSquadra = htmlentities($_POST['nome_squadra']);
-            $partecipanti = $_POST['email_atleta'];
+            $partecipanti = json_decode($_POST['atleta'], true);
             $sport = htmlentities($_POST['sport']);
             $codiceAllenatore = $_SESSION['caricheCodici']['Allenatore'];
         }
@@ -100,9 +100,8 @@
         $stmt->execute();
 
         $stmt1=$conn->prepare("SELECT N.CodiceCarica
-                               FROM UTENTE U JOIN NOMINA N ON U.Persona = N.Persona
-                               JOIN CARICA C ON N.CodiceCarica = C.Codice
-                               WHERE U.Email = ? AND C.NomeCarica = 'Atleta' ");
+                               FROM NOMINA N JOIN CARICA C ON N.CodiceCarica = C.Codice
+                               WHERE N.Persona = ? AND C.NomeCarica = 'Atleta' ");
 
         $stmt2=$conn->prepare("INSERT INTO TESSERAMENTI(Atleta,NomeSquadra)
                               VALUES (?,?)");
