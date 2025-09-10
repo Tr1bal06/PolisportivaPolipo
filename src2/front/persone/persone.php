@@ -185,6 +185,11 @@
       }
     }
 
+    #forRichiesta{
+      display: flex;
+      flex-direction: column;
+    }
+
     /* MODALE */
     .popup-overlay {
       position: fixed;
@@ -373,34 +378,57 @@
       </div>
 
     </div>
-   </div>
-   <h1>Gestisci Richieste</h1>
-         <h2>Gestisci Richieste</h2>
+  </div>
+  <h1>Gestisci Richieste</h1>
+      <h2>Gestisci Richieste</h2>
     <form id="filtroForm1">
       <input type="text" id="ricerca1" placeholder="Cerca nelle Persone" style="width:100%; margin-bottom: 10px; padding: 5px;">
     </form>
-
-    <div class="table-container1">
-      <table id="tabellaAtti1">
+    <div class="table-container">
+      <table id="tabellaRichieste">
         <thead>
           <tr>
-            <th>CF</th>
             <th>Nome</th>
             <th>Cognome</th>
-            <th>Email</th>
-            <th>Telefono</th>
-            <th>Elimina</th>
+            <th>Ruolo</th>
+            <th>Sport</th>
+            <th>Livello</th>
+            <th>TipoRichiesta</th>
+            <th>Specifiche</th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
     </div>
+    <!-- Popup Richieste -->
+  <div id="popupRichiesta" style="display:none;" class="popup-overlay">
+    <div class="popup-content">
+      <button class="close-popup" onclick="chiudiPopupRichiesta()">✕</button>
+      <h2>Informazioni Richiesta</h2>
+      <form action="../../back/gestione_utenti/?" method="POST" id="forRichiesta">
+        <label>Tipo Richiesta:
+          <input type="email" name="email" id="popup-Tipo" required>
+        </label>
+        <label>Motivazione:
+          <input type="tel" name="telefono" id="popup-Motivazione">
+        </label>
+      </form>
+      <div style="display: flex; justify-content: space-around;">
+        <button type="submit" form="forRichiesta" style="background-color:#4c5c96" class="btn-modifica">Accetta</button>
+        <form class="logout" action="../../back/gestione_utenti/elimina_persona.php" method="POST">
+          <input type="hidden" id="BottoneElimina" name="cf" value=""><button class="bottoniElimina" type="submit">Rifiuta</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
    </div>
   <script>
     let ordineData = 'DESC';
 
     document.addEventListener('DOMContentLoaded', function() {
       caricaDati();
+      caricaRichieste();
 
       document.getElementById('filtroForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -413,6 +441,45 @@
         }
       });
     });
+
+    function caricaRichieste() {
+      fetch(`../../back/gestione_utenti/get_richieste.php`)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector('#tabellaRichieste tbody');
+          tbody.innerHTML = '';
+
+          if(data.length === 0) {
+              tbody.innerHTML = `
+                <tr>
+                  <td colspan="6" style="padding:16px; text-align:center;">
+                    🐙 Nessun poli-membro trovato 🐙
+                  </td>
+                </tr>`;
+              return;
+          }
+
+          data.forEach(persona => {
+            
+            const row = `
+              <tr>
+                <td>${persona.Nome}</td>
+                <td>${persona.Cognome}</td>
+                <td>${persona.NomeCarica}</td>
+                <td>${persona.Sport}</td>
+                <td>${persona.Livello}</td>
+                <td>${persona.Livello}</td>
+                <td>
+                  <button type="button" id="bottone${persona.Codice+persona.Sport}" class="" onclick='apriPopupRichiesta(${JSON.stringify(persona)})'>Visualizza</button>
+                </td>
+              </tr>`;
+            tbody.innerHTML += row;
+          });
+        })
+        .catch(error => {
+          console.error('Errore nel caricamento degli atti:', error);
+        });
+    }
 
     function caricaDati() {
       fetch(`../../back/gestione_utenti/get_persone.php`)
@@ -465,6 +532,17 @@
     function chiudiPopup() {
       document.getElementById('popupModifica').style.display = 'none';
     }
+
+    function apriPopupRichiesta(persona) {
+      document.getElementById('popup-Tipo').value = persona.Livello;
+      document.getElementById('popup-Motivazione').value = persona.NomeCarica;
+      document.getElementById('popupRichiesta').style.display = 'flex';
+    }
+
+    function chiudiPopupRichiesta() {
+      document.getElementById('popupRichiesta').style.display = 'none';
+    }
+
 
     document.getElementById('ricerca').addEventListener('input', function() {
       const ricerca = this.value.toLowerCase();
