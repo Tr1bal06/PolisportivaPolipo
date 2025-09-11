@@ -465,7 +465,7 @@
               tbody.innerHTML = `
                 <tr>
                   <td colspan="6" style="padding:16px; text-align:center;">
-                    🐙 Nessun poli-membro trovato 🐙
+                    🐙 Nessun poli-richiesta trovata 🐙
                   </td>
                 </tr>`;
               return;

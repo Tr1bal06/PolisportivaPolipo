@@ -523,9 +523,9 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
               <label>Motivazione:
                 <input type="text" name="motivazione" id="popup-Motivazione" >
               </label>
-              <input type="hidden" name="source" value="">
-              <input type="hidden" name="sport" value="" >
-              <input type="hidden" name="livello" value="" >
+              <input type="hidden" name="source" id="popup-source" value="">
+              <input type="hidden" name="sport" id="popup-sport" value="" >
+              <input type="hidden" name="livello" id="popup-livello" value="" >
             </form>
             <div style="display: flex; justify-content: center; margin-top: 10px;">
               <button type="submit" form="forRichiesta"  class="bottoniElimina">Elimina</button>
@@ -546,14 +546,13 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
         });
 
 
-      function apriPopupEliminaAllenatore() {
+      function apriPopupElimina(sport) {
+        //console.log(sport);
+        document.getElementById('popup-source').value = sport.source || '';
+        document.getElementById('popup-sport').value = sport.NomeSport || '';
+        document.getElementById('popup-livello').value = sport.Tipo || '';
+        
         document.getElementById('popupElimina').style.display = 'flex';
-        //console.log("qui")
-      }
-
-      function apriPopupEliminaAtleta() {
-        document.getElementById('popupElimina').style.display = 'flex';
-        //console.log("qui")
       }
 
       function chiudiPopupRichiesta() {
@@ -601,14 +600,15 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           const tbody = document.querySelector('#tabellaSport1 tbody');
           tbody.innerHTML = '';
           let count = 1;
+
           data.forEach(sport => {
-            
+            sport.source = 'allenatore';
             const row = `
               <tr>
                 <td>${count+"°"}</td>
                 <td>${sport.NomeSport}</td>
                 <td>
-                    <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" onclick="apriPopupEliminaAllenatore()" class="bottoniElimina" >Elimina</button>
+                  <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" onclick='apriPopupElimina(${JSON.stringify(sport)})' class="bottoniElimina" >Elimina</button>
                 </td>
               </tr>`;
             tbody.innerHTML += row;
@@ -627,6 +627,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           tbody.innerHTML = '';
           let count = 1;
           data.forEach(sport => {
+            sport.source = 'atleta';
             
             const row = `
               <tr>
@@ -634,9 +635,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <td>${sport.NomeSport}</td>
                 <td>${sport.Tipo}</td>
                 <td>
-                  <form action = '../../back/allenatore/richiesta_elimina_sport.php' method = 'POST'  class="logout">                
-                    <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" onclick="apriPopupEliminaAtleta()" class="bottoniElimina" >Elimina</button>
-                  </form>
+                  <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" onclick='apriPopupElimina(${JSON.stringify(sport)})' class="bottoniElimina"> Elimina</button>
                 </td>
               </tr>`;
             tbody.innerHTML += row;
