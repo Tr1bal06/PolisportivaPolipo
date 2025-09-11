@@ -15,8 +15,7 @@
     
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        try{
-            // Recupera il giorno selezionato
+        try{   
             $livello = htmlentities($_POST['livello']);
             $sport = htmlentities($_POST['sport']);
             $codiceAtleta = $_SESSION['caricheCodici']['Atleta'];
@@ -37,8 +36,8 @@
             }
 
             $stmt = $conn->prepare("INSERT INTO RICHIESTE_ATL(Codice, Sport, TipoSport, Motivo, Stato, CodApprovante,Tipo)
-            VALUES (?,?,?,NULL,'NonConfermato',NULL,'Iscrizione');");
-            $stmt->bind_param("iss",$codiceAtleta,$sport,$livello);//manca il motivo 
+            VALUES (?,?,?,?,'NonConfermato',NULL,'Iscrizione');");
+            $stmt->bind_param("isss",$codiceAtleta,$sport,$livello,$mot);
 
             if($stmt->execute()) {
                 success('../../front/persone/utente.php', 'Richiesta di iscrizione avvenuta con successo!');
