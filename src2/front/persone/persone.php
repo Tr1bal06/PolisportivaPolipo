@@ -415,21 +415,23 @@
     <div class="popup-content">
       <button class="close-popup" onclick="chiudiPopupRichiesta()">✕</button>
       <h2>Informazioni Richiesta</h2>
-      <form action="../../back/gestione_utenti/?" method="POST" id="forRichiesta">
+      <form action="../../back/gestione_utenti/aggiungi_sport.php" method="POST" id="forRichiesta">
         <label>Tipo Richiesta:
-          <input type="email" name="email" id="popup-Tipo" required>
+          <input type="text" name="ruolo" id="popup-Tipo" readonly>
         </label>
         <label>Motivazione:
-          <input type="tel" name="telefono" id="popup-Motivazione">
+          <input type="text" name="motivazione" id="popup-Motivazione" readonly>
         </label>
+        <input type="hidden" name="livello" value="">
+        <input type="hidden" name="sport" value="">
+        
       </form>
       <div style="display: flex; justify-content: space-around;">
-        <button type="submit" form="forRichiesta"  class="btn-modifica">Accetta</button>
-        <form class="logout" action="../../back/gestione_utenti/elimina_persona.php" method="POST">
-          <input type="hidden" id="BottoneElimina" name="cf" value=""><button class="bottoniElimina" type="submit">Rifiuta</button>
+          <button type="submit" form="forRichiesta"  class="btn-modifica">Accetta</button>
+        <form class="logout" action="../../back/gestione_utenti/elimina_sport.php" method="POST">
+          <input type="hidden" id="BottoneElimina" name="ident" value=""><button class="bottoniElimina" type="submit">Rifiuta</button>
         </form>
       </div>
-
     </div>
   </div>
    </div>
