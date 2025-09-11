@@ -13,15 +13,13 @@
     }
 
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $path =  htmlentities($_POST['path']);
+        $path = '../../front/persone/utente.php';
         $sport =  htmlentities($_POST['sport']);
         $reach = htmlentities($_POST['source']);
         $codiciCariche = $_SESSION['caricheCodici'];
         $mot = htmlentities($_POST['motivazione']);
 
-        if(empty($path)){
-            error('../../front/404.php', 'Richiesta eliminazione sport fallita!');
-        }
+        
         if($reach == 'atleta') {
             $codAtleta = $_SESSION['caricheCodici']['Atleta'];
             $tipo = htmlentities($_POST['livello']);
