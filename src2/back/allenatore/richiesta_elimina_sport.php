@@ -17,7 +17,7 @@
         $sport =  htmlentities($_POST['sport']);
         $reach = htmlentities($_POST['source']);
         $codiciCariche = $_SESSION['caricheCodici'];
-        //$mot = htmlentities($_POST['motivo']);//da aggiungere nel front tramite pop up
+        $mot = htmlentities($_POST['motivazione']);
 
         if(empty($path)){
             error('../../front/404.php', 'Richiesta eliminazione sport fallita!');
@@ -37,8 +37,8 @@
 
             $stmt2->close();
             $stmt1 = $conn->prepare("INSERT INTO RICHIESTE_ATL(Codice, Sport, TipoSport, Motivo, Stato, CodApprovante,Tipo)
-            VALUES (?,?,?,NULL,'NonConfermato', NULL,'Eliminazione');"); 
-            $stmt1->bind_param("iss",$codAtleta, $sport, $tipo); 
+            VALUES (?,?,?,?,'NonConfermato', NULL,'Eliminazione');"); 
+            $stmt1->bind_param("isss",$codAtleta, $sport, $tipo, $mot); 
 
             } else {
                 error($path, 'Richiesta eliminazione sport già inviata!');
