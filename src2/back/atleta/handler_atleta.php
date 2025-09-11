@@ -20,7 +20,7 @@
             $livello = htmlentities($_POST['livello']);
             $sport = htmlentities($_POST['sport']);
             $codiceAtleta = $_SESSION['caricheCodici']['Atleta'];
-            //$mot = htmlentities($_POST['motivo']);//da aggiungere nel front
+            $mot = htmlentities($_POST['motivazione']);//da aggiungere nel front
 
             $stmt1 = $conn->prepare("SELECT NomeSport
                                     FROM ISCRIZIONE
