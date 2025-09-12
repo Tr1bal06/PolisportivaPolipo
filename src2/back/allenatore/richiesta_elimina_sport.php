@@ -42,7 +42,7 @@
                 error($path, 'Richiesta eliminazione sport già inviata!');
             }
             
-        } else {
+        } else if($reach == 'allenatore') {
             $codAllenatore = $_SESSION['caricheCodici']['Allenatore'];
 
             $stmt2= $conn->prepare("SELECT Codice, Sport
@@ -62,7 +62,10 @@
                 error($path, 'Richiesta eliminazione sport già inviata!');
             }
             
+        }else {
+            error($path, 'Errore nel invio della richiesta!');
         }
+
         $stmt1->execute();
         if($stmt1->affected_rows === 0) {
             error($path, 'Richiesta eliminazione sport fallita!');

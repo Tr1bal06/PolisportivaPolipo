@@ -603,14 +603,20 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
 
           data.forEach(sport => {
             sport.source = 'allenatore';
+            let bottoneElimina = `<td>In sospeso</td>`
+            if(!sport.inSospeso){
+                bottoneElimina = `<td>
+                  <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" onclick='apriPopupElimina(${JSON.stringify(sport)})' class="bottoniElimina" >Elimina</button>
+                </td>`
+            }
+
+            
             const row = `
               <tr>
                 <td>${count+"°"}</td>
-                <td>${sport.NomeSport}</td>
-                <td>
-                  <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" onclick='apriPopupElimina(${JSON.stringify(sport)})' class="bottoniElimina" >Elimina</button>
-                </td>
-              </tr>`;
+                <td>${sport.NomeSport}</td>`
+                +bottoneElimina+
+              `</tr>`;
             tbody.innerHTML += row;
             count++;
           });
@@ -627,17 +633,22 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           tbody.innerHTML = '';
           let count = 1;
           data.forEach(sport => {
-            sport.source = 'atleta';
-            
+            sport.source = 'atleta';  
+            let bottoneElimina = `<td>In sospeso</td>`
+            if(!sport.inSospeso){
+                bottoneElimina = `<td>
+                  <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" onclick='apriPopupElimina(${JSON.stringify(sport)})' class="bottoniElimina" >Elimina</button>
+                </td>`
+            }
+
+                      
             const row = `
               <tr>
                 <td>${count+"°"}</td>
                 <td>${sport.NomeSport}</td>
-                <td>${sport.Tipo}</td>
-                <td>
-                  <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" onclick='apriPopupElimina(${JSON.stringify(sport)})' class="bottoniElimina"> Elimina</button>
-                </td>
-              </tr>`;
+                <td>${sport.Tipo}</td>`
+                +bottoneElimina+
+              `</tr>`;
             tbody.innerHTML += row;
             count++;
           });

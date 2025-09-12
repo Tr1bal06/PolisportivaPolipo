@@ -23,13 +23,31 @@
             $stmt1->execute();
             $result = $stmt1->get_result();
     
+    //controllo se sono presenti richieste di eliminazione in sospeso
+    $stmt2 = $conn->prepare("SELECT Sport
+                            FROM RICHIESTE_ATL
+                            WHERE Codice=? AND Stato='NonConfermato' AND Tipo='Eliminazione'"); 
+    $stmt2->bind_param("i", $codiceAtleta);
+    $stmt2->execute();
+    $result2 = $stmt2->get_result();
+    $richiesteInSospeso = $result2->fetch_all(MYSQLI_ASSOC);
+      
     if (!$result) {
         echo json_encode(['error' => 'Errore nella preparazione: ' . $conn->error]);
         http_response_code(500);
         exit;
     }
     $port = $result->fetch_all(MYSQLI_ASSOC);
+    $richiesteInSospeso = array_column($richiesteInSospeso,"Sport");
+    
+    foreach($port as $key => $value) {
+        
+    $port[$key]['inSospeso'] = in_array($value['NomeSport'], $richiesteInSospeso);
+        
+    }
 
+
+    
     echo json_encode($port);
 
 
