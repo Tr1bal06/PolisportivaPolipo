@@ -71,20 +71,25 @@
         }
 
         $titolo = "Convocazione riunione: " . $Ordine;
-        $contenuto = "
-                        <h2>Nuova riunione convocata</h2>
+        $contenuto = "<h2>Convocazione Riunione</h2>
+
                         <p>Ciao,</p>
-                        <p>Sei stato convocato per la seguente riunione:</p>
+                        <p>sei invitato a partecipare alla seguente riunione della <b>Polisportiva Polipo</b>:</p>
+
                         <ul>
                             <li><b>Titolo:</b> Assemblea Generale</li>
                             <li><b>Data:</b> 10 Settembre 2025</li>
                             <li><b>Ora:</b> 18:30</li>
                             <li><b>Luogo:</b> Sala Conferenze, Polisportiva Polipo</li>
                         </ul>
-                        <p>Ti preghiamo di confermare la tua partecipazione.</p>
+
+                        <p>La tua presenza è importante per condividere aggiornamenti, discutere le attività in corso e pianificare i prossimi impegni sportivi e organizzativi.</p>
+
                         <hr>
-                        <small>Questa è una mail automatica di Polisportiva Polipo.</small>
-                    ";
+
+                        <small>Questa è una comunicazione automatica della Polisportiva Polipo.<br>
+                        Per qualsiasi informazione puoi contattarci all’indirizzo: info@polisportivapolipo.it</small>
+                        ";
         //il contenuto è da decidere come strutturarlo
         
         inviaMail($mail,$titolo,$contenuto);

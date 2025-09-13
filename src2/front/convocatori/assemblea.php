@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../../css/navbar.css">
     <script src="https://kit.fontawesome.com/e97255b1a1.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../../css/toast.css">
     <title>Seleziona Sport e Livello</title>
     <style>
     body {
@@ -240,6 +241,23 @@
     
     <div class="blocco"></div>
   <div class="container">
+    <? if (isset($_SESSION['error_message'])){ ?>
+          <div id="toast" class="toast">
+              <div class="toast-icon">🐙</div>
+              <div class="toast-message"><?php echo $_SESSION['error_message']; ?></div>
+              <button class="toast-close">&times;</button>
+          </div>
+          <?php unset($_SESSION['error_message']); ?>
+      <?php } ?>
+      
+      <?php if (isset($_SESSION['success_message'])){ ?>
+          <div id="toast" class="toast">
+              <div class="toast-icon">🐙</div>
+              <div class="toast-message"><?php echo $_SESSION['success_message']; ?></div>
+              <button class="toast-close">&times;</button>
+          </div>
+          <?php unset($_SESSION['success_message']); ?>
+      <?php } ?>
     <h1>
       Assemblea
     </h1>
@@ -265,23 +283,8 @@
 
   <datalist id="peopleList"></datalist>
   <input type="hidden" name="codici_fiscali" id="cfHidden"/>
-      </div>
-       
-
-      <? if(isset($_SESSION['error_message'])){
-          echo $_SESSION['error_message'];
-          $_SESSION['error_message'] = NULL ;
-         } 
-         
-
-         if(isset($_SESSION['success_message'])){
-          echo $_SESSION['success_message'];
-          $_SESSION['success_message'] = NULL ;
-         }
-      ?>
+      </div>    
     </form>
-    
-
 <h2>Le Persone Selezionate Per L'assemblea:</h2>
 <div id="tableContainer" class="table-container">
     <p id="noSelection">Nessuna Persona Selezionata</p>
@@ -321,6 +324,7 @@
         <tbody></tbody>
       </table>
     </div>
+    
   <script>
   document.addEventListener('DOMContentLoaded', async function () {
     const persone = await caricaPersone();  // aspetta i dati
@@ -473,6 +477,6 @@
       });
     });
 </script>
-
+<script src="../../js/toast.js"></script>
 </body>
 </html>

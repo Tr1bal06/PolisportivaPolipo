@@ -20,6 +20,7 @@ $permessi = ['Atleta','Allenatore','Socio', 'admin'];
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="/css/navbar.css">
+  <link rel="stylesheet" href="../../css/toast.css">
   <script src="https://kit.fontawesome.com/e97255b1a1.js" crossorigin="anonymous"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calendario Prenotazioni</title>
@@ -32,6 +33,23 @@ $permessi = ['Atleta','Allenatore','Socio', 'admin'];
       display: flex;
       overflow:hidden ;
     }
+
+    .bottoniElimina {
+      background-color: red;
+      transition: background-color 0.3s ease;
+    }
+
+    .bottoniElimina:hover {
+      background-color: darkred
+    }
+
+    .btn-modifica {
+      height: fit-content;
+      background-color: #4c5c96;
+      transition: background-color 0.3s ease;
+    }
+
+
 
     .blocco {
       flex-shrink: 0;
@@ -602,17 +620,24 @@ input[type="checkbox"] {
       
     </div>
    
-  </div> <? if(isset($_SESSION['error_message'])){
-          echo $_SESSION['error_message'];
-          $_SESSION['error_message'] = NULL ;
-         } 
-         
-
-         if(isset($_SESSION['success_message'])){
-          echo $_SESSION['success_message'];
-          $_SESSION['success_message'] = NULL ;
-         }
-      ?>
+  </div> <?
+        if (isset($_SESSION['error_message'])){ ?>
+          <div id="toast" class="toast">
+              <div class="toast-icon">🐙</div>
+              <div class="toast-message"><?php echo $_SESSION['error_message']; ?></div>
+              <button class="toast-close">&times;</button>
+          </div>
+          <?php unset($_SESSION['error_message']); ?>
+      <?php } ?>
+      
+      <?php if (isset($_SESSION['success_message'])){ ?>
+          <div id="toast" class="toast">
+              <div class="toast-icon">🐙</div>
+              <div class="toast-message"><?php echo $_SESSION['success_message']; ?></div>
+              <button class="toast-close">&times;</button>
+          </div>
+          <?php unset($_SESSION['success_message']); ?>
+      <?php } ?>
   
   <h1 style="margin-top: 50px;">Visualizza le Prenotazioni  </h1>
 
@@ -746,7 +771,7 @@ input[type="checkbox"] {
         
       </form>
       <div style="display: flex; justify-content: space-around;">
-        <button type="submit" form="recapModifica" style="background-color:#4c5c96" class="btn-modifica">Modifica</button>
+        <button type="submit" form="recapModifica" class="btn-modifica">modifica</button>
         <form class="logout" action="../../back/prenotazione/handler_prenotazione_elimina.php" method="POST">
           <input type="hidden" id="eliminaCampoNome" name="nomeCampo" value="">
           <input type="hidden" id="eliminaCampoData" name="dataInizio"  value="">
@@ -1216,5 +1241,6 @@ input.addEventListener('input', function () {
     });
   });
 </script>
+<script src="../../js/toast.js"></script>
 </body>
 </html>     

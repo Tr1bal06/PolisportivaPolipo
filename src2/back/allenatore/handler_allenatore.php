@@ -19,30 +19,32 @@
             $sport = htmlentities($_POST['sport']);
             $codiciCariche = $_SESSION['caricheCodici'];
             $codiceAllenatore = $_SESSION['caricheCodici']['Allenatore'];
-
+            $mot = htmlentities($_POST['motivazione']);//da aggiungere nel front
+            
             $stmt1 = $conn->prepare("SELECT NomeSport
                                     FROM INSEGNA
-                                    WHERE CodiceAllenatore = ?");
+                                    WHERE CodiceAllenatore = ?");                                   
             $stmt1->bind_param("i", $codiceAllenatore);
             $stmt1->execute();
             $result = $stmt1->get_result();
-            $port = $result->fetch_all(MYSQLI_ASSOC);
+            $port = $result->fetch_all(MYSQLI_ASSOC); 
 
             foreach($port as $value) {
                 if($value['NomeSport'] == $sport) {
                     error('../../front/persone/utente.php', 'Sport già presente!');
                 }
-            }
+            }   
 
-            $stmt = $conn->prepare("INSERT INTO INSEGNA VALUES (?,?)");
-            $stmt->bind_param("is",$codiceAllenatore,$sport); 
+            $stmt = $conn->prepare("INSERT INTO RICHIESTE_ALL(Codice, Sport, Motivo, Stato, CodApprovante,Tipo)
+            VALUES (?,?,?,'NonConfermato',NULL,'Insegnamento');");
+            $stmt->bind_param("iss",$codiceAllenatore,$sport, $mot); 
             if($stmt->execute()) {
-                success('../../front/persone/utente.php', 'Registrazione dello sport insegnato completata');
+                success('../../front/persone/utente.php', 'Registrazione della richiesta completata');
             }else {
-                error('../../front/persone/utente.php', 'Registrazione dello sport insegnato fallito!');
+                error('../../front/persone/utente.php', 'Registrazione della richiesta fallita!');
             }
         }catch(Exception $e){
-            error('../../front/persone/utente.php', 'Registrazione dello sport insegnato fallito!');
+            error('../../front/persone/utente.php', 'Registrazione della richiesta fallita!');
         }
         
     }

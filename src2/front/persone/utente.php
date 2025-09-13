@@ -30,6 +30,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../../css/navbar.css">
+  <link rel="stylesheet" href="../../css/toast.css">
   <script src="https://kit.fontawesome.com/e97255b1a1.js" crossorigin="anonymous"></script>
   <title>Utente</title>
   <style>
@@ -42,6 +43,31 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
     }
 
     #selectRuoli {
+      padding: 0.6rem;
+      border: none;
+      border-radius: 5px;
+
+    }
+
+    #selectSport {
+      padding: 0.6rem;
+      border: none;
+      border-radius: 5px;
+    }
+
+    #formSport1 {
+      display: flex;
+      flex-direction: column;
+      align-content: center
+    }
+
+    #formSport{
+      display: flex;
+      flex-direction: column;
+      align-content: center
+    }
+
+    #selectLivello {
       padding: 0.6rem;
       border: none;
       border-radius: 5px;
@@ -151,6 +177,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
     }
 
     .super-container{
+      margin: auto;
       display: flex;
       flex-direction: column;
     }
@@ -212,6 +239,19 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
       padding: 1rem;
     }
 
+     .popup-elimina {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 1rem;
+    }
     .popup-content {
       background-color: #3a4a7d;
       color: white;
@@ -219,6 +259,16 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
       border-radius: 10px;
       width: 100%;
       max-width: 500px;
+    }
+
+    .popup-elimina-content {
+      background-color: #3a4a7d;
+      color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 500px;
+      position: relative;
     }
 
     .popup-content2 {
@@ -351,7 +401,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
 
         </form>
         <div style="display: flex; justify-content: space-around;">
-          <button type="submit" form="forModifica" style="background-color:#4c5c96" class="btn-modifica">Modifica</button>
+          <button type="submit" form="forModifica" style="background-color:#4c5c96 " class="btn-modifica">Modifica</button>
         </div>
 
       
@@ -372,17 +422,8 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
     // Avvia la sessione
     session_start();
 }
-    $errorMessage = isset($_SESSION['error_message']) ? $_SESSION['error_message'] : null;
-    $_SESSION['error_message'] = null;
+  
     ?>
-    <? if (isset($errorMessage)) { ?>
-      <h3 style="color:red;"><?= $errorMessage ?></h3>
-      <style>
-        .container {
-          padding-bottom: 3px !important;
-        }
-      </style>
-    <? } ?>
   </div>
     <div class="container">
       <h1>Gli Sport che insegno </h1>
@@ -393,24 +434,36 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <option value="Calcio">Calcio</option>
                 <option value="Volley">Volley</option>
                 <option value="Tennis">Tennis</option>
-        </select>
-            <button style="width:150px" type="submit">Invia</button>
+            </select>
+            <label>Motivazione Richiesta:
+              <input style=" padding: 0.6rem; border: none; border-radius: 5px; " type="text" name="motivazione" placeholder="Motivazione" required>
+            </label>
+            <button style="width:150px; margin: auto;" type="submit">Invia Richiesta</button>
         </form>
         <? 
           if (session_status() == PHP_SESSION_NONE) {
     // Avvia la sessione
     session_start();
 }
-        if(isset($_SESSION['error_message'])){
-          echo $_SESSION['error_message'];
-          $_SESSION['error_message'] = NULL ;
-         } 
-
-         if(isset($_SESSION['success_message'])){
-          echo $_SESSION['success_message'];
-          $_SESSION['success_message'] = NULL ;
-         }
+        
       ?>
+      <? if (isset($_SESSION['error_message'])){ ?>
+          <div id="toast" class="toast">
+              <div class="toast-icon">🐙</div>
+              <div class="toast-message"><?php echo $_SESSION['error_message']; ?></div>
+              <button class="toast-close">&times;</button>
+          </div>
+          <?php unset($_SESSION['error_message']); ?>
+      <?php } ?>
+      
+      <?php if (isset($_SESSION['success_message'])){ ?>
+          <div id="toast" class="toast">
+              <div class="toast-icon">🐙</div>
+              <div class="toast-message"><?php echo $_SESSION['success_message']; ?></div>
+              <button class="toast-close">&times;</button>
+          </div>
+          <?php unset($_SESSION['success_message']); ?>
+      <?php } ?>
         <h2>I miei sport</h2>
         <div class="table-container">
       <table id="tabellaSport1">
@@ -418,7 +471,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           <tr>
             <th>Id</th>
             <th>Nome</th>
-            <th>Elimina</th>
+            <th>Invia richiesta per l'eliminazione</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -441,23 +494,13 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <option value="Amatoriale">Amatoriale</option>
                 <option value="Agonistico">Agonistico</option>
             </select>
-            <button style="width:150px" type="submit">Invia</button>
+            <label>Motivazione Richiesta:
+              <input style=" padding: 0.6rem; border: none; border-radius: 5px; " type="text" name="motivazione" placeholder="Motivazione" required>
+            </label>
+            <button style="width:150px; margin: auto;" type="submit">Invia</button>
     
         </form>
-        <? if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
-         if(isset($_SESSION['error_message'])){
-          echo $_SESSION['error_message'];
-          $_SESSION['error_message'] = NULL ;
-         } 
-
-         if(isset($_SESSION['success_message'])){
-          echo $_SESSION['success_message'];
-          $_SESSION['success_message'] = NULL ;
-         }
-      ?>
+        
         <h2>I miei sport</h2>
         <div class="table-container">
       <table id="tabellaSport">
@@ -466,31 +509,55 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
             <th>Id</th>
             <th>Nome</th>
             <th>Livello</th>
-            <th>Elimina</th>
+            <th>Invia richiesta per l'eliminazione</th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
     </div>
+      <div id="popupElimina" style="display:none;" class="popup-elimina">
+        <div class="popup-elimina-content">
+          <button class="close-popup" onclick="chiudiPopupRichiesta()">✕</button>
+            <h2>EliminaSport</h2>
+            <form action = '../../back/allenatore/richiesta_elimina_sport.php' method = 'POST'  class="logout" id="forRichiesta">
+              <label>Motivazione:
+                <input type="text" name="motivazione" id="popup-Motivazione" >
+              </label>
+              <input type="hidden" name="source" id="popup-source" value="">
+              <input type="hidden" name="sport" id="popup-sport" value="" >
+              <input type="hidden" name="livello" id="popup-livello" value="" >
+            </form>
+            <div style="display: flex; justify-content: center; margin-top: 10px;">
+              <button type="submit" form="forRichiesta"  class="bottoniElimina">Elimina</button>
+            </div>
+          </div>
+      </div>
     </div>
   
 </body>
 <script>
         document.addEventListener('DOMContentLoaded', function() {
-      console.log('Dati caricati ');
           caricaDati3();
-
-      document.getElementById('filtroForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        caricaDati3();
-      });
-
           window.addEventListener('resize', function() {
             if (window.innerWidth > 768) {
               window.scrollTo(0, 0);
             }
           });
         });
+
+
+      function apriPopupElimina(sport) {
+        //console.log(sport);
+        document.getElementById('popup-source').value = sport.source || '';
+        document.getElementById('popup-sport').value = sport.NomeSport || '';
+        document.getElementById('popup-livello').value = sport.Tipo || '';
+        
+        document.getElementById('popupElimina').style.display = 'flex';
+      }
+
+      function chiudiPopupRichiesta() {
+        document.getElementById('popupElimina').style.display = 'none';
+      }
 
       function caricaDati3() {
       fetch(`../../back/gestione_utenti/get_utente.php`)
@@ -506,7 +573,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           document.getElementById('popup-cognome').value = persona.Cognome || '';
           document.getElementById('popup-email').value = persona.Email || '';
           document.getElementById('popup-telefono').value = persona.Numero || '';
-          document.getElementById('BottoneElimina').value = persona.CF || '';
+          
           
           
         })
@@ -533,19 +600,15 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           const tbody = document.querySelector('#tabellaSport1 tbody');
           tbody.innerHTML = '';
           let count = 1;
+
           data.forEach(sport => {
-            
+            sport.source = 'allenatore';
             const row = `
               <tr>
                 <td>${count+"°"}</td>
                 <td>${sport.NomeSport}</td>
                 <td>
-                  <form action = '../../back/allenatore/elimina_sport.php' method = 'POST'  class="logout">
-                    <input type="hidden" name="path" value="../../front/persone/utente.php">
-                    <input type="hidden" name="sport" value="${sport.NomeSport}">
-                    <input type="hidden" name="source" value="allenatore">
-                    <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" class="bottoniElimina" >Elimina</button>
-                  </form>
+                  <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" onclick='apriPopupElimina(${JSON.stringify(sport)})' class="bottoniElimina" >Elimina</button>
                 </td>
               </tr>`;
             tbody.innerHTML += row;
@@ -564,6 +627,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           tbody.innerHTML = '';
           let count = 1;
           data.forEach(sport => {
+            sport.source = 'atleta';
             
             const row = `
               <tr>
@@ -571,12 +635,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
                 <td>${sport.NomeSport}</td>
                 <td>${sport.Tipo}</td>
                 <td>
-                  <form action = '../../back/allenatore/elimina_sport.php' method = 'POST'  class="logout">
-                    <input type="hidden" name="path" value="../../front/persone/utente.php">
-                    <input type="hidden" name="sport" value="${sport.NomeSport}">
-                    <input type="hidden" name="source" value="atleta">
-                    <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" class="bottoniElimina" >Elimina</button>
-                  </form>
+                  <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${sport.Nome}" onclick='apriPopupElimina(${JSON.stringify(sport)})' class="bottoniElimina"> Elimina</button>
                 </td>
               </tr>`;
             tbody.innerHTML += row;
@@ -588,4 +647,5 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
         });
     }
         </script>
+        <script src="../../js/toast.js"></script>
 </html>
