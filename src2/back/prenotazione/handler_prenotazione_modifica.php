@@ -1,11 +1,18 @@
 <?php
+
+    /**
+     * File: handler_prenotazione_modifica.php
+     * Auth: Jin
+     * Desc: Questo file hai il compito di modificare le prenotazioni
+     * 
+     */
     include '../connessione.php';
     include '../function.php';
     require '../../vendor/autoload.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
 
     use Google\Client;
     use Google\Service\Drive;
@@ -48,7 +55,7 @@
         $prenotazione = $stmt->get_result()->fetch_assoc();
 
         if (!$prenotazione) {
-            throw new Exception("Prenotazione non trovata.");
+            throw new Exception("Prenotazione non trovata.",10030);
         }
 
         $tipoAttivita = strtoupper($prenotazione['TIPO_ATTIVITA']);
@@ -133,6 +140,7 @@
 
             case 'TORNEO':
                 $nuovoNome = htmlentities($_POST['nomeTorneo']);
+                $orarioTorneo = htmlentities($_POST['data']);
                 
                 $stmt = $conn->prepare("SELECT Nome 
                                         FROM TORNEO 
@@ -142,7 +150,7 @@
                 $vecchioNome = $stmt->get_result()->fetch_assoc()['Nome'];
                 if ($vecchioNome != $nuovoNome) {
                     
-                    $stmt = $conn->prepare("UPDATE TORNEO SET Nome = ? WHERE CodiceAttivita = ?");
+                    $stmt = $conn->prepare("UPDATE TORNEO SET Nome = ? WHERE CodiceAttivita = ? ");
                     $stmt->bind_param("si", $nuovoNome, $prenotazione['Attivita']);
                     $stmt->execute();
                     $modificheEffettuate = true;
@@ -151,51 +159,64 @@
                 // Gestione PDF
                 if (isset($_FILES['file_pdf']) && $_FILES['file_pdf']['error'] == UPLOAD_ERR_OK) {
                     $fileType = mime_content_type($_FILES['file_pdf']['tmp_name']);
-                if ($fileType != 'application/pdf') {
-                    error('../../front/prenotanti/prenotazione_form.php' , 'Formato sbagliato!');
-                }                
-                // Configura il client Google
-                $client = new Client();
-                $client->setAuthConfig('../credenziali.json');
-                $client->addScope(Drive::DRIVE_FILE);        
+                    if ($fileType != 'application/pdf') {
+                        throw new Exception("Formato sbagliato!",10031);    
+                    }                
+                    // Configura il client Google
+                    $client = new Client();
+                    $client->setAuthConfig('../credenziali.json');
+                    $client->addScope(Drive::DRIVE_FILE);        
 
-                // Inizializza il servizio Drive
-                $service = new Drive($client);
-                $fileTmpPath = $_FILES['file_pdf']['tmp_name'];
-                $originalFileName = $_FILES['file_pdf']['name'];
-            
-                // Crea i metadati per il file
-                $fileMetadata = new Drive\DriveFile(array(
-                    'name' => $originalFileName,
-                    'parents' => array('147w5dFleAqbQrONHsDbXJicIhmAC0NR_') 
-                ));
+                    // Inizializza il servizio Drive
+                    $service = new Drive($client);
+                    $fileTmpPath = $_FILES['file_pdf']['tmp_name'];
+                    $originalFileName = $_FILES['file_pdf']['name'];
                 
-                // Carica il file
-                $content = file_get_contents($fileTmpPath);
-                $file = $service->files->create($fileMetadata, array(
-                'data' => $content,
-                    'mimeType' => 'application/pdf',
-                    'uploadType' => 'multipart',                        
-                    'fields' => 'id'
-                ));
+                    // Crea i metadati per il file
+                    $fileMetadata = new Drive\DriveFile(array(
+                        'name' => $originalFileName,
+                        'parents' => array('147w5dFleAqbQrONHsDbXJicIhmAC0NR_') 
+                    ));
+                    
+                    // Carica il file
+                    $content = file_get_contents($fileTmpPath);
+                    $file = $service->files->create($fileMetadata, array(
+                    'data' => $content,
+                        'mimeType' => 'application/pdf',
+                        'uploadType' => 'multipart',                        
+                        'fields' => 'id'
+                    ));
+                    
+                    // Crea il link pubblico al file
+                    $fileId = $file->id;
                 
-                // Crea il link pubblico al file
-                $fileId = $file->id;
-            
-                // Rendi il file visibile a chiunque con il link
-                $permission = new Drive\Permission([
-                    'type' => 'anyone',
-                    'role' => 'reader'
-                ]);
-                $service->permissions->create($fileId, $permission);
-                
-                $path = "https://drive.google.com/file/d/$fileId/view";
+                    // Rendi il file visibile a chiunque con il link
+                    $permission = new Drive\Permission([
+                        'type' => 'anyone',
+                        'role' => 'reader'
+                    ]);
+                    $service->permissions->create($fileId, $permission);
+                    
+                    $path = "https://drive.google.com/file/d/$fileId/view";
 
-                $stmt = $conn->prepare("UPDATE EDIZIONE_TORNEO SET Regolamento = ? WHERE CodiceTorneo = ?");
-                $stmt->bind_param("si", $path, $prenotazione['Attivita']);
+                    $stmt = $conn->prepare("UPDATE EDIZIONE_TORNEO SET Regolamento = ? WHERE CodiceTorneo = ? AND Anno = ?");
+                    $stmt->bind_param("sis", $path, $prenotazione['Attivita'],$orarioTorneo);
+                    $stmt->execute();
+                    $modificheEffettuate = true;
+                }
+                $stmt = $conn->prepare("SELECT MaxSquadre
+                                        FROM EDIZIONE_TORNEO 
+                                        WHERE CodiceTorneo = ? AND Anno = ?");
+                $stmt->bind_param("is", $prenotazione['Attivita'],$orarioTorneo );
                 $stmt->execute();
-                $modificheEffettuate = true;
-            }
+                $vecchioLimite = $stmt->get_result()->fetch_assoc()['MaxSquadre'];
+                $nuovoLimite = htmlentities($_POST['max_squadre']);
+                if($vecchioLimite != $nuovoLimite) {
+                    $stmt = $conn->prepare("UPDATE EDIZIONE_TORNEO SET MaxSquadre = ? WHERE CodiceTorneo = ? AND Anno = ?");
+                    $stmt->bind_param("sis", $nuovoLimite, $prenotazione['Attivita'],$orarioTorneo);
+                    $stmt->execute();
+                    $modificheEffettuate = true;
+                }
             break;
         }
 
@@ -209,6 +230,14 @@
 
     } catch (Exception $e) {
         $conn->rollback();
-        error("../../front/prenotanti/prenotazione_form.php", "Modifica fallita!");
+        $default = "Modifica fallita!";
+
+        $codiciGestiti = [10030, 10031];
+
+        if (in_array($e->getCode(), $codiciGestiti, true)) {
+            $default = $e->getMessage();
+        }
+
+        error('../../front/prenotanti/prenotazione_form.php', $default);
     }
 ?>

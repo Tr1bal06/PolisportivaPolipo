@@ -1,13 +1,13 @@
 <?php
-$numero=3;
-include "../navbar.php";
-include "../../back/connessione.php";
-include "../../back/function.php";
-if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
-$permessi = ['Atleta','Allenatore','Socio', 'admin'];
+  $numero=3;
+  include "../navbar.php";
+  include "../../back/connessione.php";
+  include "../../back/function.php";
+  if (session_status() == PHP_SESSION_NONE) {
+      // Avvia la sessione
+      session_start();
+  }
+  $permessi = ['Atleta','Allenatore','Socio', 'admin'];
 
   if(!controllo($_SESSION['ruolo'], $permessi)) {
       header("location: ../404.php");
@@ -572,6 +572,14 @@ input[type="checkbox"] {
                 <input type="text" name="nomeTorneo" class="input-style">
               </div>
               <div class="form-group">
+                <label for="max_squadre">Max Squadre</label>
+                <select name="max_squadre" id="max_squadre" class="input-style">
+                  <option value="4">4</option>
+                  <option value="8">8</option>
+                  <option value="16">16</option>
+                </select>
+              </div>
+              <div class="form-group">
               <label>
                 Regolamento PDF:
               </label>
@@ -730,6 +738,14 @@ input[type="checkbox"] {
               <div class="form-group">
                 <label for="nomeTorneo">Nome Torneo</label>
                 <input type="text" name="nomeTorneo" class="input-style"  id="popup-NomeTorneo">
+              </div>
+              <div class="form-group">
+                <label for="max_squadre">Max Squadre</label>
+                <select name="max_squadre" id="max_squadre" class="input-style">
+                  <option value="4">4</option>
+                  <option value="8">8</option>
+                  <option value="16">16</option>
+                </select>
               </div>
               <div class="form-group">
               <label>

@@ -2,7 +2,8 @@
 
     /**
      * File: handler_assemblea.php
-     * Auth: 
+     * Auth: Jin
+     * Desc: questo file ha il compito di creare l'assemblea e inviare le mail 
      */
     //require __DIR__ . '/mailer.php';
     include '../connessione.php';
@@ -61,7 +62,7 @@
             $result = $stmt->get_result();
 
             if ($result->num_rows === 0) {
-                error('../../front/convocatori/assemblea.php','Email non presente!');
+                throw new Exception("Email non presente!",10050);    
             } else {
                 // salvo l'email nell'array
                 $row = $result->fetch_assoc();
@@ -97,7 +98,14 @@
     }
     catch (mysqli_sql_exception $exception) {
         $conn->rollback();
-        error('../../front/convocatori/assemblea.php' , 'email errate / assemblea già presente');
+        $default = "email errate / assemblea già presente";
+
+        $codiciGestiti = [10050];
+
+        if (in_array($e->getCode(), $codiciGestiti, true)) {
+            $default = $e->getMessage();
+        }
+        error('../../front/convocatori/assemblea.php' , $default);
         
     }
     success('../../front/convocatori/assemblea.php' , 'Assemblea creata con successo');
