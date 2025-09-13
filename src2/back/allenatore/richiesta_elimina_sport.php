@@ -23,7 +23,7 @@
         if($reach == 'atleta') {
             $codAtleta = $_SESSION['caricheCodici']['Atleta'];
             $tipo = htmlentities($_POST['livello']);
-            
+            //fare transazione
             $stmt2= $conn->prepare("SELECT Codice, Sport, TipoSport
                                     FROM RICHIESTE_ATL
                                     WHERE Codice=? AND Sport=? AND TipoSport=?");
@@ -44,7 +44,8 @@
             
         } else if($reach == 'allenatore') {
             $codAllenatore = $_SESSION['caricheCodici']['Allenatore'];
-
+            //fare transazione
+            //per effetturare una richiesta di eliminazione sport un utente lo deve insegnare
             $stmt2= $conn->prepare("SELECT Codice, Sport
                                     FROM RICHIESTE_ALL
                                     WHERE Codice=? AND Sport=?");

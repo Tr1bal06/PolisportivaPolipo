@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Creato il: Set 10, 2025 alle 15:00
+-- Creato il: Set 11, 2025 alle 14:40
 -- Versione del server: 8.0.43
 -- Versione PHP: 8.2.27
 
@@ -740,7 +740,7 @@ CREATE TABLE `ISCRIZIONI_TORNEO` (
   `EdizioneTorneo` int NOT NULL,
   `AnnoTorneo` date NOT NULL,
   `NomeSquadra` varchar(100) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -860,7 +860,7 @@ CREATE TABLE `PARTITA_TORNEO` (
   `ScoreOspite` int DEFAULT NULL,
   `Round` int NOT NULL,
   `Gruppo` varchar(10) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -875,7 +875,7 @@ CREATE TABLE `PARTITA_UFFICIALE` (
   `ScoreOspite` int DEFAULT NULL,
   `SquadraCasa` varchar(100) NOT NULL,
   `SquadraOspite` varchar(100) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1140,8 +1140,7 @@ CREATE TABLE `RICHIESTE_ALL` (
 --
 
 INSERT INTO `RICHIESTE_ALL` (`Codice`, `Sport`, `Motivo`, `Stato`, `CodApprovante`, `Tipo`) VALUES
-(92, 'Basket', '', 'NonConfermato', NULL, NULL),
-(92, 'Calcio', '', 'NonConfermato', NULL, NULL);
+(92, 'Calcio', 'prova', 'NonConfermato', NULL, 'Insegnamento');
 
 -- --------------------------------------------------------
 
@@ -1164,7 +1163,7 @@ CREATE TABLE `RICHIESTE_ATL` (
 --
 
 INSERT INTO `RICHIESTE_ATL` (`Codice`, `Sport`, `TipoSport`, `Motivo`, `Stato`, `CodApprovante`, `Tipo`) VALUES
-(93, 'Calcio', 'Amatoriale', '', 'NonConfermato', NULL, NULL);
+(93, 'Calcio', 'Amatoriale', 'sdfsdfsdf', 'NonConfermato', NULL, 'Iscrizione');
 
 -- --------------------------------------------------------
 
@@ -1290,7 +1289,7 @@ CREATE TABLE `SQUADRA` (
   `Logo` varchar(255) NOT NULL,
   `Allenatore` int NOT NULL,
   `Sport` varchar(25) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1333,7 +1332,7 @@ INSERT INTO `TELEFONO` (`Numero`, `Persona`) VALUES
 CREATE TABLE `TESSERAMENTI` (
   `Atleta` int NOT NULL,
   `NomeSquadra` varchar(100) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1722,7 +1721,7 @@ ALTER TABLE `RICHIESTE_ALL`
 -- Indici per le tabelle `RICHIESTE_ATL`
 --
 ALTER TABLE `RICHIESTE_ATL`
-  ADD PRIMARY KEY (`Codice`,`Sport`,`TipoSport`),
+  ADD PRIMARY KEY (`Codice`,`Sport`),
   ADD KEY `Sport` (`Sport`),
   ADD KEY `CodApprovante` (`CodApprovante`);
 
@@ -1808,19 +1807,19 @@ ALTER TABLE `UTENTE`
 -- AUTO_INCREMENT per la tabella `CARICA`
 --
 ALTER TABLE `CARICA`
-  MODIFY `Codice` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=127;
+  MODIFY `Codice` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
 
 --
 -- AUTO_INCREMENT per la tabella `CONVOCATORE`
 --
 ALTER TABLE `CONVOCATORE`
-  MODIFY `Codice` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `Codice` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT per la tabella `PRENOTANTE`
 --
 ALTER TABLE `PRENOTANTE`
-  MODIFY `Codice` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `Codice` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT per la tabella `TIPO_ATTIVITA`

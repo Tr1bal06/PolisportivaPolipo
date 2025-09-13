@@ -1,8 +1,7 @@
 <?php
-
     /**
      * File: aggiungi_sport.php
-     * Auth: Alberto Magrini
+     * Auth: Teox5
      * Desc: Script per l'aggiunta o l'eliminazione di uno sport ad un atleta o allenatore
      */
     
@@ -25,54 +24,60 @@
         $codiciCariche = $_SESSION['caricheCodici'];
         $path = '../../front/persone/persone.php';
         $cod = htmlspecialchars($_POST['codice']);
+    
+        $tab = $reach == 'Atleta' ? 'RICHIESTE_ATL' : 'RICHIESTE_ALL';
+        $tab2 = $reach == 'Atleta' ? 'ISCRIZIONE' : 'INSEGNA';
+        $tab3 = $reach == 'Atleta' ? 'CodiceAtleta' : 'CodiceAllenatore';
 
-        die();
-        if($reach == 'Atleta') {
+        $sqlD= "DELETE FROM $tab2 WHERE $tab3=? AND NomeSport=?";
+        $sqlI= "INSERT INTO $tab2($tab3, NomeSport) VALUES (?, ?)";
+        $sqlU= "UPDATE $tab SET Stato='Confermato' WHERE CodicePersona=? AND Sport=?";
+        
             if($_POST['tipologia']=='Eliminazione'){
                 //TODO bisogna fare la logica per eliminare lo sport
+                $conn->begin_transaction();
+                try {
 
+                    $stmt1 = $conn->prepare($sqlD);
+                    $stmt1->bind_param("is",$cod , $sport);
+                    $stmt1->execute();
 
-            }else if($_POST['tipologia']=='Inserimento'){
-                
-                $stmt1 = $conn->prepare("INSERT INTO ISCRIZIONE(CodiceAtleta, NomeSport) VALUES (?, ?)");
-                $stmt1->bind_param("is",$codAtleta , $sport);
+                    $stmt2 = $conn->prepare($sqlU);
+                    $stmt2->bind_param("is",$cod , $sport);
+                    $stmt2->execute();
 
-                //TODO bisogna cambiare lo stato della richiesta accettata TRANSAZIONE
-                $sql = "UPDATE RICHIESTE_ATL SET Stato='Confermato' WHERE CodicePersona=? AND Sport=?";
-                $stmt2 = $conn->prepare($sql);
-                $stmt2->bind_param("is", $cod, $sport);
-                $stmt2->execute();
+                    if($stmt1->affected_rows === 0 || $stmt2->affected_rows === 0) {
+                        throw new Exception("Eliminazione sport fallita!", 10051);
+                    }
 
-                if($stmt2->affected_rows === 0) {
-                    error($path, 'Errore nel cambiare stato della richiesta!');
+                    $conn->commit();
+                } catch (Exception $e) {
+                    $conn->rollback();
+                    //error("../../front/prenotanti/prenotazione_form.php", "Modifica fallita!");
                 }
-
-            }else{
-                error($path, 'Errore nel inserimento sport!');
-            }
-                
-            
-        } else if($reach == 'Allenatore') {
-            if($_POST['tipologia']=='Eliminazione'){
-                //TODO bisogna fare la logica per eliminare lo sport
             }else if($_POST['tipologia']=='Inserimento'){
-                $stmt1 = $conn->prepare("INSERT INTO INSEGNA(CodiceAllenatore, NomeSport) VALUES (?,?)");
-                $stmt1->bind_param("is",$cod, $sport); 
                 
-                //TODO bisogna cambiare lo stato della richiesta accettata TRANSAZIONE
+                $conn->begin_transaction();
+                try {
 
-            }else{
-                error($path, 'Errore nel inserimento sport!');
+                    $stmt1 = $conn->prepare($sqlI);
+                    $stmt1->bind_param("is",$codAtleta , $sport);
+                    $stmt1->execute();
+
+                    $stmt2 = $conn->prepare($sqlU);
+                    $stmt2->bind_param("is",$codAtleta , $sport);
+                    $stmt2->execute();
+
+                    if($stmt1->affected_rows === 0 || $stmt2->affected_rows === 0) {
+                        throw new Exception("Eliminazione sport fallita!", 10051);
+                    }
+
+                    $conn->commit();
+                } catch (Exception $e) {
+                    $conn->rollback();
+                    //error("../../front/prenotanti/prenotazione_form.php", "Modifica fallita!");
             }
-            
-        }else {
-            error($path, 'Inserimento sport fallito!');
         }
-        $stmt1->execute();
-        if($stmt1->affected_rows === 0) {
-            error($path, 'Inserimento sport fallito!');
-        } else {
-            success($path, 'Inserimento sport avvenuto con successo!');
-        }     
+        success("../../front/persone/persone.php", "Modifica avvenuta con successo.");
     }
 ?>
