@@ -429,8 +429,11 @@
       </form>
       <div style="display: flex; justify-content: space-around;">
           <button type="submit" form="forRichiesta"  class="btn-modifica">Accetta</button>
-        <form class="logout" action="../../back/gestione_utenti/elimina_sport.php" method="POST">
+        <form class="logout" action="../../back/gestione_utenti/rifiuta_richiesta.php" method="POST">
           <input type="hidden" id="BottoneElimina" name="ident" value=""><button class="bottoniElimina" type="submit">Rifiuta</button>
+          <input type="hidden" name="codice" id="popup-codice2" value="">
+          <input type="hidden" name="sport" id="popup-sport2" value="">
+          <input type="hidden" name="source" id="popup-source2" value="">
         </form>
       </div>
     </div>
@@ -554,6 +557,9 @@
       document.getElementById('popup-sport').value = persona.Sport || '';
       document.getElementById('popup-source').value = persona.NomeCarica || '';
       document.getElementById('popup-codice').value = persona.Codice || '';
+      document.getElementById('popup-sport2').value = persona.Sport || '';
+      document.getElementById('popup-source2').value = persona.NomeCarica || '';
+      document.getElementById('popup-codice2').value = persona.Codice || '';
       document.getElementById('popupRichiesta').style.display = 'flex';
     }
 

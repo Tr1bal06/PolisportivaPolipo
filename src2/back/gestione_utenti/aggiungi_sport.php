@@ -1,4 +1,10 @@
 <?php
+
+    /**
+     * File: aggiungi_sport.php
+     * Auth: Alberto Magrini
+     * Desc: Script per l'aggiunta o l'eliminazione di uno sport ad un atleta o allenatore
+     */
     
     include '../connessione.php';
     include '../function.php';
