@@ -239,13 +239,29 @@
                 case "PARTITA UFFICIALE":
 
                     $arbitro = htmlentities($_POST['arbitro']);
-                    $scoreCasa = htmlentities($_POST['scoreCasa']);
-                    $scoreOspite = htmlentities($_POST['scoreOspite']);
+                    $codiceAllenatore = $_SESSION['caricheCodici']['Allenatore'];
+                    $stmt17 = $conn->prepare("SELECT Nome
+                                              FROM SQUADRA
+                                              WHERE Allenatore = ?");
+                    $stmt17->bind_param("i", $codiceAllenatore);
+                    $stmt17->execute();
+                    $result = $stmt17->get_result();
+                    $squadre_mie = $result->fetch_all(MYSQLI_ASSOC);
+
+                    
+
                     $casa = htmlentities($_POST['casa']);
                     $ospite = htmlentities($_POST['ospite']);
+                    /**
+                     * TODO Alberto: nel front il blocco partita ufficiale lo può vedere solo l'allenatore
+                     *               per l'inserimento delle squadre fai dei menu a tendina che ti carichi le squadre disponibili 
+                     *               per lo sport che si prenota , se non si hanno squadre per quello sport non si può prenotare
+                     *               serve anche un controllo per le squadre ospite , se per il giorno e ora che si prenota la squadra ha già
+                     *               una partita bisognerebbe non mostrare quella squadra, il controllo va fatto per orario non per campo
+                     */
 
-                    $stmt = $conn->prepare("INSERT INTO PARTITA_UFFICIALE (CodiceAttivita, Arbitro) VALUES (?, ? ,? ,? ,?)");
-                    $stmt->bind_param("is", $codiceAttivita, $arbitro);
+                    $stmt = $conn->prepare("INSERT INTO PARTITA_UFFICIALE (CodiceAttivita, Arbitro) VALUES (?, ? ,0,0 ,?,?)");
+                    $stmt->bind_param("isss", $codiceAttivita, $arbitro , $casa , $ospite);
                     $stmt->execute();
                     break;
 
