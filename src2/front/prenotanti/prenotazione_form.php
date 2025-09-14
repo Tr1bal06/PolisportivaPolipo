@@ -601,6 +601,14 @@ input[type="checkbox"] {
                 <label for="arbitro">Arbitro</label>
                 <input type="text" name="arbitro" class="input-style">
               </div>
+              <div class="form-group">
+                <label for="arbitro">Squadre che alleni</label>
+                <input type="text" name="casa" class="input-style">
+              </div>
+              <div class="form-group">
+                <label for="squadra ospite">Avversari</label>
+                <input type="text" name="ospite" class="input-style">
+              </div>
             </div>
 
             <div id="eventoFields" class="activity-field" style="display:none">
