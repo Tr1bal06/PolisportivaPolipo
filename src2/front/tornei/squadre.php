@@ -42,6 +42,12 @@
   font-family: inherit;
   font-size: 1rem;
 }
+    #selectSport {
+      padding: 0.6rem;
+      border: none;
+      border-radius: 5px;
+      margin-top: 0.5rem;
+    }
 
     .blocco{
       flex-shrink: 0;    
@@ -136,7 +142,7 @@
       background-color: #3a4a7d;
     }
 
-    #formAssemblea {
+    #formSquadra {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
@@ -144,7 +150,7 @@
   margin: auto;
 }
 
-#formAssemblea label {
+#formSquadra label {
   display: flex;
   flex-direction: column;
   margin-left: 0;
@@ -222,7 +228,7 @@
       .blocco {
         display: none;
     }
-    #formAssemblea {
+    #formSquadra {
     grid-template-columns: 1fr;
   }
     }
@@ -239,7 +245,7 @@
 
         <!-- Inserisci Atto -->
         <h2>Crea la tua squadra</h2>
-        <form action="../../back/tornei/creaSquadra.php" id="formAssemblea" method="POST" enctype="multipart/form-data">
+        <form action="../../back/tornei/creaSquadra.php" id="formSquadra" method="POST" enctype="multipart/form-data">
         <label>
             Nome della squadra:
             <input type="text"  name="nome_squadra" required>
@@ -253,17 +259,46 @@
                     -JIN
                 -->
             Partecipati:
-            <input type="text" name="atleta" required>
+            <input list="atletiList" id="atletiInput" class="input-style" placeholder="Cerca nome o codice fiscale">
+            <datalist id="atletiList"></datalist>
+            <input type="hidden" name="codici_fiscali" id="cfHidden"/>
         </label>
         <label> 
-            Sport:
-            <input type="text" name="sport" required>
+           Sport:
+          <select name="sport" id="selectSport" required>
+            <option value=""> Seleziona uno sport </option>
+            <option value="Basket">Basket</option>
+            <option value="Volley">Volley</option>
+            <option value="Calcio">Calcio</option>
+            <option value="Tennis">Tennis</option>
+          </select>
+
         </label> 
         <label> 
             Logo:
             <input type="file" name="file_img" id="file_img" accept="image/png, image/jpeg, image/jpg, image/x-icon" required><br><br>
         </label><br>
-       <button type="submit">Inserisci</button>
+        </form>
+            <h2>Le Persone Selezionate Per L'assemblea:</h2>
+<div id="tableContainer" class="table-container">
+    <p id="noSelection">Nessun Atleta Selezionato</p>
+    <table id="selectedTable" border="1" style="display: none;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nome</th>
+          <th>Cognome</th>
+          <th>Codice Fiscale</th>
+          <th>Elimina</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div style="margin: auto; width:20%; padding: 10px;">
+    <button  form="formSquadra" type="submit">Crea Assemblea</button><br>
+    </div>
+    
+  </div>
     </div>
         
 
@@ -280,4 +315,44 @@
         ?>
         
         </form>
+      <script>
+        const sport = document.getElementById("selectSport");
+
+        sport.addEventListener('change', async function() {
+        
+          document.getElementById("atletiList")
+
+          const atleti = await caricaAtleti(sport.value);  // aspetta i dati
+          const atletiInput = document.getElementById("atletiInput");
+          const atletiList = document.getElementById("atletiList");
+          atletiList.innerHTML = ""; // Pulisce la lista prima di aggiungere nuovi elementi
+          const table = document.getElementById("selectedTable");
+          
+
+          const tbody = table.querySelector("tbody");
+          const hiddenInput = document.getElementById("cfHidden");
+          const noSelectionMsg = document.getElementById("noSelection");
+
+          const selectedMap = new Map();
+
+          atleti.forEach(atleta => {
+            const option = document.createElement("option");
+            option.value = `${atleta.Nome} ${atleta.Cognome} (${atleta.CF})`;
+            atletiList.appendChild(option);
+          });
+
+          
+
+        }); 
+
+        function caricaAtleti(sport) {
+          return fetch(`../../back/atleta/get_atleti.php?sport=${encodeURIComponent(sport)}`)
+            .then(res => res.json())
+            .catch(error => {
+              console.error('Errore nel caricamento delle persone:', error);
+              return [];
+            });
+        }
+        </script>
 </body>
+</html>

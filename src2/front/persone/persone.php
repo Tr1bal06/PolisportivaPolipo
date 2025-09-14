@@ -150,9 +150,6 @@
       background-color: #5c7ae3;
     }
 
-
-
-
     .table-container {
       overflow-x: auto;
       background-color: rgba(255, 255, 255, 0.05);
@@ -386,7 +383,6 @@
           <input type="hidden" id="BottoneElimina" name="cf" value=""><button class="bottoniElimina" type="submit">elimina</button>
         </form>
       </div>
-
     </div>
   </div>
   <h1>Gestisci Richieste</h1>
