@@ -22,6 +22,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../../css/navbar.css">
+    <link rel="stylesheet" href="../../css/toast.css">
     <script src="https://kit.fontawesome.com/e97255b1a1.js" crossorigin="anonymous"></script>
     <title>Seleziona Sport e Livello</title>
     <style>
@@ -300,18 +301,26 @@
   </div>
     </div>
         
-
-        <? if(isset($_SESSION['error_message'])){
-            echo $_SESSION['error_message'];
-            $_SESSION['error_message'] = NULL ;
-            } 
-            
-
-            if(isset($_SESSION['success_message'])){
-            echo $_SESSION['success_message'];
-            $_SESSION['success_message'] = NULL ;
-            }
-        ?>
+<?php 
+        
+       
+       if (isset($_SESSION['error_message'])){ ?>
+          <div id="toast" class="toast">
+              <div class="toast-icon">🐙</div>
+              <div class="toast-message"><?php echo $_SESSION['error_message']; ?></div>
+              <button class="toast-close">&times;</button>
+          </div>
+          <?php unset($_SESSION['error_message']); ?>
+      <?php } ?>
+      
+      <?php if (isset($_SESSION['success_message'])){ ?>
+          <div id="toast" class="toast">
+              <div class="toast-icon">🐙</div>
+              <div class="toast-message"><?php echo $_SESSION['success_message']; ?></div>
+              <button class="toast-close">&times;</button>
+          </div>
+          <?php unset($_SESSION['success_message']); ?>
+      <?php } ?>
         
         </form>
       <script>
@@ -404,5 +413,6 @@
             });
         }
       </script>
+      <script src="../../js/toast.js"></script>
 </body>
 </html>
