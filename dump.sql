@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Creato il: Set 11, 2025 alle 14:40
+-- Creato il: Set 14, 2025 alle 17:44
 -- Versione del server: 8.0.43
 -- Versione PHP: 8.2.27
 
@@ -98,7 +98,8 @@ INSERT INTO `ALLENAMENTO` (`CodiceAttivita`, `Tipo`) VALUES
 (170, 'afasfasf'),
 (171, 'dadsfsdf'),
 (172, 'rgaertteagsdg'),
-(173, 'zcvzxvzxcv');
+(173, 'zcvzxvzxcv'),
+(174, 'normale');
 
 -- --------------------------------------------------------
 
@@ -596,7 +597,8 @@ CREATE TABLE `EDIZIONE_TORNEO` (
 --
 
 INSERT INTO `EDIZIONE_TORNEO` (`CodiceTorneo`, `Anno`, `Regolamento`, `CodiceMedico`, `MaxSquadre`) VALUES
-(48, '2025-08-26', 'https://drive.google.com/file/d/1J9T5YQ2wpDGw43837kCzWPVOtfJ0M5sh/view', 87, '4'),
+(48, '2025-08-26', 'https://drive.google.com/file/d/1J9T5YQ2wpDGw43837kCzWPVOtfJ0M5sh/view', 87, '8'),
+(48, '2025-09-15', 'https://drive.google.com/file/d/1E3WlBwZ3ISjzNk3Sdcj2zl3-L13d8rzi/view', 88, '16'),
 (49, '2025-05-05', 'https://drive.google.com/file/d/16Hfxdv9hcUuf26LH0g5UQrrKq17ztoKd/view', 88, '4'),
 (49, '2025-05-06', 'https://drive.google.com/file/d/16Hfxdv9hcUuf26LH0g5UQrrKq17ztoKd/view', 88, '4'),
 (49, '2025-05-09', 'https://drive.google.com/file/d/16Hfxdv9hcUuf26LH0g5UQrrKq17ztoKd/view', 88, '4'),
@@ -642,7 +644,8 @@ INSERT INTO `EVENTO_SPECIALE` (`CodiceAttivita`, `Causale`) VALUES
 (139, 'sadfasfsf'),
 (151, 'asfasfsdf'),
 (163, 'dsfsadfasf'),
-(165, 'asdfasdfas');
+(165, 'asdfasdfas'),
+(175, 'hh');
 
 -- --------------------------------------------------------
 
@@ -819,31 +822,8 @@ INSERT INTO `NOMINA` (`Persona`, `CodiceCarica`, `DataDiNomina`, `DataFine`, `Au
 CREATE TABLE `PARTECIPAZIONE` (
   `CodiceTorneo` int NOT NULL,
   `Anno` date NOT NULL,
-  `CFPartecipante` varchar(16) NOT NULL
+  `Squadra` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dump dei dati per la tabella `PARTECIPAZIONE`
---
-
-INSERT INTO `PARTECIPAZIONE` (`CodiceTorneo`, `Anno`, `CFPartecipante`) VALUES
-(49, '2025-05-05', 'bbbbbbbbbbbbbbbb'),
-(91, '2025-05-12', 'JNINDR06T17L407K'),
-(91, '2025-05-16', 'JNINDR06T17L407K'),
-(91, '2025-05-23', 'JNINDR06T17L407K'),
-(159, '2025-07-18', 'JNINDR06T17L407K'),
-(91, '2025-05-23', 'MGRLRT06T22G223Q'),
-(51, '2025-05-12', 'MGRLRT06T22G223Z'),
-(91, '2025-05-12', 'MGRLRT06T22G223Z'),
-(91, '2025-05-23', 'MGRLRT06T22G224Q'),
-(91, '2025-05-23', 'MGRLRT06T22G225Q'),
-(91, '2025-05-23', 'MGRLRT06T22G226Q'),
-(91, '2025-05-16', 'MGRLRT06T22G227Q'),
-(149, '2025-05-13', 'MGRLRT06T22G227Q'),
-(91, '2025-05-16', 'MGRLRT06T22G228Q'),
-(91, '2025-05-23', 'MGRLRT06T22G228Q'),
-(91, '2025-05-23', 'MGRLRT06T22G229Q'),
-(49, '2025-05-05', 'TBL1111111111111');
 
 -- --------------------------------------------------------
 
@@ -876,6 +856,13 @@ CREATE TABLE `PARTITA_UFFICIALE` (
   `SquadraCasa` varchar(100) NOT NULL,
   `SquadraOspite` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dump dei dati per la tabella `PARTITA_UFFICIALE`
+--
+
+INSERT INTO `PARTITA_UFFICIALE` (`CodiceAttivita`, `Arbitro`, `ScoreCasa`, `ScoreOspite`, `SquadraCasa`, `SquadraOspite`) VALUES
+(180, 'PAolo', 5, 0, 'Teobado_interista!!', 'Teobado_juventino');
 
 -- --------------------------------------------------------
 
@@ -1005,6 +992,7 @@ INSERT INTO `PRENOTAZIONE` (`IDCampo`, `DataTimeInizio`, `DataTimeFine`, `TimeSt
 (5, '2025-05-21 08:00:00', '2025-05-21 09:00:00', '2025-05-07 16:43:11', 15, 121),
 (5, '2025-05-30 08:00:00', '2025-05-30 22:00:00', '2025-05-22 14:42:04', 11, 157),
 (5, '2025-08-15 08:00:00', '2025-08-15 22:00:00', '2025-08-09 14:16:48', 11, 161),
+(5, '2025-09-15 08:00:00', '2025-09-15 09:00:00', '2025-09-14 16:24:02', 11, 180),
 (6, '2025-05-03 08:00:00', '2025-05-03 09:00:00', '2025-05-03 17:05:26', 15, 37),
 (6, '2025-05-03 09:00:00', '2025-05-03 10:00:00', '2025-05-03 18:23:18', 15, 45),
 (6, '2025-05-04 08:00:00', '2025-05-04 09:00:00', '2025-05-04 13:56:56', 15, 48),
@@ -1063,6 +1051,7 @@ INSERT INTO `PRENOTAZIONE` (`IDCampo`, `DataTimeInizio`, `DataTimeFine`, `TimeSt
 (7, '2025-08-30 18:00:00', '2025-08-30 19:00:00', '2025-08-29 17:38:37', 11, 165),
 (7, '2025-09-02 08:00:00', '2025-09-02 09:00:00', '2025-09-01 15:09:21', 11, 168),
 (7, '2025-09-09 09:00:00', '2025-09-09 10:00:00', '2025-09-08 08:55:14', 11, 173),
+(7, '2025-09-14 08:00:00', '2025-09-14 09:00:00', '2025-09-13 12:34:58', 11, 175),
 (8, '2025-05-03 08:00:00', '2025-05-03 11:00:00', '2025-05-03 18:09:49', 15, 43),
 (8, '2025-05-04 08:00:00', '2025-05-04 09:00:00', '2025-05-04 14:15:22', 15, 50),
 (8, '2025-05-04 09:00:00', '2025-05-04 10:00:00', '2025-05-04 14:15:47', 15, 51),
@@ -1163,6 +1152,7 @@ CREATE TABLE `RICHIESTE_ATL` (
 --
 
 INSERT INTO `RICHIESTE_ATL` (`Codice`, `Sport`, `TipoSport`, `Motivo`, `Stato`, `CodApprovante`, `Tipo`) VALUES
+(93, 'Basket', 'Amatoriale', 'ciao', 'NonConfermato', NULL, 'Eliminazione'),
 (93, 'Calcio', 'Amatoriale', 'sdfsdfsdf', 'NonConfermato', NULL, 'Iscrizione');
 
 -- --------------------------------------------------------
@@ -1290,6 +1280,14 @@ CREATE TABLE `SQUADRA` (
   `Allenatore` int NOT NULL,
   `Sport` varchar(25) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dump dei dati per la tabella `SQUADRA`
+--
+
+INSERT INTO `SQUADRA` (`Nome`, `Logo`, `Allenatore`, `Sport`) VALUES
+('Teobado_interista!!', 'https://drive.google.com/uc?export=view&id=1PZ3EY68XmiTCwX6Oput1HcEmr66OWntC', 92, 'Calcio'),
+('Teobado_juventino', 'https://drive.google.com/uc?export=view&id=14vPZFhF6R6jxgqTN7pr5N_JSpudws0E7', 92, 'Calcio');
 
 -- --------------------------------------------------------
 
@@ -1455,7 +1453,10 @@ INSERT INTO `TIPO_ATTIVITA` (`Codice`, `TIPO_ATTIVITA`) VALUES
 (170, 'Allenamento'),
 (171, 'Allenamento'),
 (172, 'Allenamento'),
-(173, 'Allenamento');
+(173, 'Allenamento'),
+(174, 'Allenamento'),
+(175, 'Evento speciale'),
+(180, 'Partita ufficiale');
 
 -- --------------------------------------------------------
 
@@ -1656,8 +1657,8 @@ ALTER TABLE `NOMINA`
 -- Indici per le tabelle `PARTECIPAZIONE`
 --
 ALTER TABLE `PARTECIPAZIONE`
-  ADD PRIMARY KEY (`CodiceTorneo`,`Anno`,`CFPartecipante`),
-  ADD KEY `CFPartecipante` (`CFPartecipante`);
+  ADD PRIMARY KEY (`CodiceTorneo`,`Anno`,`Squadra`),
+  ADD KEY `Squadra` (`Squadra`);
 
 --
 -- Indici per le tabelle `PARTITA_TORNEO`
@@ -1825,7 +1826,7 @@ ALTER TABLE `PRENOTANTE`
 -- AUTO_INCREMENT per la tabella `TIPO_ATTIVITA`
 --
 ALTER TABLE `TIPO_ATTIVITA`
-  MODIFY `Codice` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=174;
+  MODIFY `Codice` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=182;
 
 --
 -- Limiti per le tabelle scaricate
@@ -1934,8 +1935,8 @@ ALTER TABLE `NOMINA`
 -- Limiti per la tabella `PARTECIPAZIONE`
 --
 ALTER TABLE `PARTECIPAZIONE`
-  ADD CONSTRAINT `PARTECIPAZIONE_ibfk_1` FOREIGN KEY (`CFPartecipante`) REFERENCES `PERSONA` (`CF`),
-  ADD CONSTRAINT `PARTECIPAZIONE_ibfk_2` FOREIGN KEY (`CodiceTorneo`,`Anno`) REFERENCES `EDIZIONE_TORNEO` (`CodiceTorneo`, `Anno`);
+  ADD CONSTRAINT `partecipazione_ibfk_1` FOREIGN KEY (`Squadra`) REFERENCES `SQUADRA` (`Nome`),
+  ADD CONSTRAINT `partecipazione_ibfk_2` FOREIGN KEY (`CodiceTorneo`,`Anno`) REFERENCES `EDIZIONE_TORNEO` (`CodiceTorneo`, `Anno`);
 
 --
 -- Limiti per la tabella `PRENOTAZIONE`
