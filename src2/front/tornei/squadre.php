@@ -266,8 +266,7 @@
         <label> 
            Sport:
           <select name="sport" id="selectSport" required>
-            <option value=""> Seleziona uno sport </option>
-            <option value="Basket">Basket</option>
+            <option value="Basket" selected>Basket</option>
             <option value="Volley">Volley</option>
             <option value="Calcio">Calcio</option>
             <option value="Tennis">Tennis</option>
@@ -295,7 +294,7 @@
       <tbody></tbody>
     </table>
     <div style="margin: auto; width:20%; padding: 10px;">
-    <button  form="formSquadra" type="submit">Crea Assemblea</button><br>
+    <button  form="formSquadra" type="submit">Crea Squadra</button><br>
     </div>
     
   </div>
@@ -316,43 +315,94 @@
         
         </form>
       <script>
+        // per far partire l'evento change allo start
+        document.addEventListener("DOMContentLoaded", () => {
+          sport.dispatchEvent(new Event("change"));
+        }); 
+
         const sport = document.getElementById("selectSport");
-
-        sport.addEventListener('change', async function() {
+        const atletiInput = document.getElementById("atletiInput");
+        const atletiList = document.getElementById("atletiList");
+        const table = document.getElementById("selectedTable");
+        const tbody = table.querySelector("tbody");
+        const hiddenInput = document.getElementById("cfHidden");
+        const noSelectionMsg = document.getElementById("noSelection");  
         
-          document.getElementById("atletiList")
+        const selectedMap = new Map();
+        let atleti = [];
 
-          const atleti = await caricaAtleti(sport.value);  // aspetta i dati
-          const atletiInput = document.getElementById("atletiInput");
-          const atletiList = document.getElementById("atletiList");
-          atletiList.innerHTML = ""; // Pulisce la lista prima di aggiungere nuovi elementi
-          const table = document.getElementById("selectedTable");
-          
+        // Listener che parte solo una volta
+        atletiInput.addEventListener("input", () => {
+          const val = atletiInput.value;
+          const match = atleti.find(p => val.includes(p.CF));
+          if (match && !selectedMap.has(match.CF)) {
+            selectedMap.set(match.CF, match);
+            updateTable();
+          }
+          atletiInput.value = "";
+        });
 
-          const tbody = table.querySelector("tbody");
-          const hiddenInput = document.getElementById("cfHidden");
-          const noSelectionMsg = document.getElementById("noSelection");
+        sport.addEventListener("change", async function () {
+          atleti = await caricaAtleti(sport.value);  // aspetta i dati
 
-          const selectedMap = new Map();
+          // Reset lista e tabella
+          atletiList.innerHTML = "";
+          tbody.innerHTML = "";
+          selectedMap.clear();
+          updateTable();
 
+          // Popola la datalist
           atleti.forEach(atleta => {
             const option = document.createElement("option");
             option.value = `${atleta.Nome} ${atleta.Cognome} (${atleta.CF})`;
             atletiList.appendChild(option);
           });
+        });
 
-          
+        function updateTable() {
+          tbody.innerHTML = "";
+          const values = Array.from(selectedMap.values());
 
-        }); 
+          if (values.length === 0) {
+            table.style.display = "none";
+            noSelectionMsg.style.display = "block";
+          } else {
+            table.style.display = "table";
+            noSelectionMsg.style.display = "none";
+
+            values.forEach((p, index) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${p.Nome}</td>
+                <td>${p.Cognome}</td>
+                <td>${p.CF}</td>
+                <td><button type="button" class="bottoniElimina" data-cf="${p.CF}">X</button></td>
+              `;
+
+              row.querySelector("button").addEventListener("click", () => {
+                selectedMap.delete(p.CF);
+                updateTable();
+              });
+
+              tbody.appendChild(row);
+            });
+          }
+
+          // Costruisce un oggetto numerato con i CF
+          const cfObj = {};
+          Array.from(selectedMap.keys()).forEach((cf, i) => cfObj[i] = cf);
+          hiddenInput.value = JSON.stringify(cfObj);
+        }
 
         function caricaAtleti(sport) {
           return fetch(`../../back/atleta/get_atleti.php?sport=${encodeURIComponent(sport)}`)
             .then(res => res.json())
             .catch(error => {
-              console.error('Errore nel caricamento delle persone:', error);
+              console.error("Errore nel caricamento delle persone:", error);
               return [];
             });
         }
-        </script>
+      </script>
 </body>
 </html>
