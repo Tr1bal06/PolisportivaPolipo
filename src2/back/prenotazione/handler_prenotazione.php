@@ -269,44 +269,58 @@
                         $codici[] = $row['Attivita'];
                     }
 
-                    if (!empty($codici)) {
-                        $placeholders = implode(',', array_fill(0, count($codici), '?'));
-                        //questa parte non funziona fai un ciclo 
-                        $sql = "
-                            SELECT Squadra AS nome_squadra
-                            FROM PARTECIPAZIONE
-                            WHERE CodiceTorneo IN ($placeholders)
+                    $squadre = [];
 
-                            UNION
+                    $stmtPartecipazione = $conn->prepare("
+                        SELECT Squadra AS nome_squadra
+                        FROM PARTECIPAZIONE
+                        WHERE CodiceTorneo = ?
+                    ");
 
-                            SELECT SquadraCasa AS nome_squadra
-                            FROM PARTITA_UFFICIALE
-                            WHERE CodiceAttivita IN ($placeholders)
+                    $stmtCasa = $conn->prepare("
+                        SELECT SquadraCasa AS nome_squadra
+                        FROM PARTITA_UFFICIALE
+                        WHERE CodiceAttivita = ?
+                    ");
 
-                            UNION
+                    $stmtOspite = $conn->prepare("
+                        SELECT SquadraOspite AS nome_squadra
+                        FROM PARTITA_UFFICIALE
+                        WHERE CodiceAttivita = ?
+                    ");
 
-                            SELECT SquadraOspite AS nome_squadra
-                            FROM PARTITA_UFFICIALE
-                            WHERE CodiceAttivita IN ($placeholders)
-                        ";
-
-                        $stmt = $conn->prepare($sql);
-                        $types = str_repeat('i', count($codici) * 3);
-                        $params = array_merge($codici, $codici, $codici);
-                        $stmt->bind_param($types, ...$params);
-                        $stmt->execute();
-                        $result2 = $stmt->get_result();
-
-                        $squadre = [];
-                        while ($row = $result2->fetch_assoc()) {
+                    foreach ($codici as $codice) {
+                        // PARTECIPAZIONE
+                        $stmtPartecipazione->bind_param("i", $codice);
+                        $stmtPartecipazione->execute();
+                        $res = $stmtPartecipazione->get_result();
+                        while ($row = $res->fetch_assoc()) {
                             $squadre[] = $row['nome_squadra'];
                         }
-                        $squadre = array_unique($squadre);
 
-                        if(in_array($ospite , $squadre) || in_array($ospite , $squadre)) {
-                            throw new Exception("La squadra sta già giocando",10027);
+                        // PARTITA_UFFICIALE 
+                        $stmtCasa->bind_param("i", $codice);
+                        $stmtCasa->execute();
+                        $res = $stmtCasa->get_result();
+                        while ($row = $res->fetch_assoc()) {
+                            $squadre[] = $row['nome_squadra'];
+                        }
+
+                        // PARTITA_UFFICIALE 
+                        $stmtOspite->bind_param("i", $codice);
+                        $stmtOspite->execute();
+                        $res = $stmtOspite->get_result();
+                        while ($row = $res->fetch_assoc()) {
+                            $squadre[] = $row['nome_squadra'];
                         }
                     }
+
+                    $squadre = array_unique($squadre);
+
+                    if (in_array($ospite, $squadre) || in_array($casa, $squadre)) {
+                        throw new Exception("La squadra sta già giocando", 10027);
+                    }
+
                     /**
                      * TODO Alberto: nel front il blocco partita ufficiale lo può vedere solo l'allenatore
                      *               per l'inserimento delle squadre fai dei menu a tendina che ti carichi le squadre disponibili 
@@ -477,7 +491,7 @@
 
         $default = "Prenotazione fallita!";
 
-        $codiciGestiti = [10020, 10021, 10022, 10023 ,10024, 10025, 10026];
+        $codiciGestiti = [10020, 10021, 10022, 10023 ,10024, 10025, 10026,10027];
 
         if (in_array($e->getCode(), $codiciGestiti, true)) {
             $default = $e->getMessage();
