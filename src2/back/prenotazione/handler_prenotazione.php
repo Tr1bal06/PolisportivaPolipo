@@ -240,6 +240,28 @@
 
                     $arbitro = htmlentities($_POST['arbitro']);
                     $casa = htmlentities($_POST['casa']);
+                    $ospite = htmlentities($_POST['ospite']);
+
+                    $sport_praticato = ucfirst(htmlentities($_POST['sport']));
+                    $stmt19 = $conn->prepare("SELECT Sport
+                                              FROM SQUADRA
+                                              WHERE Nome = ?");
+                    $stmt19->bind_param("s", $casa);
+                    $stmt19->execute();
+                    $result = $stmt19->get_result();
+                    $row = $result->fetch_assoc();
+                    $sport_casa = $row['Sport'];
+
+                    $stmt19->bind_param("s", $ospite);
+                    $stmt19->execute();
+                    $result = $stmt19->get_result();
+                    $row = $result->fetch_assoc();
+                    $sport_ospite= $row['Sport'];
+    
+                    if($sport_praticato != $sport_ospite || $sport_praticato != $sport_casa) {
+                        throw new Exception("La/Le squadre non giocano a questo sport!", 10028);
+                    }
+
                     $codiceAllenatore = $_SESSION['caricheCodici']['Allenatore'];//solo un allenatore prenota la partita ufficiale
                     $stmt17 = $conn->prepare("SELECT Nome
                                               FROM SQUADRA
@@ -253,7 +275,7 @@
                     if (!in_array($casa, $nomi_squadre)) {
                         throw new Exception("Non è una tua squadra!", 10026);
                     }
-                    $ospite = htmlentities($_POST['ospite']);
+                    
                     $start = $data . " 00:00:00";
                     $end   = $data . " 23:59:59";
 
@@ -491,7 +513,7 @@
 
         $default = "Prenotazione fallita!";
 
-        $codiciGestiti = [10020, 10021, 10022, 10023 ,10024, 10025, 10026,10027];
+        $codiciGestiti = [10020, 10021, 10022, 10023 ,10024, 10025, 10026,10027,10028];
 
         if (in_array($e->getCode(), $codiciGestiti, true)) {
             $default = $e->getMessage();
