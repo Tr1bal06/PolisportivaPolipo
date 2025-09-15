@@ -24,3 +24,6 @@ RUN composer install --no-dev --optimize-autoloader || true
 
 # Copia tutto il codice PHP da src2
 COPY ./src2 /var/www/html
+
+# ⚡ Copia il php.ini custom (docker-php-output.ini) dentro conf.d
+COPY ./docker-php-output.ini /usr/local/etc/php/conf.d/docker-php-output.ini

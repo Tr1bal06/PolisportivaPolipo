@@ -1,18 +1,22 @@
 <?php
 
+    /**
+     * File: handler_prenotazione_elimina.php
+     * Auth: Jin
+     * Desc: Questo file ha il compito di eliminare la prenotazione
+     */
     include '../connessione.php';
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
 
     $permessi = ['admin','Allenatore','Atleta', 'Socio'];
 
     if(!controllo($_SESSION['ruolo'], $permessi)) {
         error('../../front/404.php', 'Accesso negato');
     }
-
 
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $campo =  htmlentities($_POST['nomeCampo']);

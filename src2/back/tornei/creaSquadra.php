@@ -40,7 +40,7 @@
         $check->execute();
         $result = $check->get_result();
         if ($result->num_rows > 0) {
-            throw new Exception("Il nome della squadra esiste già!", 1001);
+            throw new Exception("Il nome della squadra esiste già!", 10010);
         }
 
         if (!(isset($_FILES['file_img']) && $_FILES['file_img']['error'] == UPLOAD_ERR_OK)) {
@@ -124,7 +124,7 @@
 
         $default = "Creazione della squadra fallita!";
 
-        $codiciGestiti = [1001, 10011, 10012];
+        $codiciGestiti = [10010, 10011, 10012];
 
         if (in_array($e->getCode(), $codiciGestiti, true)) {
             $default = $e->getMessage();

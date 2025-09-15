@@ -1,13 +1,19 @@
 <?php
+    /*
+    file: get_atleta.php
+    desc: Recupera le informazioni di uno specifico atleta dal database.
+    Auth: Alberto Magrini
+    */
+
+
     include "../connessione.php";
     include '../function.php';
     
     header('Content-Type: application/json');
 
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        session_start();
+    }
                 
     $permessi = ['Atleta', 'admin'];
 
@@ -19,6 +25,7 @@
     $stmt1 = $conn->prepare("SELECT NomeSport , Tipo
                 FROM ISCRIZIONE
                 WHERE CodiceAtleta = ?");
+                
             $stmt1->bind_param("i", $codiceAtleta);
             $stmt1->execute();
             $result = $stmt1->get_result();
