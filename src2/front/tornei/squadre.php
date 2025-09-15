@@ -22,6 +22,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../../css/navbar.css">
+    <link rel="stylesheet" href="../../css/card.css">
     <script src="https://kit.fontawesome.com/e97255b1a1.js" crossorigin="anonymous"></script>
     <title>Seleziona Sport e Livello</title>
     <style>
@@ -298,9 +299,22 @@
     </div>
     
   </div>
+    <h1>Le mie squadre:</h1>  
+  <div class="card">
+  <div class="card-inner">
+    <div id="logo">
+      <img src="../../assets/IconaPolipo.png" alt="Logo Squadra">
     </div>
-        
 
+    <div class="content">
+      <p class="heading">Card</p>
+      <p class="para">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi laboriosam
+        at voluptas minus culpa deserunt delectus sapiente inventore pariatur.
+      </p>
+    </div>
+  </div>
+</div>
         <? if(isset($_SESSION['error_message'])){
             echo $_SESSION['error_message'];
             $_SESSION['error_message'] = NULL ;
