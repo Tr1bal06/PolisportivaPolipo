@@ -426,7 +426,7 @@
       <div style="display: flex; justify-content: space-around;">
           <button type="submit" form="forRichiesta"  class="btn-modifica">Accetta</button>
         <form class="logout" action="../../back/gestione_utenti/rifiuta_richiesta.php" method="POST">
-          <input type="hidden" id="BottoneElimina" name="ident" value=""><button class="bottoniElimina" type="submit">Rifiuta</button>
+          <input type="hidden" id="BottoneElimina" name="tipologia" value=""><button class="bottoniElimina" type="submit">Rifiuta</button>
           <input type="hidden" name="codice" id="popup-codice2" value="">
           <input type="hidden" name="sport" id="popup-sport2" value="">
           <input type="hidden" name="source" id="popup-source2" value="">

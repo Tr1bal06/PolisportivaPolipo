@@ -1,5 +1,4 @@
 <?php
-
     /*
         file: rifiuta_richiesta.php
         desc: Rifiuta la richiesta di Inserimento o Eliminazione di un Atleta o Allenatore

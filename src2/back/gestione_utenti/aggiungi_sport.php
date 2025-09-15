@@ -1,8 +1,8 @@
 <?php
     /**
      * File: aggiungi_sport.php
+     * Desc: Script per accettare o rifiutare la richiesta di aggiunta di uno sport ad un atleta o allenatore
      * Auth: Teox5
-     * Desc: Script per l'aggiunta o l'eliminazione di uno sport ad un atleta o allenatore
      */
     
     include '../connessione.php';
@@ -10,7 +10,7 @@
     if (session_status() == PHP_SESSION_NONE) {
     // Avvia la sessione
     session_start();
-}
+    }
 
     $permessi = ['admin', 'segreteria'];
 
@@ -21,63 +21,66 @@
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sport =  htmlentities($_POST['sport']);
         $reach = htmlentities($_POST['source']);
-        $codiciCariche = $_SESSION['caricheCodici'];
         $path = '../../front/persone/persone.php';
         $cod = htmlspecialchars($_POST['codice']);
-    
+
         $tab = $reach == 'Atleta' ? 'RICHIESTE_ATL' : 'RICHIESTE_ALL';
-        $tab2 = $reach == 'Atleta' ? 'ISCRIZIONE' : 'INSEGNA';
-        $tab3 = $reach == 'Atleta' ? 'CodiceAtleta' : 'CodiceAllenatore';
 
-        $sqlD= "DELETE FROM $tab2 WHERE $tab3=? AND NomeSport=?";
-        $sqlI= "INSERT INTO $tab2($tab3, NomeSport) VALUES (?, ?)";
-        $sqlU= "UPDATE $tab SET Stato='Confermato' WHERE CodicePersona=? AND Sport=?";
-        
-            if($_POST['tipologia']=='Eliminazione'){
-                //TODO bisogna fare la logica per eliminare lo sport
-                $conn->begin_transaction();
-                try {
+        $sqlD= "DELETE FROM $tab WHERE Codice=? AND Sport=?";
 
-                    $stmt1 = $conn->prepare($sqlD);
-                    $stmt1->bind_param("is",$cod , $sport);
-                    $stmt1->execute();
-
-                    $stmt2 = $conn->prepare($sqlU);
-                    $stmt2->bind_param("is",$cod , $sport);
-                    $stmt2->execute();
-
-                    if($stmt1->affected_rows === 0 || $stmt2->affected_rows === 0) {
-                        throw new Exception("Eliminazione sport fallita!", 10051);
-                    }
-
-                    $conn->commit();
-                } catch (Exception $e) {
-                    $conn->rollback();
-                    //error("../../front/prenotanti/prenotazione_form.php", "Modifica fallita!");
-                }
-            }else if($_POST['tipologia']=='Inserimento'){
+         if($_POST['tipologia']=='Iscrizione'||$_POST['tipologia']=='Insegnamento'){
                 
                 $conn->begin_transaction();
                 try {
 
-                    $stmt1 = $conn->prepare($sqlI);
-                    $stmt1->bind_param("is",$codAtleta , $sport);
-                    $stmt1->execute();
-
-                    $stmt2 = $conn->prepare($sqlU);
-                    $stmt2->bind_param("is",$codAtleta , $sport);
+                    $stmt2 = $conn->prepare($sqlD);
+                    var_dump($stmt2);
+                    $stmt2->bind_param("is", $cod, $sport);
+                    
                     $stmt2->execute();
 
-                    if($stmt1->affected_rows === 0 || $stmt2->affected_rows === 0) {
-                        throw new Exception("Eliminazione sport fallita!", 10051);
+                    if($stmt2->affected_rows === 0) {
+                        throw new Exception("Eliminazione sport fallita!", 10052);
+                        
+                    }
+                    $stmt2->close();
+
+                    if($reach == 'Atleta') {
+                        $tipo = htmlentities($_POST['livello']);
+
+                        $stmt1 = $conn->prepare("INSERT INTO ISCRIZIONE (CodiceAtleta, NomeSport, Tipo) VALUES (?,?,?)");
+                        $stmt1->bind_param("iss", $cod, $sport, $tipo);
+                    
+                    
+                    }
+                    else if($reach == 'Allenatore') {
+                        $stmt1 = $conn->prepare("INSERT INTO INSEGNA (CodiceAllenatore, NomeSport) VALUES (?,?)");
+                        $stmt1->bind_param("is", $cod, $sport);
                     }
 
+                    $stmt1->execute();
+                    if($stmt1->affected_rows === 0) {
+                            throw new Exception("Inserimento sport fallito!", 10051);
+                        }
+                    
+                    $stmt1->close();
+
                     $conn->commit();
-                } catch (Exception $e) {
-                    $conn->rollback();
-                    //error("../../front/prenotanti/prenotazione_form.php", "Modifica fallita!");
+                } catch(Exception $e){
+                    var_dump($e->getMessage());
+                    die();
+                $conn->rollback();
+                $default = "Errore nell'operazione!";
+
+                $codiciGestiti = [10051, 10052];
+
+                if (in_array($e->getCode(), $codiciGestiti, true)) {
+                    $default = $e->getMessage();
+                }
+
+                error($path, $default);
             }
-        }
-        success("../../front/persone/persone.php", "Modifica avvenuta con successo.");
+         }
+        success($path, 'Operazione avvenuta con successo!');
     }
 ?>
