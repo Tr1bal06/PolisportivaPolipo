@@ -229,7 +229,7 @@
                 case "ALLENAMENTO":
 
                     $tipo = htmlentities($_POST['tipo']);
-
+                    
                     $stmt = $conn->prepare("INSERT INTO ALLENAMENTO (CodiceAttivita, Tipo) VALUES (?, ?)");
                     $stmt->bind_param("is", $codiceAttivita, $tipo);
                     
@@ -239,7 +239,8 @@
                 case "PARTITA UFFICIALE":
 
                     $arbitro = htmlentities($_POST['arbitro']);
-                    $codiceAllenatore = $_SESSION['caricheCodici']['Allenatore'];
+                    $casa = htmlentities($_POST['casa']);
+                    $codiceAllenatore = $_SESSION['caricheCodici']['Allenatore'];//solo un allenatore prenota la partita ufficiale
                     $stmt17 = $conn->prepare("SELECT Nome
                                               FROM SQUADRA
                                               WHERE Allenatore = ?");
@@ -247,11 +248,79 @@
                     $stmt17->execute();
                     $result = $stmt17->get_result();
                     $squadre_mie = $result->fetch_all(MYSQLI_ASSOC);
-
-                    
-
-                    $casa = htmlentities($_POST['casa']);
+    
+                    $nomi_squadre = array_column($squadre_mie, "Nome");
+                    if (!in_array($casa, $nomi_squadre)) {
+                        throw new Exception("Non è una tua squadra!", 10026);
+                    }
                     $ospite = htmlentities($_POST['ospite']);
+                    $start = $data . " 00:00:00";
+                    $end   = $data . " 23:59:59";
+
+                    $stmt18 = $conn->prepare("SELECT P.Attivita
+                                              FROM PRENOTAZIONE P JOIN TIPO_ATTIVITA TA ON P.Attivita = TA.Codice
+                                              WHERE DataTimeInizio >= ? AND DataTimeFine <= ?");
+                    $stmt18->bind_param("ss", $start,$end);
+                    $stmt18->execute();
+                    $result = $stmt18->get_result();
+
+                    $codici = [];
+                    while ($row = $result->fetch_assoc()) {
+                        $codici[] = $row['Attivita'];
+                    }
+
+                    $squadre = [];
+
+                    $stmtPartecipazione = $conn->prepare("
+                        SELECT Squadra AS nome_squadra
+                        FROM PARTECIPAZIONE
+                        WHERE CodiceTorneo = ?
+                    ");
+
+                    $stmtCasa = $conn->prepare("
+                        SELECT SquadraCasa AS nome_squadra
+                        FROM PARTITA_UFFICIALE
+                        WHERE CodiceAttivita = ?
+                    ");
+
+                    $stmtOspite = $conn->prepare("
+                        SELECT SquadraOspite AS nome_squadra
+                        FROM PARTITA_UFFICIALE
+                        WHERE CodiceAttivita = ?
+                    ");
+
+                    foreach ($codici as $codice) {
+                        // PARTECIPAZIONE
+                        $stmtPartecipazione->bind_param("i", $codice);
+                        $stmtPartecipazione->execute();
+                        $res = $stmtPartecipazione->get_result();
+                        while ($row = $res->fetch_assoc()) {
+                            $squadre[] = $row['nome_squadra'];
+                        }
+
+                        // PARTITA_UFFICIALE 
+                        $stmtCasa->bind_param("i", $codice);
+                        $stmtCasa->execute();
+                        $res = $stmtCasa->get_result();
+                        while ($row = $res->fetch_assoc()) {
+                            $squadre[] = $row['nome_squadra'];
+                        }
+
+                        // PARTITA_UFFICIALE 
+                        $stmtOspite->bind_param("i", $codice);
+                        $stmtOspite->execute();
+                        $res = $stmtOspite->get_result();
+                        while ($row = $res->fetch_assoc()) {
+                            $squadre[] = $row['nome_squadra'];
+                        }
+                    }
+
+                    $squadre = array_unique($squadre);
+
+                    if (in_array($ospite, $squadre) || in_array($casa, $squadre)) {
+                        throw new Exception("La squadra sta già giocando", 10027);
+                    }
+
                     /**
                      * TODO Alberto: nel front il blocco partita ufficiale lo può vedere solo l'allenatore
                      *               per l'inserimento delle squadre fai dei menu a tendina che ti carichi le squadre disponibili 
@@ -260,7 +329,7 @@
                      *               una partita bisognerebbe non mostrare quella squadra, il controllo va fatto per orario non per campo
                      */
 
-                    $stmt = $conn->prepare("INSERT INTO PARTITA_UFFICIALE (CodiceAttivita, Arbitro) VALUES (?, ? ,0,0 ,?,?)");
+                    $stmt = $conn->prepare("INSERT INTO PARTITA_UFFICIALE (CodiceAttivita, Arbitro, ScoreCasa ,ScoreOspite,SquadraCasa,SquadraOspite) VALUES (?, ? ,0,0 ,?,?)");
                     $stmt->bind_param("isss", $codiceAttivita, $arbitro , $casa , $ospite);
                     $stmt->execute();
                     break;
@@ -422,7 +491,7 @@
 
         $default = "Prenotazione fallita!";
 
-        $codiciGestiti = [10020, 10021, 10022, 10023 ,10024, 10025];
+        $codiciGestiti = [10020, 10021, 10022, 10023 ,10024, 10025, 10026,10027];
 
         if (in_array($e->getCode(), $codiciGestiti, true)) {
             $default = $e->getMessage();
