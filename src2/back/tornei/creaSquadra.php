@@ -28,8 +28,9 @@
         if($_SERVER['REQUEST_METHOD']=='POST'){
         
             $nomeSquadra = htmlentities($_POST['nome_squadra']);
-            $partecipanti = json_decode($_POST['atleta'], true);
+            $partecipanti = json_decode($_POST['codici_fiscali'], true);
             $sport = htmlentities($_POST['sport']);
+            $sport = htmlentities($_POST['sport']); 
             $codiceAllenatore = $_SESSION['caricheCodici']['Allenatore'];
         }
        

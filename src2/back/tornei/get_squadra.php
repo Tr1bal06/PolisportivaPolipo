@@ -44,10 +44,11 @@
                                         JOIN TESSERAMENTI T ON A.Codice = T.Atleta
                                         JOIN NOMINA N ON N.CodiceCarica = A.Codice
                                         JOIN PERSONA P ON P.CF = N.Persona
-                                    WHERE T.NomeSquadra = ?");
+                                    WHERE T.NomeSquadra = ? ");
+                                                               
     foreach($squadre as $index => $squadra) {
         
-        $stmt2->bind_param("i", $squadra['Nome']);
+        $stmt2->bind_param("s", $squadra['Nome']);
         $stmt2->execute();
         $result2 = $stmt2->get_result();
 

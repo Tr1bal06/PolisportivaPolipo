@@ -23,6 +23,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../../css/navbar.css">
     <link rel="stylesheet" href="../../css/card.css">
+    <link rel="stylesheet" href="../../css/button.css">
     <script src="https://kit.fontawesome.com/e97255b1a1.js" crossorigin="anonymous"></script>
     <title>Seleziona Sport e Livello</title>
     <style>
@@ -176,6 +177,15 @@
       border-radius: 5px;
 
     }
+
+    .atleti-list{
+      margin: 5 10px
+    }
+
+    .animated-button{
+      margin: 5px;
+    }
+
     #selectLivello {
       padding: 0.6rem;
       border: none;
@@ -215,9 +225,17 @@
     }
     
     .bottoniElimina {
-      background-color: red;
-      transition: background-color 0.3s ease;
-    }
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
     .bottoniElimina:hover {
       background-color: darkred
     }
@@ -401,37 +419,61 @@
         }
 
         function caricaSquadre() {
-          fetch('../../back/tornei/get_squadra.php')
-            .then(response => response.json())
-            .then(data => {
-              const squadreContainer = document.getElementById('squadreContainer');
-              data.forEach(squadra => {
-                let url = squadra.Logo;
-                const params = new URL(url).searchParams;
-                const fileId = params.get("id");
-                let Sport = squadra.Sport;
-                let Nome = squadra.Nome;
+  fetch('../../back/tornei/get_squadra.php')
+    .then(response => response.json())
+    .then(data => {
+      const squadreContainer = document.getElementById('squadreContainer');
+      squadreContainer.innerHTML = ""; // reset
 
-                const card = document.createElement('div');
-                card.className = 'carta';
-                card.innerHTML = `
-                   <div class="carta">
-                    <div class="carta-inner">
-                      <div id="logo">
-                        <img src="../../back/proxyImmagini.php?id=${fileId}" alt="Immagine da Drive">
-                      </div>
-                      <div class="content">
-                        <p class="heading">Squadra: <par style="color:#afedf7f6;">${Nome}<par/> <button type="button" style="background-color:#0d6efd;" class="btn">${Sport}</button></p>
-                        <p class="para">
-                          
-                        </p>
-                      </div>
-                    </div>
-                  </div>`;  
-              squadreContainer.appendChild(card);
-            });  
-          }); 
-        }
+      data.forEach(squadra => {
+        let url = squadra.Logo;
+        const params = new URL(url).searchParams;
+        const fileId = params.get("id");
+        let Sport = squadra.Sport;
+        let Nome = squadra.Nome;
+
+        const card = document.createElement('div');
+        card.className = 'carta';
+
+        let stringaAtleti = "";
+        squadra.Atleti.forEach((atleta, index) => {
+          stringaAtleti += `
+            <button class="animated-button">
+              <span><c>${index + 1}. ${atleta.Nome} ${atleta.Cognome}</c></span>
+              <span></span>
+            </button>`;
+        });
+
+        card.innerHTML = `
+          <div class="carta-inner">
+            <div id="logo">
+              <img src="../../back/proxyImmagini.php?id=${fileId}" alt="Immagine da Drive">
+            </div>
+            <div class="content">
+              <p class="heading">
+                Squadra: <span style="color:#afedf7f6;">${Nome}</span>
+                
+                <button type="button" class="btn" style="background-color:#0d6efd;">${Sport}</button>
+              </p>
+              <p class="para">
+                ATLETI:
+                <div id="atletiList${Nome}" class="atleti-list">
+                  ${stringaAtleti}
+                </div>
+              </p>
+            </div>
+          </div>
+          <form action="../../back/tornei/eliminaSquadra.php" method="POST" class="logout" style="display:inline;">
+                  <input type="hidden" name="nome_squadra" value="${Nome}">
+                 <button type="button" class="bottoniElimina">Elimina</button>
+          </form>
+        `;
+
+        squadreContainer.appendChild(card);
+      });
+    });
+}
+
       </script>
 </body>
 </html>
