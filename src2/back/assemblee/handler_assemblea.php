@@ -5,7 +5,6 @@
      * Auth: Jin
      * Desc: questo file ha il compito di creare l'assemblea e inviare le mail 
      */
-    //require __DIR__ . '/mailer.php';
     include '../connessione.php';
     include '../function.php';
     include '../../function_mailer.php';
@@ -33,36 +32,36 @@
     try{
         
         //inserisco il record nella tabella Assemblea
-        $stmt = $conn->prepare("INSERT INTO ASSEMBLEA (CodiceConvocatore, Data, OrdineDelGiorno, Oggetto)
+        $stmt1 = $conn->prepare("INSERT INTO ASSEMBLEA (CodiceConvocatore, Data, OrdineDelGiorno, Oggetto)
                                 VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("isss", $codConv, $Data, $Ordine, $Oggetto);
-        $stmt->execute();
-        $stmt->close();
-        
+        $stmt1->bind_param("isss", $codConv, $Data, $Ordine, $Oggetto);
+        $stmt1->execute();
+
+        $stmt2 = $conn->prepare("INSERT INTO INTERVENTO (CodiceConvocatore, DataAssemblea, Persona)
+                                    VALUES (?, ?, ?)");
         //inserisco i record nella tabella intervento
         foreach($cf_list as $cf){
-            $stmt = $conn->prepare("INSERT INTO INTERVENTO (CodiceConvocatore, DataAssemblea, Persona)
-                                    VALUES (?, ?, ?)");
-            $stmt->bind_param("iss", $codConv, $Data, $cf);
-            $stmt->execute();
-            $stmt->close();
-        }
+            
+            $stmt2->bind_param("iss", $codConv, $Data, $cf);
+            $stmt2->execute();
 
+        }
         $mail = [];
 
+        $stmt3 = $conn->prepare("SELECT Email
+                                    FROM UTENTE
+                                    WHERE Persona = ? ");
         //carico le mail dei partecipanti
         foreach ($cf_list as $cf) {
             
             //controllo che le email siano presenti nel database e le salvo in una variabile
-            $stmt = $conn->prepare("SELECT Email
-                                    FROM UTENTE
-                                    WHERE Persona = ? ");
-            $stmt->bind_param("s", $cf); 
-            $stmt->execute();
-            $result = $stmt->get_result();
+            
+            $stmt3->bind_param("s", $cf); 
+            $stmt3->execute();
+            $result = $stmt3->get_result();
 
             if ($result->num_rows === 0) {
-                throw new Exception("Email non presente!",10050);    
+                throw new Exception("Email non presente!",10070);    
             } else {
                 // salvo l'email nell'array
                 $row = $result->fetch_assoc();
@@ -95,12 +94,11 @@
         
         inviaMail($mail,$titolo,$contenuto);
         $conn->commit();
-    }
-    catch (mysqli_sql_exception $exception) {
+    } catch (Exception $e) {
         $conn->rollback();
         $default = "email errate / assemblea già presente";
 
-        $codiciGestiti = [10050];
+        $codiciGestiti = [10070];
 
         if (in_array($e->getCode(), $codiciGestiti, true)) {
             $default = $e->getMessage();
