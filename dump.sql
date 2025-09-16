@@ -1130,7 +1130,6 @@ CREATE TABLE `RICHIESTE_ALL` (
 
 INSERT INTO `RICHIESTE_ALL` (`Codice`, `Sport`, `Motivo`, `Stato`, `CodApprovante`, `Tipo`) VALUES
 (92, 'Calcio', 'prova', 'NonConfermato', NULL, 'Insegnamento');
-(92, 'Calcio', 'prova', 'NonConfermato', NULL, 'Insegnamento');
 
 -- --------------------------------------------------------
 
