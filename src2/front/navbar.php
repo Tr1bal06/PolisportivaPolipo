@@ -37,7 +37,7 @@
           "/front/prenotanti/prenotazione_form.php" => [['admin', 'Allenatore', 'Socio', 'Atleta'], 3, 'Prenotazione'],
           "/front/sponsor/sponsorizzazioni.php" => [['admin', 'Sponsor'], 4, 'Sponsorizzazione'],
           "/front/tornei/squadre.php" => [['admin', 'Allenatore'], 5, 'Crea squadra'],
-          //"/front/atleti/atleta.php" => [['admin', 'Atleta'], 6, 'Iscrizione allo sport'],
+          "/front/tornei/tornei.php" => [['admin', 'Allenatore'], 9, 'Partecipa Torneo'],
           "/front/disponibilita/disponibilita_medico.php" => [['admin', 'Medico'], 7, 'Disponibilità'],
           "/front/convocatori/assemblea.php" => [['admin', 'Consigliere'], 8, 'Crea Assemblea'],
         ];
@@ -62,7 +62,7 @@
           }
         }
       ?>
-      <a href="/front/tornei/tornei.php" class="<?= ($numero == 9) ? "active" : "" ?>">Partecipa Torneo</a>
+      
     </div>
   </div>
   <div class="footer">
@@ -101,7 +101,7 @@
       }
     }
     ?>
-    <a href="/front/tornei/tornei.php" class="<?= ($numero == 9) ? "active" : "" ?>">Partecipa Torneo</a>
+    
   </div>
 </div>
 
