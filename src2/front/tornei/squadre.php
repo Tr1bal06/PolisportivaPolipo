@@ -251,14 +251,7 @@
             Nome della squadra:
             <input type="text"  name="nome_squadra" required>
         </label>
-        <label><!--TODO Alberto -> mi fai che questa sia una lista di persone che si possono aggiungere alla squadra
-                                    un'idea carina sarebbe quella che già dal front il sistema sia in grado di capire se 
-                                    il numero di persone sia maggiore di quella consentita 
-                    la logica dietro la posso fare io però mi serve la struttura fatta 
-                    la lista mostra solo nome e cognome invece nel post mi mandi la mail associata
-                    Alberto le mail che mi passi devono essere in un array sennò il back non funziona
-                    -JIN
-                -->
+        <label>
             Partecipati:
             <input list="atletiList" id="atletiInput" class="input-style" placeholder="Cerca nome o codice fiscale">
             <datalist id="atletiList"></datalist>
@@ -300,21 +293,8 @@
     
   </div>
     <h1>Le mie squadre:</h1>  
-  <div class="card">
-  <div class="card-inner">
-    <div id="logo">
-      <img src="../../assets/IconaPolipo.png" alt="Logo Squadra">
-    </div>
-
-    <div class="content">
-      <p class="heading">Card</p>
-      <p class="para">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Modi laboriosam
-        at voluptas minus culpa deserunt delectus sapiente inventore pariatur.
-      </p>
-    </div>
-  </div>
-</div>
+    <!-- Le mie squadre-->
+      <div id="squadreContainer"></div>
         <? if(isset($_SESSION['error_message'])){
             echo $_SESSION['error_message'];
             $_SESSION['error_message'] = NULL ;
@@ -332,6 +312,8 @@
         // per far partire l'evento change allo start
         document.addEventListener("DOMContentLoaded", () => {
           sport.dispatchEvent(new Event("change"));
+
+          caricaSquadre();
         }); 
 
         const sport = document.getElementById("selectSport");
@@ -416,6 +398,39 @@
               console.error("Errore nel caricamento delle persone:", error);
               return [];
             });
+        }
+
+        function caricaSquadre() {
+          fetch('../../back/tornei/get_squadra.php')
+            .then(response => response.json())
+            .then(data => {
+              const squadreContainer = document.getElementById('squadreContainer');
+              data.forEach(squadra => {
+                let url = squadra.Logo;
+                const params = new URL(url).searchParams;
+                const fileId = params.get("id");
+                let Sport = squadra.Sport;
+                let Nome = squadra.Nome;
+
+                const card = document.createElement('div');
+                card.className = 'carta';
+                card.innerHTML = `
+                   <div class="carta">
+                    <div class="carta-inner">
+                      <div id="logo">
+                        <img src="../../back/proxyImmagini.php?id=${fileId}" alt="Immagine da Drive">
+                      </div>
+                      <div class="content">
+                        <p class="heading">Squadra: <par style="color:#afedf7f6;">${Nome}<par/> <button type="button" style="background-color:#0d6efd;" class="btn">${Sport}</button></p>
+                        <p class="para">
+                          
+                        </p>
+                      </div>
+                    </div>
+                  </div>`;  
+              squadreContainer.appendChild(card);
+            });  
+          }); 
         }
       </script>
 </body>
