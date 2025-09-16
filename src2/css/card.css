@@ -10,7 +10,7 @@
 /* ---------- CARD INTERNA (ritaglia i cerchi blu) ---------- */
 .carta-inner {
   display: flex;
-  align-items: center;
+  
   gap: 24px;
   padding: 36px;
   border-radius: 20px;
