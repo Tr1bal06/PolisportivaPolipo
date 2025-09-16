@@ -27,6 +27,7 @@
         $Oggetto = htmlentities($_POST['oggetto']);
         $cf_list = json_decode($_POST['codici_fiscali'], true); //trasformo l'input in array associativo
     }
+
     //Inizio la transazione
     $conn->begin_transaction();
     try{
@@ -69,16 +70,19 @@
             }
             
         }
+        $titolo = "Convocazione riunione: ";
+        $contenuto = "<html>
+                        <head>
+                     <meta charset='UTF-8'>
+                    <title>$Ordine</title>
+                    </head><h2>Convocazione Riunione</h2>
 
-        $titolo = "Convocazione riunione: " . $Ordine;
-        $contenuto = "<h2>Convocazione Riunione</h2>
-
-                        <p>Ciao,</p>
+                        <p>Ciao, ". $_SESSION['nome'] ." ". $_SESSION['cognome']. ";</p>
                         <p>sei invitato a partecipare alla seguente riunione della <b>Polisportiva Polipo</b>:</p>
 
                         <ul>
-                            <li><b>Titolo:</b> Assemblea Generale</li>
-                            <li><b>Data:</b> 10 Settembre 2025</li>
+                            <li><b>Titolo:</b> $Oggetto</li>
+                            <li><b>Data:</b> $Data</li>
                             <li><b>Ora:</b> 18:30</li>
                             <li><b>Luogo:</b> Sala Conferenze, Polisportiva Polipo</li>
                         </ul>
@@ -90,8 +94,6 @@
                         <small>Questa è una comunicazione automatica della Polisportiva Polipo.<br>
                         Per qualsiasi informazione puoi contattarci all’indirizzo: info@polisportivapolipo.it</small>
                         ";
-        //il contenuto è da decidere come strutturarlo
-        
         inviaMail($mail,$titolo,$contenuto);
         $conn->commit();
     } catch (Exception $e) {
