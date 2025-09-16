@@ -24,10 +24,10 @@
         $reach = htmlentities($_POST['source']);
         $mot = htmlentities($_POST['motivazione']);
 
-        $cod = $reach == 'Atleta' ? $_SESSION['caricheCodici']['Atleta'] : $_SESSION['caricheCodici']['Allenatore'];
-        $tab2 = $reach == 'Atleta' ? 'ISCRIZIONE' : 'INSEGNA';
-        $tab3 = $reach == 'Atleta' ? 'CodiceAtleta' : 'CodiceAllenatore';
-        $tab = $reach == 'Atleta' ? 'RICHIESTE_ATL' : 'RICHIESTE_ALL';
+        $cod = $reach == 'atleta' ? $_SESSION['caricheCodici']['Atleta'] : $_SESSION['caricheCodici']['Allenatore'];
+        $tab2 = $reach == 'atleta' ? 'ISCRIZIONE' : 'INSEGNA';
+        $tab3 = $reach == 'atleta' ? 'CodiceAtleta' : 'CodiceAllenatore';
+        $tab = $reach == 'atleta' ? 'RICHIESTE_ATL' : 'RICHIESTE_ALL';
 
         $sqlS="SELECT $tab3, NomeSport FROM $tab2 WHERE $tab3=? AND NomeSport=?";
 
@@ -52,7 +52,7 @@
             error($path, 'Richiesta già effettuata!');
         }
         
-        if($reach == 'Atleta') {
+        if($reach == 'atleta') {
 
                 $tipo = htmlentities($_POST['livello']);
 
@@ -60,18 +60,19 @@
                 VALUES (?,?,?,?,'NonConfermato', NULL,'Eliminazione')"); 
                 $stmt2->bind_param("isss",$cod, $sport, $tipo, $mot); 
                 
-        } else if($reach == 'Allenatore') {
+        } else if($reach == 'allenatore') {
             
-            $stmt2 = $conn->prepare ("INSERT INTO RICHIESTE_ALL (Codice, Sport, Motivo, Stato, CodApprovante,Tipo)
-            VALUES (?,?,?,'NonConfermato', NULL,'Eliminazione');"); 
+            $stmt2 = $conn->prepare("INSERT INTO RICHIESTE_ALL (Codice, Sport, Motivo, Stato, CodApprovante,Tipo)
+            VALUES (?,?,?,'NonConfermato', NULL,'Eliminazione')"); 
             $stmt2->bind_param("iss",$cod, $sport, $mot); 
         }
-
         $stmt2->execute();
         if($stmt2->affected_rows === 0) {
             error($path, 'Richiesta eliminazione sport fallita!');
         } else {
             success($path, 'Richiesta eliminazione sport avvenuta con successo!');
         }
+        $stmt2->close();
+        $conn->close();
     }
 ?>
