@@ -413,19 +413,23 @@
       <h2>Informazioni Richiesta</h2>
       <form action="../../back/gestione_utenti/aggiungi_sport.php" method="POST" id="forRichiesta">
         <label>Tipo Richiesta:
-          <input type="text" name="ruolo" id="popup-Tipo" readonly>
+          <input type="text" name="tipologia" id="popup-Tipo" readonly>
         </label>
         <label>Motivazione:
           <input type="text" name="motivazione" id="popup-Motivazione" readonly>
         </label>
-        <input type="hidden" name="livello" value="">
-        <input type="hidden" name="sport" value="">
-        
+        <input type="hidden" name="livello" id="popup-livello" value="">
+        <input type="hidden" name="codice" id="popup-codice" value="">
+        <input type="hidden" name="sport" id="popup-sport" value="">
+        <input type="hidden" name="source" id="popup-source" value="">
       </form>
       <div style="display: flex; justify-content: space-around;">
           <button type="submit" form="forRichiesta"  class="btn-modifica">Accetta</button>
-        <form class="logout" action="../../back/gestione_utenti/elimina_sport.php" method="POST">
-          <input type="hidden" id="BottoneElimina" name="ident" value=""><button class="bottoniElimina" type="submit">Rifiuta</button>
+        <form class="logout" action="../../back/gestione_utenti/rifiuta_richiesta.php" method="POST">
+          <input type="hidden" id="BottoneElimina" name="tipologia" value=""><button class="bottoniElimina" type="submit">Rifiuta</button>
+          <input type="hidden" name="codice" id="popup-codice2" value="">
+          <input type="hidden" name="sport" id="popup-sport2" value="">
+          <input type="hidden" name="source" id="popup-source2" value="">
         </form>
       </div>
     </div>
@@ -476,7 +480,7 @@
                 <td>${persona.NomeCarica}</td>
                 <td>${persona.Sport}</td>
                 <td>${persona.Livello}</td>
-                <td>${persona.Livello}</td>
+                <td>${persona.Tipo}</td>
                 <td>
                   <button type="button" id="bottone${persona.Codice+persona.Sport}" class="" onclick='apriPopupRichiesta(${JSON.stringify(persona)})'>Visualizza</button>
                 </td>
@@ -542,8 +546,16 @@
     }
 
     function apriPopupRichiesta(persona) {
+      console.log(persona);
       document.getElementById('popup-Tipo').value = persona.Tipo || '';
       document.getElementById('popup-Motivazione').value = persona.Motivo || '';
+      document.getElementById('popup-livello').value = persona.Livello || '';
+      document.getElementById('popup-sport').value = persona.Sport || '';
+      document.getElementById('popup-source').value = persona.NomeCarica || '';
+      document.getElementById('popup-codice').value = persona.Codice || '';
+      document.getElementById('popup-sport2').value = persona.Sport || '';
+      document.getElementById('popup-source2').value = persona.NomeCarica || '';
+      document.getElementById('popup-codice2').value = persona.Codice || '';
       document.getElementById('popupRichiesta').style.display = 'flex';
     }
 

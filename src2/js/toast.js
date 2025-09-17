@@ -2,7 +2,6 @@
     file : toast.js
     desc : Gestione js delle notifiche toast
     auth : Alberto Magrini 
-    date : 2024-06-10
 
 */
 

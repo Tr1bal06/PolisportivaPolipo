@@ -1,11 +1,15 @@
 <?php
+    /** 
+     * File: 
+     * Auth: 
+     * Desc: 
+    */
     include "../connessione.php";
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
-
+        // Avvia la sessione
+        session_start();
+    }
    
     //comunico al sistema che riceverà una risposta
     header('Content-Type: application/json');
@@ -20,14 +24,12 @@
     $covocatore = $_SESSION['cf'];
     $oggi = date('Y-m-d');
 
-
-
     // Query SQL con placeholders
         $query = "SELECT A.Data , A.OrdineDelGiorno , A.Oggetto , P.Nome as NomeConvocatore , P.Cognome as CognomeConvocatore
-FROM ASSEMBLEA A
-	JOIN INTERVENTO I ON I.CodiceConvocatore  = A.CodiceConvocatore
-    JOIN PERSONA P ON P.CF = I.Persona
-WHERE I.Persona = '$covocatore' AND CURRENT_DATE <= A.Data";
+                    FROM ASSEMBLEA A
+                        JOIN INTERVENTO I ON I.CodiceConvocatore  = A.CodiceConvocatore
+                        JOIN PERSONA P ON P.CF = I.Persona
+                    WHERE I.Persona = '$covocatore' AND CURRENT_DATE <= A.Data";
 
     $result = $conn->query($query);
 

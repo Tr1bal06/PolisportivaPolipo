@@ -1,11 +1,15 @@
 <?php
+    /*
+        DEPRECATO -> sostituito da src2/back/gestione_utenti/aggiungi_sport.php
+        AUTH: Alberto Magrini
+    */
 
     include '../connessione.php';
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
 
     $permessi = ['admin', 'segreteria'];
 

@@ -5,7 +5,6 @@
      * Auth: Jin
      * Desc: questo file ha il compito di creare l'assemblea e inviare le mail 
      */
-    //require __DIR__ . '/mailer.php';
     include '../connessione.php';
     include '../function.php';
     include '../../function_mailer.php';
@@ -28,41 +27,42 @@
         $Oggetto = htmlentities($_POST['oggetto']);
         $cf_list = json_decode($_POST['codici_fiscali'], true); //trasformo l'input in array associativo
     }
+
     //Inizio la transazione
     $conn->begin_transaction();
     try{
         
         //inserisco il record nella tabella Assemblea
-        $stmt = $conn->prepare("INSERT INTO ASSEMBLEA (CodiceConvocatore, Data, OrdineDelGiorno, Oggetto)
+        $stmt1 = $conn->prepare("INSERT INTO ASSEMBLEA (CodiceConvocatore, Data, OrdineDelGiorno, Oggetto)
                                 VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("isss", $codConv, $Data, $Ordine, $Oggetto);
-        $stmt->execute();
-        $stmt->close();
-        
+        $stmt1->bind_param("isss", $codConv, $Data, $Ordine, $Oggetto);
+        $stmt1->execute();
+
+        $stmt2 = $conn->prepare("INSERT INTO INTERVENTO (CodiceConvocatore, DataAssemblea, Persona)
+                                    VALUES (?, ?, ?)");
         //inserisco i record nella tabella intervento
         foreach($cf_list as $cf){
-            $stmt = $conn->prepare("INSERT INTO INTERVENTO (CodiceConvocatore, DataAssemblea, Persona)
-                                    VALUES (?, ?, ?)");
-            $stmt->bind_param("iss", $codConv, $Data, $cf);
-            $stmt->execute();
-            $stmt->close();
-        }
+            
+            $stmt2->bind_param("iss", $codConv, $Data, $cf);
+            $stmt2->execute();
 
+        }
         $mail = [];
 
+        $stmt3 = $conn->prepare("SELECT Email
+                                    FROM UTENTE
+                                    WHERE Persona = ? ");
         //carico le mail dei partecipanti
         foreach ($cf_list as $cf) {
             
             //controllo che le email siano presenti nel database e le salvo in una variabile
-            $stmt = $conn->prepare("SELECT Email
-                                    FROM UTENTE
-                                    WHERE Persona = ? ");
-            $stmt->bind_param("s", $cf); 
-            $stmt->execute();
-            $result = $stmt->get_result();
+            
+            $stmt3->bind_param("s", $cf); 
+            $stmt3->execute();
+            $result = $stmt3->get_result();
 
             if ($result->num_rows === 0) {
-                throw new Exception("Email non presente!",10050);    
+                throw new Exception("Email non presente!",10070);    
             } else {
                 // salvo l'email nell'array
                 $row = $result->fetch_assoc();
@@ -70,16 +70,19 @@
             }
             
         }
+        $titolo = "Convocazione riunione: ";
+        $contenuto = "<html>
+                        <head>
+                     <meta charset='UTF-8'>
+                    <title>$Ordine</title>
+                    </head><h2>Convocazione Riunione</h2>
 
-        $titolo = "Convocazione riunione: " . $Ordine;
-        $contenuto = "<h2>Convocazione Riunione</h2>
-
-                        <p>Ciao,</p>
+                        <p>Ciao, ". $_SESSION['nome'] ." ". $_SESSION['cognome']. ";</p>
                         <p>sei invitato a partecipare alla seguente riunione della <b>Polisportiva Polipo</b>:</p>
 
                         <ul>
-                            <li><b>Titolo:</b> Assemblea Generale</li>
-                            <li><b>Data:</b> 10 Settembre 2025</li>
+                            <li><b>Titolo:</b> $Oggetto</li>
+                            <li><b>Data:</b> $Data</li>
                             <li><b>Ora:</b> 18:30</li>
                             <li><b>Luogo:</b> Sala Conferenze, Polisportiva Polipo</li>
                         </ul>
@@ -91,16 +94,13 @@
                         <small>Questa è una comunicazione automatica della Polisportiva Polipo.<br>
                         Per qualsiasi informazione puoi contattarci all’indirizzo: info@polisportivapolipo.it</small>
                         ";
-        //il contenuto è da decidere come strutturarlo
-        
         inviaMail($mail,$titolo,$contenuto);
         $conn->commit();
-    }
-    catch (mysqli_sql_exception $exception) {
+    } catch (Exception $e) {
         $conn->rollback();
         $default = "email errate / assemblea già presente";
 
-        $codiciGestiti = [10050];
+        $codiciGestiti = [10070];
 
         if (in_array($e->getCode(), $codiciGestiti, true)) {
             $default = $e->getMessage();

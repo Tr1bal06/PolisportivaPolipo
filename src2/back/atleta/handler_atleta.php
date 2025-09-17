@@ -1,11 +1,17 @@
 <?php
 
+
+    /** 
+     * File: 
+     * Auth: 
+     * Desc: 
+    */
     include '../connessione.php';
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
 
     $permessi = ['admin','Atleta'];
     
@@ -15,6 +21,7 @@
     
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $conn->begin_transaction();
         try{   
             $livello = htmlentities($_POST['livello']);
             $sport = htmlentities($_POST['sport']);
@@ -31,7 +38,7 @@
 
             foreach($port as $value) {
                 if($value['NomeSport'] == $sport) {
-                    error('../../front/persone/utente.php', 'Sport già praticato!');
+                    throw new Exception("Sport già praticato!",10090);
                 }
             }
 
@@ -39,14 +46,21 @@
             VALUES (?,?,?,?,'NonConfermato',NULL,'Iscrizione');");
             $stmt->bind_param("isss",$codiceAtleta,$sport,$livello,$mot);
 
-            if($stmt->execute()) {
-                success('../../front/persone/utente.php', 'Richiesta di iscrizione avvenuta con successo!');
-            }else {
-                error('../../front/persone/utente.php', 'Richiesta di iscrizione fallita!');
-            }
+            $stmt->execute();
+
+            $conn->commit();
         }catch(Exception $e){
-            error('../../front/persone/utente.php', 'Richiesta di iscrizione fallita!');
+            $conn->rollback();
+            $default = "Richiesta di iscrizione fallita!";
+
+            $codiciGestiti = [10090];
+
+            if (in_array($e->getCode(), $codiciGestiti, true)) {
+                $default = $e->getMessage();
+            }
+            error('../../front/persone/utente.php' , $default);
+
         }
-        
+        success('../../front/persone/utente.php', 'Richiesta di iscrizione avvenuta con successo!');
     }
 ?>
