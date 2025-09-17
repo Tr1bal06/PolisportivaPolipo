@@ -28,8 +28,27 @@
         if($_SERVER['REQUEST_METHOD']=='POST'){
         
             $nomeSquadra = htmlentities($_POST['nome_squadra']);
-            $partecipanti = json_decode($_POST['atleta'], true);
+            $partecipanti = json_decode($_POST['codici_fiscali'], true);
             $sport = htmlentities($_POST['sport']);
+
+            $minimi = [
+                "Calcio"    => 8,
+                "Tennis"    => 1,
+                "Volley"    => 6,
+                "Basket"    => 5,
+            ];
+
+            // Se lo sport è tra quelli previsti, controllo il numero
+            if (isset($minimi[$sport])) {
+                $numeroAtleti = count($partecipanti);
+                $minimoRichiesto = $minimi[$sport];
+
+                if ($numeroAtleti < $minimoRichiesto) {
+                    throw new Exception("Per lo sport $sport servono almeno $minimoRichiesto atleti, ne hai inseriti $numeroAtleti.",10013);
+                }
+            } else {
+                throw new Exception("Sport non valido", 10014);
+            }
             $codiceAllenatore = $_SESSION['caricheCodici']['Allenatore'];
         }
        
@@ -124,7 +143,7 @@
 
         $default = "Creazione della squadra fallita!";
 
-        $codiciGestiti = [10010, 10011, 10012];
+        $codiciGestiti = [10010, 10011, 10012,10013,10014];
 
         if (in_array($e->getCode(), $codiciGestiti, true)) {
             $default = $e->getMessage();
