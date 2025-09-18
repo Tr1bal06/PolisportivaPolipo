@@ -1,6 +1,6 @@
 <?php
     include "../connessione.php";
-    include '../function.php';
+    
     if (session_status() == PHP_SESSION_NONE) {
     // Avvia la sessione
     session_start();
@@ -11,26 +11,48 @@
 
     $permessi = ['user', 'admin'];
 
+
+    ob_start();
+    include "get_squadra.php"; // esegue il PHP e cattura l’output
+    $json = ob_get_clean();
+
+
+    // Decodifica il JSON in array associativo PHP
+    $squadre = json_decode($json, true);
+
+
+    $sport = array_map(function($squadra) {
+        return $squadra['Sport'];
+    }, $squadre);
+
+    
+    
+    $sport = array_unique($sport);
+    
     //controllo i permessi 
     if (!controllo($_SESSION['ruolo'], $permessi)) {
         error("./front/404.php","Permesso negato!");
     }
 
-    $cfPersona = $_SESSION['cf'];
-    // Query SQL con placeholders per ricavare i dati di maggior importanza, in modo sicuro, per ogni torneo
+    $codiceAllenatore = $_SESSION['caricheCodici']['Allenatore'];
+
+    // Query SQL con placeholders per ricavare i dati di maggior importanza, in modo sicuro, per ogni torneo 
+    // query modificata per includere solo i tornei degli sport delle squadre dell'allenatore esclusi quelli a cui si partecipa di già
     $query = "SELECT E_D.CodiceTorneo, E_D.Anno, E_D.Regolamento, T.Nome AS NomeTorneo, T.Sport
                 FROM EDIZIONE_TORNEO E_D
                 JOIN TORNEO T ON T.CodiceAttivita = E_D.CodiceTorneo
-                WHERE E_D.Anno >= CURRENT_DATE
+                WHERE E_D.Anno >= CURRENT_DATE AND T.Sport IN ('" . implode("','", $sport) . "') 
                 AND NOT EXISTS (
-                        SELECT 1
-                        FROM PARTECIPAZIONE P1
-                        WHERE P1.CodiceTorneo = E_D.CodiceTorneo
-                        AND P1.Anno = E_D.Anno
-                        AND P1.CFPartecipante = '$cfPersona'
-                    )
+                    
+                    SELECT E_D.CodiceTorneo, E_D.Anno, E_D.Regolamento, T.Nome AS NomeTorneo, T.Sport
+                    FROM ISCRIZIONI_TORNEO I 
+                        JOIN SQUADRA S  ON S.Nome = I.NomeSquadra
+                        JOIN EDIZIONE_TORNEO E_D ON E_D.CodiceTorneo = I.EdizioneTorneo AND E_D.Anno = I.AnnoTorneo
+                        JOIN TORNEO T ON T.CodiceAttivita = E_D.CodiceTorneo 
+                        WHERE S.Allenatore = $codiceAllenatore AND I.AnnoTorneo >= CURRENT_DATE
+                )
                 ORDER BY E_D.Anno DESC;";
-
+                
     $result = $conn->query($query);
 
     if ($result === false) {

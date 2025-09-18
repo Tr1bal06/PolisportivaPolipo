@@ -10,7 +10,9 @@
         // Avvia la sessione
         session_start();
     }
-
+    
+    
+    //session_start();
     //Comunico al sistema che riceverà una risposta JSON
     header('Content-Type: application/json');
 

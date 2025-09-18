@@ -40,6 +40,7 @@
           //"/front/atleti/atleta.php" => [['admin', 'Atleta'], 6, 'Iscrizione allo sport'],
           "/front/disponibilita/disponibilita_medico.php" => [['admin', 'Medico'], 7, 'Disponibilità'],
           "/front/convocatori/assemblea.php" => [['admin', 'Consigliere'], 8, 'Crea Assemblea'],
+          "/front/tornei/tornei.php" => [['admin', 'Allenatore'], 9, 'Partecipa Torneo'],
         ];
 
         // Funzione che controlla se l’utente ha almeno un ruolo ammesso
@@ -62,7 +63,6 @@
           }
         }
       ?>
-      <a href="/front/tornei/tornei.php" class="<?= ($numero == 9) ? "active" : "" ?>">Partecipa Torneo</a>
     </div>
   </div>
   <div class="footer">
