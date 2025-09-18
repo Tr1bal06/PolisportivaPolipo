@@ -54,6 +54,69 @@
         //tutte le partite precedenti perforza saranno a 1 senno siamo all'inizio , check if all == 1
         // query --> is_updated , gruppo , round++ 
 
+        $stmt = $conn->prepare("SELECT is_updated , Round , Gruppo , SquadraCasa , SquadraOspite , ScoreCasa, ScoreOspite
+                                 FROM PARTITA_TORNEO
+                                 WHERE EdizioneTorneo = ? AND AnnoTorneo = ?");
+        $stmt->bind_param("is",$codTorneo,$Anno);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $rows = [];
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
+        $allUpdated = !in_array(0, array_column($rows, 'is_updated'));
+        if($allUpdated) {
+            // Raggruppo per Gruppo
+            $gruppi = [];
+            foreach ($rows as $r) {
+                $gruppi[$r['Gruppo']][] = $r;
+            }
+            // Per ogni gruppo trovo il Round più alto e il vincitore
+            $winners = [];
+
+            foreach ($gruppi as $gruppo => $partite) {
+                // Ordino le partite del gruppo per Round discendente
+                usort($partite, function($a, $b) {
+                    return $b['Round'] <=> $a['Round'];
+                });
+
+                // Prendo la partita col Round più alto
+                $match = $partite[0];
+
+                // Determino il vincitore
+                if ($match['ScoreCasa'] > $match['ScoreOspite']) {
+                    $winner = $match['SquadraCasa'];
+                } elseif ($match['ScoreCasa'] < $match['ScoreOspite']) {
+                    $winner = $match['SquadraOspite'];
+                } else {
+                    $winner = null; // pareggio, da gestire come preferisci
+                }
+
+                if ($winner !== null) {
+                    $winners[$gruppo] = [
+                        'Round'   => $match['Round'],
+                        'Gruppo'  => $gruppo,
+                        'Vincitore' => $winner
+                    ];
+                }
+            }//da capire
+            $fine = count($squadre)-1;
+
+            $count = 1;
+            $gruppo = 1;
+            $insert = $conn->prepare("INSERT INTO PARTITA_TORNEO (SquadraCasa,SquadraOspite,EdizioneTorneo,AnnoTorneo,ScoreCasa,ScoreOspite,Round,Gruppo)
+                                        VALUES (?, ?, ?,?,?,?,?,?)");
+            for($i=0 ; $i<count($squadre)/2;$i++ , $fine--) {
+                $insert->bind_param("ssisiiis", $squadre[$i], $squadre[$fine], $codTorneo,$Anno,0,0,1,$gruppo);
+                $insert->execute();
+                if($count == 2) {
+                    $count = 0;
+                    $gruppo++;
+                }
+                $count++;
+            }
+        }
+
         $conn->commit();
     }catch(Exception $e){
         $conn->rollback();
