@@ -45,6 +45,13 @@
 
     }
 
+    .selectRuoli {
+      margin-top: 5px;
+      padding: 0.6rem;
+      border: none;
+      border-radius: 5px;
+    }
+
     .container {
       width: 80%;
       margin-left: auto;
@@ -115,6 +122,11 @@
       padding: 1rem;
     }
 
+    .btn-modifica {
+      height: fit-content;
+      background-color: #4c5c96;
+      transition: background-color 0.3s ease;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -139,6 +151,110 @@
 
     .bottoniElimina:hover {
       background-color: darkred
+    }
+
+     .popup-overlay {
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-evenly;
+      z-index: 9999;
+      padding: 1rem;
+    }
+
+     .popup-elimina {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 1rem;
+    }
+    .popup-content {
+      background-color: #3a4a7d;
+      color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .popup-elimina-content {
+      background-color: #3a4a7d;
+      color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 500px;
+      position: relative;
+    }
+
+    .popup-content2 {
+      background-color: #3a4a7d;
+      color: white;
+      border-radius: 10px;
+      width: 30%;
+      max-width: 500px;
+      margin-left: 40px;
+      padding-bottom: 20px;
+      height: fit-content;
+
+    }
+
+    .popup-content h2 {
+      margin-top: 0;
+      color: #aadfff;
+    }
+
+    .close-popup {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: white;
+      cursor: pointer;
+    }
+
+
+    @media (max-width: 1268px) {
+      .popup-overlay {
+        flex-direction: column;
+      }
+
+      .popup-content {
+        margin: auto !important;
+        width: 85% !important;
+      }
+
+      .popup-content2 {
+        margin: auto !important;
+        margin-top: 32px !important;
+        width: 100% !important;
+        padding: 32px;
+
+      }
+    }
+
+    @media (max-width: 970px) {
+      .container {
+        padding-left: 0px;
+      }
+
+      .popup-content {
+        width: 85% !important;
+      }
+
+      .popup-content2 {
+        width: 85% !important;
+      }
     }
 
     @media (max-width: 768px) {
@@ -238,6 +354,24 @@ include "../navbar.php"; // Inclusione della barra di navigazione
         </tbody>
       </table>
     </div>
+    <div id="popupElimina" style="display:none;" class="popup-elimina">
+        <div class="popup-elimina-content">
+          <button class="close-popup" onclick="chiudiPopupRichiesta()">✕</button>
+            <h2>Inserisci la squadra!</h2>
+            <form action = '../../back/allenatore/richiesta_elimina_sport.php' method = 'POST'  class="logout" id="forRichiesta">
+              <label>Squadra:
+                <div id="popup-select-squadra"></div>
+              </label>
+              <input type="hidden" name="source" id="popup-source" value="">
+              <input type="hidden" name="sport" id="popup-sport" value="" >
+              <input type="hidden" name="livello" id="popup-livello" value="" >
+              <div style="display: flex; justify-content: center; margin-top: 10px;">
+              <button type="submit" form="forRichiesta"  class="btn-modifica">Partecipa</button>
+            </div>
+            </form>
+            
+          </div>
+      </div>
   </div>
 
   <script>
@@ -273,13 +407,9 @@ include "../navbar.php"; // Inclusione della barra di navigazione
             <td>${atto.Anno}</td>
             <td><a href="${atto.Regolamento}" target="_blank">Visualizza Regolamento</a></td>
             <td id="${sponsorId}"></td>
-            <td>
-              <form class="logout" action="../../back/tornei/PartecipaTornei.php" method="POST">
-                <input type="hidden" name="CodiceTorneo" value="${atto.CodiceTorneo}">
-                <input type="hidden" name="Anno" value="${atto.Anno}">
-                <button type="submit">Partecipa</button>
-              </form>
-            </td>
+              <td>
+                  <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${atto.CodiceTorneo+atto.Anno}" onclick='apriPopupElimina(${JSON.stringify(atto)})'  >partecipa</button>
+              </td>
           </tr>`;
         tbody.innerHTML += row;
 
@@ -350,6 +480,39 @@ include "../navbar.php"; // Inclusione della barra di navigazione
 
         
     }
+
+    function apriPopupElimina(sport) {
+        //console.log(sport);
+        fetch(`../../back/tornei/get_squadra.php`) // Effettua chiamata GET al backend
+        .then(res => res.json())
+        .then(data => {
+          console.log(data);
+            const popupSportInput = document.getElementById('popup-select-squadra');
+            popupSportInput.innerHTML = ''; // Pulisce il contenuto precedente
+            const selectSquadra = document.createElement('select');
+            selectSquadra.name = 'squadra';
+            selectSquadra.id = 'squadra';
+            selectSquadra.classList.add('selectRuoli');
+            selectSquadra.required = true;
+
+            data.forEach(squadra => {
+                if(squadra.Sport !== sport.Sport) return; // Filtra per sport
+                const option = document.createElement('option');
+                option.value = squadra.Nome;
+                option.text = squadra.Nome 
+                selectSquadra.appendChild(option);
+            });
+
+            popupSportInput.appendChild(selectSquadra);
+            popupLivelloInput.value = sport.Tipo || '';
+        })
+        document.getElementById('popupElimina').style.display = 'flex';
+      }
+
+      function chiudiPopupRichiesta() {
+        document.getElementById('popupElimina').style.display = 'none';
+      }
+
   </script>
   <script src="../../js/toast.js"></script>
 </body>

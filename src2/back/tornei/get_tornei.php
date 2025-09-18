@@ -96,9 +96,6 @@
         exit;
     }
 
-    
-
-    
     // Output
     echo json_encode($tornei);
     http_response_code(200);
