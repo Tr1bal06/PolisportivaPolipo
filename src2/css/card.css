@@ -1,0 +1,130 @@
+/* ---------- CONTAINER ESTERNO ---------- */
+.carta{
+  position: relative;
+  margin: 24px auto;
+  width: 85%;
+  max-width: 1600px;
+  overflow: visible; /* permette glow e ombre esterne */
+}
+
+/* ---------- CARD INTERNA (ritaglia i cerchi blu) ---------- */
+.carta-inner {
+  display: flex;
+  
+  gap: 24px;
+  padding: 36px;
+  border-radius: 20px;
+  overflow: hidden;              /* i cerchi restano dentro la card */
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* ---------- LOGO (30%) ---------- */
+#logo {
+  flex-basis: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1; /* sopra i cerchi */
+}
+#logo img {
+  width: 80%;
+  max-width: 180px;
+  height: auto;
+  border-radius: 14px;
+  object-fit: contain;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* ---------- CONTENUTO (70%) ---------- */
+.content {
+  flex-basis: 80%;
+  color: #0f1724;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  z-index: 1; /* sopra i cerchi */
+}
+.content .heading {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  transition: color .3s;
+}
+.content .para {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  opacity: .9;
+  transition: color .3s;
+}
+
+/* ---------- CERCHI BLU (animazione hover) ---------- */
+.carta-inner::before,
+.carta-inner::after {
+  content: "";
+  position: absolute;
+  width: 20%;
+  height: 10rem;
+  background: #0a3cff;
+  border-radius: 50%;
+  opacity: 0;
+  z-index: 0; /* restano sotto logo e testo */
+  transform: scale(1);
+  transform-origin: center;
+  transition: opacity .48s cubic-bezier(.23,1,.32,1),
+              transform .48s cubic-bezier(.23,1,.32,1);
+}
+.carta-inner::before { right: -5rem; top: -5rem; }
+.carta-inner::after  { left: -5rem; bottom: -5rem; }
+
+.carta:hover .carta-inner::before,
+.carta:hover .carta-inner::after {
+  opacity: 1;
+  transform: scale(7);
+}
+
+/* ---------- HOVER CARD (testo/cornice) ---------- */
+.carta:hover .carta-inner {
+  transform: scale(1.03);
+  box-shadow: 0 20px 40px rgba(10, 60, 255, 0.14);
+  border-color: #0a3cff;
+}
+.carta:hover .content .heading,
+.carta:hover .content .para {
+  color: #fff;
+}
+
+/* ---------- RESPONSIVE: mobile / small screens ---------- */
+@media (max-width: 1308px) {
+  .carta-inner {
+    flex-direction: column;
+    text-align: center;
+    padding: 26px;
+  }
+  #logo {
+    order: 0;
+    margin-bottom: 12px;
+    flex-basis: auto;
+  }
+  .content {
+    order: 2;
+    margin-top: 18px;
+    flex-basis: auto;
+  }
+  .content .heading { font-size: 22px; }
+  .content .para { font-size: 14px; }
+}
+
+
+@media (max-width: 530px) {
+  .carta-inner::before,
+    .carta-inner::after {
+        width: 23%;
+    }
+}

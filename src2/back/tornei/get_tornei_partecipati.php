@@ -16,16 +16,16 @@
         error("./front/404.php","Permesso negato!");
     }
 
-    $cfPersona = $_SESSION['cf'];
+    $codiceAllenatore = $_SESSION['caricheCodici']['Allenatore'];
 
     // Query SQL con placeholders per ricavare i dati di maggior importanza, in modo sicuro, per ogni torneo
     $query = "SELECT E_D.CodiceTorneo, E_D.Anno, E_D.Regolamento , T.Nome AS NomeTorneo , T.Sport 
-            FROM PARTECIPAZIONE P
-            	JOIN EDIZIONE_TORNEO E_D ON E_D.CodiceTorneo = P.CodiceTorneo AND E_D.Anno = P.Anno
-                JOIN TORNEO T ON T.CodiceAttivita = E_D.CodiceTorneo
-            WHERE  E_D.Anno >= CURRENT_DATE AND P.CFPartecipante = '$cfPersona'
-            ORDER BY E_D.Anno DESC;";
-
+                FROM ISCRIZIONI_TORNEO I 
+                    JOIN SQUADRA S  ON S.Nome = I.NomeSquadra
+                    JOIN EDIZIONE_TORNEO E_D ON E_D.CodiceTorneo = I.EdizioneTorneo AND E_D.Anno = I.AnnoTorneo
+                    JOIN TORNEO T ON T.CodiceAttivita = E_D.CodiceTorneo 
+                WHERE S.Allenatore = $codiceAllenatore AND I.AnnoTorneo >= CURRENT_DATE";
+    
     $result = $conn->query($query);
 
     if ($result === false) {
