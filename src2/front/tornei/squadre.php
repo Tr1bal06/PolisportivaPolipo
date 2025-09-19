@@ -311,7 +311,7 @@
     </div>
     
   </div>
-    </div>
+    
         
 <?php 
         
@@ -339,6 +339,8 @@
       
         
         </form>
+
+        </div>
       <script>
         // per far partire l'evento change allo start
         document.addEventListener("DOMContentLoaded", () => {
