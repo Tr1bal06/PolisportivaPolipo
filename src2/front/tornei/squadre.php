@@ -45,6 +45,14 @@
   font-family: inherit;
   font-size: 1rem;
 }
+
+.bottoneTogli {
+      background-color: red;
+      transition: background-color 0.3s ease;
+    }
+    .bottoneTogli:hover {
+      background-color: darkred
+    }
     #selectSport {
       padding: 0.6rem;
       border: none;
@@ -339,8 +347,6 @@
       
         
         </form>
-
-        </div>
       <script>
         // per far partire l'evento change allo start
         document.addEventListener("DOMContentLoaded", () => {
@@ -406,7 +412,7 @@
                 <td>${p.Nome}</td>
                 <td>${p.Cognome}</td>
                 <td>${p.CF}</td>
-                <td><button type="button" class="bottoniElimina" data-cf="${p.CF}">X</button></td>
+                <td><button type="button" class="bottoneTogli" data-cf="${p.CF}">X</button></td>
               `;
 
               row.querySelector("button").addEventListener("click", () => {
