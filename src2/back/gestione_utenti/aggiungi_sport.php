@@ -44,13 +44,13 @@
 
             if($_POST['tipologia']=='Iscrizione'||$_POST['tipologia']=='Insegnamento'){            
 
-                if($reach == 'atleta') {
+                if($reach == 'Atleta') {
                     $tipo = htmlentities($_POST['livello']);
                     $stmt1 = $conn->prepare("INSERT INTO ISCRIZIONE (CodiceAtleta, NomeSport, Tipo) VALUES (?,?,?)");
                     $stmt1->bind_param("iss", $cod, $sport, $tipo);
                 }
 
-                else if($reach == 'allenatore') {
+                else if($reach == 'Allenatore') {
                     $stmt1 = $conn->prepare("INSERT INTO INSEGNA (CodiceAllenatore, NomeSport) VALUES (?,?)");
                     $stmt1->bind_param("is", $cod, $sport);
                 }
