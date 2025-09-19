@@ -3,8 +3,7 @@
     /**
      * File: PartecipaTorneo.php
      * Auth: Jin
-     * Desc: Questo file serve per l'iscrizione delle squadre ad un torneo , 
-     *       a controllare se il torneo è pieno per far partire il matchmatching
+     * Desc: Questo file serve per gestire il matchmatching delle partite successive
      */
     include '../connessione.php';
     include '../function.php';
@@ -22,12 +21,12 @@
 
     if($_SERVER['REQUEST_METHOD']=='POST'){
         
-            $scoreCasa = htmlentities($_POST['scoreCasa']);
-            $scoreOspite = htmlentities($_POST['scoreOspite']);
-            $codTorneo = htmlentities($_POST['CodiceTorneo']);
-            $Anno = htmlentities($_POST['Anno']);
-            $casa = htmlentities($_POST['casa']);
-            $ospite = htmlentities($_POST['ospite']);
+        $scoreCasa = htmlentities($_POST['scoreCasa']);
+        $scoreOspite = htmlentities($_POST['scoreOspite']);
+        $codTorneo = htmlentities($_POST['CodiceTorneo']);
+        $Anno = htmlentities($_POST['Anno']);
+        $casa = htmlentities($_POST['casa']);
+        $ospite = htmlentities($_POST['ospite']);
     }
 
     $conn->begin_transaction();
@@ -46,13 +45,12 @@
             throw new Exception("Modifica illegale!",20020);
         }
 
-        $insert = $conn->prepare("UPDATE PARTITA_TORNEO (ScoreCasa, ScoreOspite, is_updated) VALUES (?, ? , 1)");
-        $insert->bind_param("ii", $scoreCasa, $scoreOspite);
-        $insert->execute();
+        $update = $conn->prepare("UPDATE PARTITA_TORNEO
+                                  SET ScoreCasa = ?, ScoreOspite = ?, is_updated = 1
+                                  WHERE EdizioneTorneo = ? AND AnnoTorneo = ? AND SquadraCasa = ? AND SquadraOspite = ?");
+        $update->bind_param("iiisss", $scoreCasa, $scoreOspite, $codTorneo, $Anno, $casa, $ospite);
+        $update->execute();
 
-        //manca il controllo degli is_updated , controlla tutto per EdizioneTorneo = ? AND AnnoTorneo = ?
-        //tutte le partite precedenti perforza saranno a 1 senno siamo all'inizio , check if all == 1
-        // query --> is_updated , gruppo , round++ 
 
         $stmt = $conn->prepare("SELECT is_updated , Round , Gruppo , SquadraCasa , SquadraOspite , ScoreCasa, ScoreOspite
                                  FROM PARTITA_TORNEO
@@ -65,55 +63,43 @@
             $rows[] = $row;
         }
         $allUpdated = !in_array(0, array_column($rows, 'is_updated'));
-        if($allUpdated) {
+        if ($allUpdated) {
             // Raggruppo per Gruppo
             $gruppi = [];
             foreach ($rows as $r) {
                 $gruppi[$r['Gruppo']][] = $r;
             }
-            // Per ogni gruppo trovo il Round più alto e il vincitore
+
+            // Trovo i vincitori per ogni gruppo e round massimo
             $winners = [];
-
             foreach ($gruppi as $gruppo => $partite) {
-                // Ordino le partite del gruppo per Round discendente
-                usort($partite, function($a, $b) {
-                    return $b['Round'] <=> $a['Round'];
-                });
+                // Prendo tutte le partite dell'ultimo round
+                $maxRound = max(array_column($partite, 'Round'));
+                $ultimoRound = array_filter($partite, fn($p) => $p['Round'] == $maxRound);
 
-                // Prendo la partita col Round più alto
-                $match = $partite[0];
-
-                // Determino il vincitore
-                if ($match['ScoreCasa'] > $match['ScoreOspite']) {
-                    $winner = $match['SquadraCasa'];
-                } elseif ($match['ScoreCasa'] < $match['ScoreOspite']) {
-                    $winner = $match['SquadraOspite'];
-                } else {
-                    $winner = null; // pareggio, da gestire come preferisci
+                foreach ($ultimoRound as $match) {
+                    if ($match['ScoreCasa'] > $match['ScoreOspite']) {
+                        $winner = $match['SquadraCasa'];
+                    } elseif ($match['ScoreCasa'] < $match['ScoreOspite']) {
+                        $winner = $match['SquadraOspite'];
+                    } else {
+                        $winner = $match['SquadraCasa']; // pareggio -> passa Casa
+                    }
+                    $winners[$gruppo][] = $winner;
                 }
+            }
 
-                if ($winner !== null) {
-                    $winners[$gruppo] = [
-                        'Round'   => $match['Round'],
-                        'Gruppo'  => $gruppo,
-                        'Vincitore' => $winner
-                    ];
-                }
-            }//da capire
-            $fine = count($squadre)-1;
+            // Ora genero il nuovo round
+            $nextRound = $maxRound + 1;
+            $insert = $conn->prepare("INSERT INTO PARTITA_TORNEO (SquadraCasa, SquadraOspite, EdizioneTorneo, AnnoTorneo, ScoreCasa, ScoreOspite, Round, Gruppo) VALUES (?, ?, ?, ?, 0, 0, ?, ?)");
 
-            $count = 1;
-            $gruppo = 1;
-            $insert = $conn->prepare("INSERT INTO PARTITA_TORNEO (SquadraCasa,SquadraOspite,EdizioneTorneo,AnnoTorneo,ScoreCasa,ScoreOspite,Round,Gruppo)
-                                        VALUES (?, ?, ?,?,?,?,?,?)");
-            for($i=0 ; $i<count($squadre)/2;$i++ , $fine--) {
-                $insert->bind_param("ssisiiis", $squadre[$i], $squadre[$fine], $codTorneo,$Anno,0,0,1,$gruppo);
-                $insert->execute();
-                if($count == 2) {
-                    $count = 0;
-                    $gruppo++;
+            foreach ($winners as $gruppo => $squadre) {
+                for ($i = 0; $i < count($squadre); $i += 2) {
+                    if (isset($squadre[$i+1])) {
+                        $insert->bind_param("ssisis",$squadre[$i], $squadre[$i+1], $codTorneo, $Anno, $nextRound, $gruppo);
+                        $insert->execute();
+                    }
                 }
-                $count++;
             }
         }
 
@@ -122,7 +108,7 @@
         $conn->rollback();
         $default = "Aggiornamento score fallito fallita!";
 
-        $codiciGestiti = [20010];
+        $codiciGestiti = [20020];
 
         if (in_array($e->getCode(), $codiciGestiti, true)) {
             $default = $e->getMessage();
