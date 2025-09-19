@@ -1,5 +1,10 @@
 <?php
-
+    /**
+     * File: handler_assemblea.php
+     * Auth: Jin
+     * Desc: questo file ha il compito di gestire la registrazione di un nuovo utente
+     */
+    
     include '../connessione.php';
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
@@ -68,7 +73,7 @@
 
     } catch (mysqli_sql_exception $exception) {
         $conn->rollback();
-
+        
         error('../../front/signup.php', 'Registrazione fallita!');
     }
     

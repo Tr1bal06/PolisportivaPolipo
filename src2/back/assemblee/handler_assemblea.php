@@ -22,12 +22,16 @@
     //acquisisco i dati 
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $codConv = htmlentities($_SESSION['conv']);
-        $Data = htmlentities($_POST['data']);
+        $data = htmlentities($_POST['data']);
         $Ordine = htmlentities($_POST['ordine_giorno']);
         $Oggetto = htmlentities($_POST['oggetto']);
         $cf_list = json_decode($_POST['codici_fiscali'], true); //trasformo l'input in array associativo
     }
-
+    //converto la data nel formato giusto
+    $dt = new DateTime($data);
+    $Data = $dt->format('Y-m-d'); // "2025-09-18"
+    $ora = $dt->format('H:i');  // "14:30"
+    
     //Inizio la transazione
     $conn->begin_transaction();
     try{
@@ -48,10 +52,11 @@
 
         }
         $mail = [];
+        $utente = [];
 
-        $stmt3 = $conn->prepare("SELECT Email
-                                    FROM UTENTE
-                                    WHERE Persona = ? ");
+        $stmt3 = $conn->prepare("SELECT U.Email, P.Nome, P.Cognome
+                                FROM UTENTE U JOIN PERSONA P ON U.Persona=P.CF
+                                WHERE U.Persona = ? ");
         //carico le mail dei partecipanti
         foreach ($cf_list as $cf) {
             
@@ -67,9 +72,15 @@
                 // salvo l'email nell'array
                 $row = $result->fetch_assoc();
                 $mail[] = $row['Email'];
+                $utente[] = [
+                    "nome" => $row['Nome'],
+                    "cognome" => $row['Cognome']
+                ];
+                
             }
             
         }
+        foreach ($utente as $m){
         $titolo = "Convocazione riunione: ";
         $contenuto = "<html>
                         <head>
@@ -77,24 +88,26 @@
                     <title>$Ordine</title>
                     </head><h2>Convocazione Riunione</h2>
 
-                        <p>Ciao, ". $_SESSION['nome'] ." ". $_SESSION['cognome']. ";</p>
-                        <p>sei invitato a partecipare alla seguente riunione della <b>Polisportiva Polipo</b>:</p>
+                        <p>Ciao, ". $m["nome"] . " " . $m["cognome"]. ";</p>
+                        <p>è stata invitata a partecipare alla seguente riunione della <b>Polisportiva Polipo</b>:</p>
 
                         <ul>
                             <li><b>Titolo:</b> $Oggetto</li>
                             <li><b>Data:</b> $Data</li>
-                            <li><b>Ora:</b> 18:30</li>
+                            <li><b>Ora:</b> $ora</li>
                             <li><b>Luogo:</b> Sala Conferenze, Polisportiva Polipo</li>
                         </ul>
 
-                        <p>La tua presenza è importante per condividere aggiornamenti, discutere le attività in corso e pianificare i prossimi impegni sportivi e organizzativi.</p>
+                        <p>All'entrata della sala conferenze le verrà comunicato in quale aula si terrà l'assemblea.
+                        La sua presenza è importante per condividere aggiornamenti, discutere le attività in corso e pianificare i prossimi impegni sportivi e organizzativi.</p>
 
                         <hr>
 
                         <small>Questa è una comunicazione automatica della Polisportiva Polipo.<br>
                         Per qualsiasi informazione puoi contattarci all’indirizzo: info@polisportivapolipo.it</small>
                         ";
-        inviaMail($mail,$titolo,$contenuto);
+        inviaMail($mail, $titolo, $contenuto);
+        }
         $conn->commit();
     } catch (Exception $e) {
         $conn->rollback();

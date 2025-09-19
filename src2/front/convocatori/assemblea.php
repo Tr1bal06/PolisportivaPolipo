@@ -82,6 +82,7 @@
 
     input[type="text"],
     input[type="date"],
+    input[type="datetime-local"],
     input[type="file"] {
       padding: 0.5rem;
       border: none;
@@ -267,7 +268,7 @@
      <form action="../../back/assemblee/handler_assemblea.php" id="formAssemblea" method="POST" enctype="multipart/form-data">
       <label>
         Data Assemblea:
-        <input type="date" id="myDate" name="data" required>
+        <input type="datetime-local" id="myDate" name="data" required>
       </label>
       <label>
         Oggetto:
