@@ -29,7 +29,7 @@
         
             $nomeSquadra = htmlentities($_POST['nome_squadra']);
             $partecipanti = json_decode($_POST['codici_fiscali'], true);
-            $sport = htmlentities($_POST['sport']);
+            $sport = ucfirst(htmlentities($_POST['sport']));
 
             $minimi = [
                 "Calcio"    => 8,

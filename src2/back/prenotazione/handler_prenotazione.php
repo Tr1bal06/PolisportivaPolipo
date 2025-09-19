@@ -188,21 +188,22 @@
                 
             } else {
                 
-                $sport =  htmlentities($_POST['sport']);
-
+                $sport =  ucfirst(htmlentities($_POST['sport']));
+                $Maxsquadre = htmlentities($_POST['max_squadre']);
                 $stmt = $conn->prepare("INSERT INTO TIPO_ATTIVITA (TIPO_ATTIVITA) VALUES (?)");
                 $stmt->bind_param("s", $attivita);
                 $stmt->execute();
                 $codiceAttivita = $conn->insert_id;
-           
-                $stmt5 = $conn->prepare("INSERT INTO TORNEO  VALUES (?, ? , ?)");
+                
+                $stmt5 = $conn->prepare("INSERT INTO TORNEO(CodiceAttivita , Nome, Sport)  VALUES (?, ? , ?)");
                 $stmt5->bind_param("iss", $codiceAttivita, $nomeTorneo, $sport );
                 $stmt5->execute();
-
+                
                 $stmt6 = $conn->prepare("INSERT INTO EDIZIONE_TORNEO (CodiceTorneo,Anno,Regolamento,CodiceMedico,MaxSquadre) VALUES (?, ? , ?, ?,?)");
                 $stmt6->bind_param("issis", $codiceAttivita, $anno, $path , $codiceMedico, $Maxsquadre);
                 $stmt6->execute();
             }
+            
             $data_inizio  = $data . ' 8:00:00';
             $data_fine = $data . ' 22:00:00';
 
@@ -216,7 +217,7 @@
             if ($result->num_rows > 0) {
                 throw new Exception("Torneo non prenotabile: giornata intera non disponibile!", 10024);
             }
-
+            
         }else {
             $stmt = $conn->prepare("INSERT INTO TIPO_ATTIVITA (TIPO_ATTIVITA) VALUES (?)");
             $stmt->bind_param("s", $attivita);
