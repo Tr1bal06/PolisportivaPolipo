@@ -77,9 +77,10 @@
             $count = 1;
             $gruppo = 1;
             $insert = $conn->prepare("INSERT INTO PARTITA_TORNEO (SquadraCasa,SquadraOspite,EdizioneTorneo,AnnoTorneo,ScoreCasa,ScoreOspite,Round,Gruppo)
-                                        VALUES (?, ?, ?,?,?,?,?,?)");
+                                        VALUES (?, ?, ?,?,0,0,1,?)");
             for($i=0 ; $i<count($squadre)/2;$i++ , $fine--) {
-                $insert->bind_param("ssisiiis", $squadre[$i], $squadre[$fine], $codTorneo,$Anno,0,0,1,$gruppo);
+                
+                $insert->bind_param("ssiss", $squadre[$i], $squadre[$fine], $codTorneo, $Anno, $gruppo);
                 $insert->execute();
                 if($count == 2) {
                     $count = 0;
