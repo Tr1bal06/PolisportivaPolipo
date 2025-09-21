@@ -453,9 +453,9 @@ include "../navbar.php"; // Inclusione della barra di navigazione
         const sponsorId = `codice${atto.CodiceTorneo}+${atto.Anno}`;
         const numsquad = (atto.NumSquadre === undefined) ? 0 : atto.NumSquadre;
         var bottoneIscrizzione = `${atto.NumSquadre} / ${atto.MaxSquadre}`;
-
+        console.log(atto)
         if(numsquad === atto.MaxSquadre){
-          bottoneIscrizzione = ` <form action="torneo.php" class="logout" method="POST"><input type="hidden" name="Codice" value="${atto.CodiceTorneo}"></input><input type="hidden" name="Codice" value="${atto.Anno}"></input><button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${atto.CodiceTorneo+atto.Anno}"  >Tabellone</button>`;
+          bottoneIscrizzione = ` <form action="torneo.php" class="logout" method="POST"><input type="hidden" name="Codice" value="${atto.CodiceTorneo}"><input type="hidden" name="MaxSquadre" value="${atto.MaxSquadre}"></input><input type="hidden" name="Anno" value="${atto.Anno}"></input><button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${atto.CodiceTorneo+atto.Anno}"  >Tabellone</button>`;
         }
         const row = `
           <tr>

@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="it">
 <head>
@@ -50,14 +51,14 @@
   .winner-text{font-size:16px;font-weight:800;color:var(--accent);display:none;}
   .winner-team{font-size:18px;font-weight:900;color:#fff;display:none;}
   .center-finalists{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:12px;z-index:4;}
-  .final-team{width:150px;height:34px;border-radius:8px;display:flex;align-items:center;padding:6px;box-sizing:border-box;background:linear-gradient(180deg, #26385d 0%, #364e73 100%);font-weight:800;cursor:pointer;}
+  .final-team{width:150px;height:34px;font-size:12px;border-radius:8px;display:flex;align-items:center;padding:6px;box-sizing:border-box;background:linear-gradient(180deg, #26385d 0%, #364e73 100%);font-weight:800;cursor:pointer;}
   .svg-lines{position:absolute;left:0;top:0;right:0;bottom:0;z-index:1;pointer-events:none;}
   .modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:9999;}
   .modal{width:420px;background-color: #3a4a7d;padding:16px;border-radius:12px;color:var(--text);box-shadow:0 18px 40px rgba(0,0,0,0.6);}
   .modal h3{margin:0 0 8px 0;color:var(--accent);}
   .teams{display:flex;gap:10px;margin-bottom:10px;}
   .team{flex:1;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:center;font-weight:800;}
-  .score-form{display:flex;gap:8px;margin-bottom:10px;align-items:center;}
+  .score-form{display:flex;gap:8px;margin-bottom:10px;align-items:center;} 
   .score-form input[type="number"]{width:80px;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--text);}
   .actions{display:flex;gap:8px;justify-content:flex-end;}
   .btn{padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;border:0;}
@@ -96,7 +97,6 @@
           </form>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -104,26 +104,43 @@
 /* ================= CONFIGURAZIONE DI PROVA =================
    Cambia SLOTS_COUNT (4/8/16) e teamSlots per testare.
 ===========================================================*/
-const SLOTS_COUNT = 4; // 4,8 o 16
 
-const teamSlots = {
-  1: "Paris",
-  2: "Liverpool",
-  3: "Club Brugge",
-  4: "Aston Villa",
-  5: "Real Madrid",
-  6: "Atleti",
-  7: "PSV",
-  8: "Arsenal",
-  9: "Benfica",
- 10: "Barcellona",
- 11: "B. Dortmund",
- 12: "Lille",
- 13: "Bayern",
- 14: "Leverkusen",
- 15: "Feyenoord",
- 16: "Inter"
-};
+const SLOTS_COUNT = <?= intval($_POST['MaxSquadre']); ?>; // 4,8 o 16
+const EdizioneTorneo = <?= $_POST['Codice'] ?>;
+const AnnoTorneo = '<?= $_POST['Anno'] ?>';
+
+init(EdizioneTorneo, AnnoTorneo).then(teamSlots => {
+  build(SLOTS_COUNT, teamSlots);
+});
+
+
+async function init(EdizioneTorneo, AnnoTorneo) {
+  try {
+    const res = await fetch("../../back/tornei/get_squadre_torneo.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `EdizioneTorneo=${EdizioneTorneo}&AnnoTorneo=${AnnoTorneo}`
+    });
+
+    const data = await res.json();
+
+    let teamSlots = {};
+
+    data.forEach((match, index) => {
+      const slotHome = index * 2 + 1; // slot dispari
+      const slotAway = index * 2 + 2; // slot pari
+
+      teamSlots[slotHome] = match.SquadraCasa;
+      teamSlots[slotAway] = match.SquadraOspite;
+    });
+
+    return teamSlots;
+  } catch (err) {
+    console.error("Errore durante init:", err);
+    return {};
+  }
+}
+
 
 let layoutLeft = [];
 
@@ -256,7 +273,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
   }
 
   const leftLeafs = layoutFirstLeft(leftCols[0], layoutLeft);
-
+  
   const colonnaTrofeo  = document.querySelector('.center-col');
 
   if(SLOTS_COUNT === 4) colonnaTrofeo.style.height = '180px';
@@ -582,8 +599,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
   setTimeout(()=>{ drawLines(); window.addEventListener('resize', drawLines); }, 80);
 }
 
-// run builder
-build(SLOTS_COUNT, teamSlots);
+
 
 </script>
 </body>
