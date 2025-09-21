@@ -279,6 +279,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
       max-width: 500px;
       margin-left: 40px;
       padding-bottom: 20px;
+      padding-right: 10px;
       height: fit-content;
 
     }

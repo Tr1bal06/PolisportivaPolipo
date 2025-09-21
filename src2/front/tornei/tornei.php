@@ -322,6 +322,7 @@ include "../navbar.php"; // Inclusione della barra di navigazione
             <th>Data <!-- Bottone per ordinare gli anni -->
             </th>
             <th>Regolamento</th>
+            <th>N°Squadre Iscritte</th>
             <th>Sponsor Torneo</th>
           </tr>
         </thead>
@@ -344,6 +345,7 @@ include "../navbar.php"; // Inclusione della barra di navigazione
             <th>Data
             </th>
             <th>Regolamento</th>
+            <th>N°Squadre Iscritte</th>
             <th>Sponsor Torneo</th><!--mostra i posti disponibili, colore verde se ancora aperte, colore rosso se chiuse-->
             <th>Partecipa</th> <!-- Colonna per partecipare al torneo, invia i dati CodiceTorneo, anno alla pagina PartecipaTornei.php -->
           </tr>
@@ -397,6 +399,15 @@ include "../navbar.php"; // Inclusione della barra di navigazione
       console.log(data);
       data.forEach(atto => {
         const sponsorId = `codice${atto.CodiceTorneo}+${atto.Anno}`;
+        const numsquad = (atto.NumSquadre === undefined) ? 0 : atto.NumSquadre;
+        const bottoneIscrizzione = `
+                  <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${atto.CodiceTorneo+atto.Anno}" onclick='apriPopupElimina(${JSON.stringify(atto)})'  >partecipa</button>
+              `;
+
+        if(numsquad === atto.MaxSquadre){
+          bottoneIscrizzione = `Max Squadre`;
+        }
+
         const row = `
           <tr>
             <td>${atto.CodiceTorneo}</td>
@@ -404,10 +415,10 @@ include "../navbar.php"; // Inclusione della barra di navigazione
             <td>${atto.Sport}</td>
             <td>${atto.Anno}</td>
             <td><a href="${atto.Regolamento}" target="_blank">Visualizza Regolamento</a></td>
+            <td>${numsquad} / ${atto.MaxSquadre}</td>
             <td id="${sponsorId}"></td>
-              <td>
-                  <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${atto.CodiceTorneo+atto.Anno}" onclick='apriPopupElimina(${JSON.stringify(atto)})'  >partecipa</button>
-              </td>
+              <td >${bottoneIscrizzione}</td>
+             
           </tr>`;
         tbody.innerHTML += row;
 
@@ -447,10 +458,11 @@ include "../navbar.php"; // Inclusione della barra di navigazione
             <td>${atto.Sport}</td>
             <td>${atto.Anno}</td>
             <td><a href="${atto.Regolamento}" target="_blank">Visualizza Regolamento</a></td>
+            <td>${atto.NumSquadre} / ${atto.MaxSquadre}</td>
             <td id="${sponsorId}"></td>
             
           </tr>`;
-        tbody.innerHTML += row;
+        tbody.innerHTML += row; 
 
         // Genera i tag sponsor
         const sponsorCell = document.getElementById(sponsorId);

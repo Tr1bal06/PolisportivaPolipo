@@ -16,8 +16,9 @@
     //Comunico al sistema che riceverà una risposta JSON
     header('Content-Type: application/json');
 
-    $permessi = ['Atleta', 'admin','Allenatore'];
+    $permessi = ['Atleta','admin','Allenatore'];
 
+    
     //controllo i permessi 
     if (!controllo($_SESSION['ruolo'], $permessi)) {
         error("./front/404.php","Permesso negato!");

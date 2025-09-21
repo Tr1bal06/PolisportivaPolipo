@@ -15,7 +15,7 @@
         session_start();
     }
                 
-    $permessi = ['Atleta', 'admin'];
+    $permessi = ['Atleta','Allenatore', 'admin'];
 
     if(!controllo($_SESSION['ruolo'], $permessi)) { 
         error('../../front/404.php', 'Accesso negato');

@@ -15,7 +15,7 @@
         session_start();
     }
                 
-    $permessi = ['Atleta', 'admin'];
+    $permessi = ['Atleta','Allenatore', 'admin'];
     $sport = ['Basket','Volley','Calcio',"Tennis"];
 
     if(!in_array($_GET['sport'], $sport)) {

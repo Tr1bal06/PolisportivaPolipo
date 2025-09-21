@@ -9,14 +9,14 @@
     //Comunico al sistema che riceverà una risposta JSON
     header('Content-Type: application/json');
 
-    $permessi = ['user', 'admin'];
+    $permessi = ['Allenatore', 'admin'];
 
 
     ob_start();
     include "get_squadra.php"; // esegue il PHP e cattura l’output
     $json = ob_get_clean();
 
-
+    
     // Decodifica il JSON in array associativo PHP
     $squadre = json_decode($json, true);
 
@@ -38,13 +38,13 @@
 
     // Query SQL con placeholders per ricavare i dati di maggior importanza, in modo sicuro, per ogni torneo 
     // query modificata per includere solo i tornei degli sport delle squadre dell'allenatore esclusi quelli a cui si partecipa di già
-    $query = "SELECT E_D.CodiceTorneo, E_D.Anno, E_D.Regolamento, T.Nome AS NomeTorneo, T.Sport
+    $query = "SELECT E_D.CodiceTorneo, E_D.Anno, E_D.Regolamento, T.Nome AS NomeTorneo, T.Sport , MaxSquadre
                 FROM EDIZIONE_TORNEO E_D
                 JOIN TORNEO T ON T.CodiceAttivita = E_D.CodiceTorneo
                 WHERE E_D.Anno >= CURRENT_DATE AND T.Sport IN ('" . implode("','", $sport) . "') 
-                AND NOT EXISTS (
+                AND (E_D.CodiceTorneo, E_D.Anno, E_D.Regolamento,  T.Nome , T.Sport, MaxSquadre) NOT IN (
                     
-                    SELECT E_D.CodiceTorneo, E_D.Anno, E_D.Regolamento, T.Nome AS NomeTorneo, T.Sport
+                    SELECT E_D.CodiceTorneo, E_D.Anno, E_D.Regolamento, T.Nome AS NomeTorneo, T.Sport , MaxSquadre
                     FROM ISCRIZIONI_TORNEO I 
                         JOIN SQUADRA S  ON S.Nome = I.NomeSquadra
                         JOIN EDIZIONE_TORNEO E_D ON E_D.CodiceTorneo = I.EdizioneTorneo AND E_D.Anno = I.AnnoTorneo
@@ -52,7 +52,6 @@
                         WHERE S.Allenatore = $codiceAllenatore AND I.AnnoTorneo >= CURRENT_DATE
                 )
                 ORDER BY E_D.Anno DESC;";
-                
     $result = $conn->query($query);
 
     if ($result === false) {
@@ -60,9 +59,6 @@
         http_response_code(500);
         exit;
     }
-
-    
-
 
     $tornei = $result->fetch_all(MYSQLI_ASSOC);
 
@@ -72,6 +68,23 @@
         $chiave = $torneo['CodiceTorneo'] . '-' . $torneo['Anno'];
         $tornei[$numero]['Sponsor'] = []; // Inizializzo sponsor vuoti
         $torneiMappa[$chiave] = &$tornei[$numero];
+    }
+
+    
+    //faccio una query per sapere quante squadre sono iscritte a ciascun torneo
+    $querySquadre = "SELECT I.EdizioneTorneo, I.AnnoTorneo, COUNT(*) AS NumSquadre 
+                     FROM ISCRIZIONI_TORNEO I
+                     WHERE  I.AnnoTorneo >= CURRENT_DATE
+                     GROUP BY I.EdizioneTorneo, I.AnnoTorneo;";
+
+    $numeroSquadre = $conn->query($querySquadre)->fetch_all(MYSQLI_ASSOC);
+    
+    //prendo i risultati in un array associativo e gli inserisco facilmente grazie alla mappa che ho fatto prima
+    foreach ($numeroSquadre as $num) {
+        $chiave = $num['EdizioneTorneo'] . '-' . $num['AnnoTorneo'];
+        if (isset($torneiMappa[$chiave])) {
+            $torneiMappa[$chiave]['NumSquadre'] =  $num['NumSquadre'];
+        }
     }
     
     // Query per prendere tutti gli sponsor di tutti i tornei in una volta sola
