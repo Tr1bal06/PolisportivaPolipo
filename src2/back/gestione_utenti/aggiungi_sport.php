@@ -68,8 +68,7 @@
             $conn->commit();
 
             } catch(Exception $e){
-                var_dump($e->getMessage());
-                die();
+                
                 $conn->rollback();
                 $default = "Errore nell'operazione!";
 
@@ -80,7 +79,7 @@
                 }
 
                 error($path, $default);
-                }
+            }
         success($path, 'Operazione avvenuta con successo!');
     }
 ?>

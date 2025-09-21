@@ -1,11 +1,15 @@
 <?php
-
+    /** 
+     * File: handler_disponibilita.php
+     * Auth: Jin
+     * Desc: Gestisce i giorni alla quale un medico da disponibilità
+    */
     include '../connessione.php';
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
 
     $permessi = ['admin','Medico'];
  
@@ -15,6 +19,7 @@
     }
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $conn->begin_transaction();
         try{
             // Recupera il giorno selezionato
             $giorno = htmlentities($_POST['giorni']);
@@ -60,10 +65,10 @@
                     $stmtElimina->execute();
                 }
             }
-            success('../../front/disponibilita/disponibilita_medico.php', 'Disponibilità registrata con successo!');
+            $conn->commit();
         }catch(Exception $e){
             error('../../front/disponibilita/disponibilita_medico.php', 'Errore nel inserimento!');
         }
-       
+       success('../../front/disponibilita/disponibilita_medico.php', 'Disponibilità registrata con successo!');
     }
 ?>

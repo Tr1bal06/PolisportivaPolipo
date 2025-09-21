@@ -1,10 +1,15 @@
 <?php
+    /**
+     * File: 
+     * Auth: Teox5
+     * Desc: 
+     */
     include '../connessione.php';
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
 
     $permessi = ['admin', 'Sponsor'];
 
@@ -32,5 +37,5 @@
             error('../../front/sponsor/sponsorizzazioni.php', 'Eliminazione fallita!');
         }
     }
-//made by Tha_Losco
+
 ?>
