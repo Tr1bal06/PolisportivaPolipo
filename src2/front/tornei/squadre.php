@@ -485,7 +485,7 @@
             </div>
           </div>
           <form action="../../back/tornei/eliminaSquadra.php" method="POST" class="logout" style="display:inline;">
-                  <input type="hidden" name="nome_squadra" value="${Nome}">
+                  <input type="hidden" name="nomeSquadra" value="${Nome}">
                  <button type="button" class="bottoniElimina">Elimina</button>
           </form>
         `;

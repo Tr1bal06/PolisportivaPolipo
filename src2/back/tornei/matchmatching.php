@@ -106,7 +106,7 @@
         $conn->commit();
     }catch(Exception $e){
         $conn->rollback();
-        $default = "Aggiornamento score fallito fallita!";
+        $default = "Aggiornamento score fallita!";
 
         $codiciGestiti = [20020];
 
