@@ -323,7 +323,6 @@ include "../navbar.php"; // Inclusione della barra di navigazione
             </th>
             <th>Regolamento</th>
             <th>Sponsor Torneo</th>
-            <th>Elimina</th> <!-- Colonna per eliminare la partecipazione, invia i dati CodiceTorneo, anno, CFPartecipante alla pagina EliminaTornei.php -->
           </tr>
         </thead>
         <tbody>
@@ -358,13 +357,12 @@ include "../navbar.php"; // Inclusione della barra di navigazione
         <div class="popup-elimina-content">
           <button class="close-popup" onclick="chiudiPopupRichiesta()">✕</button>
             <h2>Inserisci la squadra!</h2>
-            <form action = '../../back/allenatore/richiesta_elimina_sport.php' method = 'POST'  class="logout" id="forRichiesta">
+            <form action = '../../back/tornei/PartecipaTornei.php' method = 'POST'  class="logout" id="forRichiesta">
               <label>Squadra:
                 <div id="popup-select-squadra"></div>
               </label>
-              <input type="hidden" name="source" id="popup-source" value="">
-              <input type="hidden" name="sport" id="popup-sport" value="" >
-              <input type="hidden" name="livello" id="popup-livello" value="" >
+              <input type="hidden" name="CodiceTorneo" id="popup-Codice" value="">
+              <input type="hidden" name="Anno" id="popup-Anno" value="" >
               <div style="display: flex; justify-content: center; margin-top: 10px;">
               <button type="submit" form="forRichiesta"  class="btn-modifica">Partecipa</button>
             </div>
@@ -450,13 +448,7 @@ include "../navbar.php"; // Inclusione della barra di navigazione
             <td>${atto.Anno}</td>
             <td><a href="${atto.Regolamento}" target="_blank">Visualizza Regolamento</a></td>
             <td id="${sponsorId}"></td>
-            <td>
-              <form class="logout" action="../../back/tornei/EliminaTornei.php" method="POST">
-                <input type="hidden" name="CodiceTorneo" value="${atto.CodiceTorneo}">
-                <input type="hidden" name="Anno" value="${atto.Anno}">
-                <button type="submit" class="bottoniElimina"bt>Elimina</button>
-              </form>
-            </td>
+            
           </tr>`;
         tbody.innerHTML += row;
 
@@ -482,6 +474,11 @@ include "../navbar.php"; // Inclusione della barra di navigazione
     }
 
     function apriPopupElimina(sport) {
+        const codiceInput = document.getElementById('popup-Codice');
+        const annoInput = document.getElementById('popup-Anno');
+        codiceInput.value = sport.CodiceTorneo || '';
+        annoInput.value = sport.Anno || '';
+
         //console.log(sport);
         fetch(`../../back/tornei/get_squadra.php`) // Effettua chiamata GET al backend
         .then(res => res.json())
@@ -490,7 +487,7 @@ include "../navbar.php"; // Inclusione della barra di navigazione
             const popupSportInput = document.getElementById('popup-select-squadra');
             popupSportInput.innerHTML = ''; // Pulisce il contenuto precedente
             const selectSquadra = document.createElement('select');
-            selectSquadra.name = 'squadra';
+            selectSquadra.name = 'Squadra';
             selectSquadra.id = 'squadra';
             selectSquadra.classList.add('selectRuoli');
             selectSquadra.required = true;
