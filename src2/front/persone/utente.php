@@ -428,6 +428,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
   </div>
   
     <div class="container">
+      <? if (isset($_SESSION['caricheCodici']['Allenatore'])) { ?>
       <h1>Gli Sport che insegno </h1>
       <h2>Seleziona e insegna un nuovo sport!</h2>
         <form action="../../back/allenatore/handler_allenatore.php" method="post" id="formSport1">
@@ -442,13 +443,8 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
             </label>
             <button style="width:150px; margin: auto;" type="submit">Invia Richiesta</button>
         </form>
-        <? 
-          if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+  <? }?>
         
-      ?>
       <? if (isset($_SESSION['error_message'])){ ?>
           <div id="toast" class="toast">
               <div class="toast-icon">🐙</div>
@@ -466,6 +462,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
           </div>
           <?php unset($_SESSION['success_message']); ?>
       <?php } ?>
+    <? if (isset($_SESSION['caricheCodici']['Allenatore'])) { ?>
         <h2>I miei sport</h2>
         <div class="table-container">
       <table id="tabellaSport1">
@@ -479,8 +476,10 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
         <tbody></tbody>
       </table>
     </div>
+    <?}?>
     </div>
     <div class="container">
+      <? if (isset($_SESSION['caricheCodici']['Atleta'])) { ?>
       <h1>Gli Sport che pratico! </h1>
       <h2>Seleziona lo sport e il livello per iniziare a praticarlo!</h2>
         <form action="../../back/atleta/handler_atleta.php" method="post" id="formSport">
@@ -517,6 +516,7 @@ if (!controllo($_SESSION['ruolo'], $permessi)) {
         <tbody></tbody>
       </table>
     </div>
+    <? } ?>
       <div id="popupElimina" style="display:none;" class="popup-elimina">
         <div class="popup-elimina-content">
           <button class="close-popup" onclick="chiudiPopupRichiesta()">✕</button>
