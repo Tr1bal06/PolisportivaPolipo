@@ -128,15 +128,13 @@ async function init(EdizioneTorneo, AnnoTorneo) {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `EdizioneTorneo=${EdizioneTorneo}&AnnoTorneo=${AnnoTorneo}`
     });
+    const data = await res.json();
 
-    const data = await res.json(); // array di match dal DB
-
-    // --- configurazione base ---
     const N = SLOTS_COUNT; // 4,8,16
-    const totalSlots = N * 2 - 1; // es: 8 -> 15
-    const maxLevels = Math.log2(N) + 1; // es: N=8 => maxLevels=4 (lvl1:8, lvl2:4, lvl3:2, lvl4:1)
+    const totalSlots = N * 2 - 1;
+    const maxLevels = Math.log2(N) + 1;
 
-    // --- calcolo levelSizes e levelStarts (1-based slot indices) ---
+    // levelSizes / levelStarts (1-based slots)
     const levelSizes = [];
     const levelStarts = [];
     let cursor = 1;
@@ -147,48 +145,52 @@ async function init(EdizioneTorneo, AnnoTorneo) {
       cursor += size;
     }
 
-    // parent slot posizionale per match index idx nel round r
-    function parentForMatchInRound(r, idx) {
-      if (r + 1 > maxLevels) return null;
-      return levelStarts[r + 1] + idx;
+    const half = N / 2; // numero foglie per lato
+
+    // helper per cercare slot per nome (normalizza)
+    const norm = s => (s === null || s === undefined) ? '' : String(s).trim().toLowerCase();
+    function findSlotForName(map, name) {
+      if (!name) return null;
+      const t = norm(name);
+      for (const k of Object.keys(map)) {
+        const v = map[k];
+        if (v && v !== 'Da definire' && norm(v) === t) return parseInt(k, 10);
+      }
+      return null;
     }
 
-    // --- 1) riempio le foglie con Round === 1 (ordine assunto coerente dal back) ---
+    // helper: calcola slot parent per lato (left or right) e indice nel lato
+    // r = round number (1-based), side = 'left'|'right', indexInSide zero-based
+    function parentSlotForSideIndex(r, side, indexInSide) {
+      const parentLevel = r + 1;
+      if (parentLevel > maxLevels) return null;
+      const levelStart = levelStarts[parentLevel];
+      const totalParentsAtLevel = levelSizes[parentLevel]; // es: levelSizes[2] = 4
+      const leftParentsCount = Math.ceil(totalParentsAtLevel / 2); // o totalParentsAtLevel/2 (entrambe vanno bene)
+      // assegna: left occupy [levelStart .. levelStart+leftParentsCount-1]
+      if (side === 'left') {
+        return levelStart + indexInSide;
+      } else {
+        return levelStart + leftParentsCount + indexInSide;
+      }
+    }
+
+    // 1) riempi foglie (Round 1) in ordine ricevuto
     const teamSlots = {};
     const round1Matches = data.filter(m => parseInt(m.Round, 10) === 1);
-
     round1Matches.forEach((match, idx) => {
       const slotHome = idx * 2 + 1;
       const slotAway = idx * 2 + 2;
       teamSlots[slotHome] = match.SquadraCasa || 'Da definire';
       teamSlots[slotAway] = match.SquadraOspite || 'Da definire';
-
-      // se round1 già giocato, popola il parent (round2) posizionalmente
-      const scA = (typeof match.ScoreCasa !== 'undefined' && match.ScoreCasa !== null) ? Number(match.ScoreCasa) : NaN;
-      const scB = (typeof match.ScoreOspite !== 'undefined' && match.ScoreOspite !== null) ? Number(match.ScoreOspite) : NaN;
-      const bothZero = (Number.isFinite(scA) ? scA : 0) === 0 && (Number.isFinite(scB) ? scB : 0) === 0;
-      if (Number.isFinite(scA) || Number.isFinite(scB)) {
-        if (!bothZero) {
-          let winner = null;
-          if (Number.isFinite(scA) && Number.isFinite(scB)) {
-            winner = (scA > scB) ? match.SquadraCasa : (scB > scA ? match.SquadraOspite : null);
-          } else if (Number.isFinite(scA)) winner = match.SquadraCasa;
-          else if (Number.isFinite(scB)) winner = match.SquadraOspite;
-
-          const parent = parentForMatchInRound(1, idx);
-          if (parent) {
-            teamSlots[parent] = winner || 'Da definire';
-          }
-        }
-      }
     });
 
-    // assicurati che tutti gli slot esistano
+    // fallback "Da definire"
     for (let i = 1; i <= totalSlots; i++) {
       if (typeof teamSlots[i] === 'undefined' || teamSlots[i] === null) teamSlots[i] = 'Da definire';
     }
 
-    // --- 2) raggruppa le partite per round mantenendo l'ordine restituito dal server ---
+    // 2) organizza matches by round (mantieni ordine server)
     const matchesByRound = {};
     for (const m of data) {
       const rnum = parseInt(m.Round, 10) || 1;
@@ -196,37 +198,95 @@ async function init(EdizioneTorneo, AnnoTorneo) {
       matchesByRound[rnum].push(m);
     }
 
-    // --- 3) processa i round dall'1 fino a maxLevels-1, usando la posizione idx del match in quel round (posizionale) ---
+    // 3) processa round per round (1..maxLevels-1) ma suddividendo per lato
     for (let r = 1; r <= maxLevels - 1; r++) {
       const matchesThisRound = matchesByRound[r] || [];
-      for (let idx = 0; idx < matchesThisRound.length; idx++) {
-        const match = matchesThisRound[idx];
 
-        const rawA = match.ScoreCasa;
-        const rawB = match.ScoreOspite;
-        const scA = (rawA === null || rawA === undefined) ? NaN : Number(rawA);
-        const scB = (rawB === null || rawB === undefined) ? NaN : Number(rawB);
-        const bothZeroOrMissing = ((Number.isFinite(scA) ? scA : 0) === 0) && ((Number.isFinite(scB) ? scB : 0) === 0);
-        if (!Number.isFinite(scA) && !Number.isFinite(scB)) continue;
-        if (bothZeroOrMissing) continue;
+      // dividiamo i match in left/right/unknown basandoci sui slot correnti
+      const leftMatches = [];
+      const rightMatches = [];
+      const unknownMatches = [];
 
-        // determina vincitore
-        let winnerName = null;
-        if (Number.isFinite(scA) && Number.isFinite(scB)) {
-          if (scA > scB) winnerName = match.SquadraCasa;
-          else if (scB > scA) winnerName = match.SquadraOspite;
-          else continue;
-        } else if (Number.isFinite(scA)) winnerName = match.SquadraCasa;
-        else if (Number.isFinite(scB)) winnerName = match.SquadraOspite;
-        else continue;
+      for (const match of matchesThisRound) {
+        const slotA = findSlotForName(teamSlots, match.SquadraCasa);
+        const slotB = findSlotForName(teamSlots, match.SquadraOspite);
 
-        const parent = parentForMatchInRound(r, idx);
-        if (!parent) continue;
-        teamSlots[parent] = winnerName || 'Da definire';
+        // se uno dei due è riconosciuto sul lato sinistro => left
+        if ((slotA && slotA <= half) || (slotB && slotB <= half)) {
+          leftMatches.push(match);
+        } else if ((slotA && slotA > half) || (slotB && slotB > half)) {
+          rightMatches.push(match);
+        } else {
+          // non identificabile (es. entrambe "Da definire") -> rimandiamo a unknown
+          unknownMatches.push(match);
+        }
       }
-    }
 
-    // final fallback
+      // processa prima left, poi right, poi unknown
+      const processList = [
+        { list: leftMatches, side: 'left' },
+        { list: rightMatches, side: 'right' },
+        { list: unknownMatches, side: 'left' } // unknown li mettiamo a sinistra per fallback (o puoi dividerli)
+      ];
+
+      // numero di parent totali al livello successivo
+      const parentLevel = r + 1;
+      const totalParentsAtLevel = levelSizes[parentLevel];
+      const leftParentsCount = Math.ceil(totalParentsAtLevel / 2);
+
+      // iterazione su ciascuna lista
+      let leftIndex = 0;
+      let rightIndex = 0;
+      for (const group of processList) {
+        for (let idx = 0; idx < group.list.length; idx++) {
+          const match = group.list[idx];
+
+          // controlli score (skip se 0-0 o mancanti)
+          const scAraw = match.ScoreCasa;
+          const scBraw = match.ScoreOspite;
+          const scA = (scAraw === null || scAraw === undefined) ? NaN : Number(scAraw);
+          const scB = (scBraw === null || scBraw === undefined) ? NaN : Number(scBraw);
+          const bothZeroOrMissing = ((Number.isFinite(scA) ? scA : 0) === 0) && ((Number.isFinite(scB) ? scB : 0) === 0);
+          if (!Number.isFinite(scA) && !Number.isFinite(scB)) continue;
+          if (bothZeroOrMissing) continue;
+
+          // determina vincitore
+          let winner = null;
+          if (Number.isFinite(scA) && Number.isFinite(scB)) {
+            if (scA > scB) winner = match.SquadraCasa;
+            else if (scB > scA) winner = match.SquadraOspite;
+            else continue; // pareggio non gestito
+          } else if (Number.isFinite(scA)) winner = match.SquadraCasa;
+          else if (Number.isFinite(scB)) winner = match.SquadraOspite;
+          else continue;
+
+          // calcola parent slot secondo il lato e indice
+          let parentSlot = null;
+          if (group.list === leftMatches) {
+            parentSlot = parentSlotForSideIndex(r, 'left', leftIndex);
+            leftIndex++;
+          } else if (group.list === rightMatches) {
+            parentSlot = parentSlotForSideIndex(r, 'right', rightIndex);
+            rightIndex++;
+          } else {
+            // unknown: preferiamo assegnare alla prima posizione libera nella level successiva
+            // controllo prima area left, poi right
+            // cerco primo slot in [levelStarts[parentLevel] .. levelStarts[parentLevel]+totalParentsAtLevel-1] che sia 'Da definire'
+            const start = levelStarts[parentLevel];
+            let found = null;
+            for (let s = start; s < start + totalParentsAtLevel; s++) {
+              if (!teamSlots[s] || teamSlots[s] === 'Da definire') { found = s; break; }
+            }
+            parentSlot = found;
+          }
+
+          if (!parentSlot) continue;
+          teamSlots[parentSlot] = winner || 'Da definire';
+        }
+      }
+    } // fine foreach round
+
+    // assicurati che tutti gli slot esistano
     for (let i = 1; i <= totalSlots; i++) {
       if (typeof teamSlots[i] === 'undefined' || teamSlots[i] === null) teamSlots[i] = 'Da definire';
     }
@@ -237,6 +297,7 @@ async function init(EdizioneTorneo, AnnoTorneo) {
     return {};
   }
 }
+
 
 // =================== BRACKET BUILD ===================
 const bracketEl = document.getElementById('bracket');
@@ -414,7 +475,6 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
   });
 
   // ====== NEW: build parent levels per level (allocating slot IDs level-wise) ======
-  // compute levelSizes and levelStarts (same as in init but here local for the build)
   const levelSizes = [];
   const levelStarts = [];
   let cursor = 1;
@@ -432,16 +492,13 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
   let currentLeft = leftLeafs.slice();
   let currentRight = rightLeafs.slice();
 
-  // for each parent level r from 1..rounds-1, create parents for left and right, then assign slot ids level-wise
   for (let r = 1; r < rounds; r++) {
     const bodyLeft = leftCols[r];
     const bodyRight = rightColsForBuild[r];
-    // ensure body height based on current length
     const totalHeight = currentLeft.length * nodeH + (currentLeft.length - 1) * gap;
     bodyLeft.style.height = (totalHeight + 40) + 'px';
     bodyRight.style.height = (totalHeight + 40) + 'px';
 
-    // create parent nodes (DOM) but do not assign slot ids yet
     const parentsLeft = [];
     for (let p = 0; p < Math.ceil(currentLeft.length / 2); p++) {
       const el = document.createElement('div'); el.className='team-node';
@@ -470,14 +527,11 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
       parentsRight.push({ el, children:[childA, childB], name:'', present:false, slot:null });
     }
 
-    // now assign slot ids per level: left parents first, then right parents
     const levelStart = levelStarts[r+1]; // e.g., for r=1 and slots=8 => levelStart = 9
-    // assign left
     for (let i = 0; i < parentsLeft.length; i++) {
       const slotId = levelStart + i;
       const obj = parentsLeft[i];
       obj.slot = slotId;
-      // label from provided slotsMap if exists
       const name = (slotsMap && typeof slotsMap[slotId] !== 'undefined') ? slotsMap[slotId] : 'Da definire';
       obj.el.querySelector('.label').textContent = name;
       obj.name = (name && name !== 'Da definire') ? name : '';
@@ -485,7 +539,6 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
       obj.el.classList.toggle('muted', name === 'Da definire');
       nodesBySlot[slotId] = obj;
     }
-    // assign right (continue indices after left)
     const rightStart = levelStart + parentsLeft.length;
     for (let j = 0; j < parentsRight.length; j++) {
       const slotId = rightStart + j;
@@ -499,16 +552,13 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
       nodesBySlot[slotId] = obj;
     }
 
-    // push to levels arrays and prepare for next iteration
     leftParentsLevels.push(parentsLeft);
     rightParentsLevels.push(parentsRight);
-
-    // set currentLeft/currentRight to parents for next round
     currentLeft = parentsLeft.slice();
     currentRight = parentsRight.slice();
   }
 
-  // Determine leftFinalSource & rightFinalSource (the last elements in deepest parent arrays or leafs fallback)
+  // Determine leftFinalSource & rightFinalSource
   const leftFinalSource = leftParentsLevels.length ? leftParentsLevels[leftParentsLevels.length-1][0] : leftLeafs[0];
   const rightFinalSource = rightParentsLevels.length ? rightParentsLevels[rightParentsLevels.length-1][0] : rightLeafs[0];
 
@@ -524,7 +574,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
   finalRightBox.style.display = 'flex';
   finalRightBox.classList.toggle('muted', rightFinalName === 'Da definire');
 
-  // collect matches: for leafs (round1) and for each parent level use leftParentsLevels and rightParentsLevels arrays
+  // collect matches
   function collectMatches(levels, leafs, sideName){
     const list = [];
     // leaf pairings
@@ -556,7 +606,57 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
 
   const allMatches = [...leftMatches, ...rightMatches, finalMatch];
 
-  // helper find match for clicked element
+  // ---------- robust helpers to determine name & slot for any "part" ----------
+  function getNameForPart(part) {
+    if (!part) return 'Da definire';
+    // 1) explicit slot in slotsMap
+    if (part.slot) {
+      const nm = (typeof slotsMap !== 'undefined' && slotsMap[part.slot]) ? slotsMap[part.slot] : null;
+      if (nm && nm !== 'Da definire') return nm;
+    }
+    // 2) explicit name property
+    if (part.name && part.name !== '') return part.name;
+    // 3) source (finalObj wrappers)
+    if (part.source) {
+      const s = getNameForPart(part.source);
+      if (s && s !== 'Da definire') return s;
+    }
+    // 4) children recursive
+    if (part.children && Array.isArray(part.children)) {
+      for (const ch of part.children) {
+        if (!ch) continue;
+        const nm = getNameForPart(ch);
+        if (nm && nm !== 'Da definire') return nm;
+      }
+    }
+    return 'Da definire';
+  }
+
+  function getSlotForPart(part) {
+    if (!part) return '';
+    if (part.slot) return part.slot;
+    if (part.source) {
+      const s = getSlotForPart(part.source);
+      if (s) return s;
+    }
+    if (part.children && Array.isArray(part.children)) {
+      for (const ch of part.children) {
+        if (!ch) continue;
+        const s = getSlotForPart(ch);
+        if (s) return s;
+      }
+    }
+    return '';
+  }
+
+  // resolve competitors using helpers
+  function resolveCompetitors(match){
+    const aName = getNameForPart(match.a);
+    const bName = getNameForPart(match.b);
+    return [aName || 'Da definire', bName || 'Da definire'];
+  }
+
+  // helper: find match for clicked node element (including center small boxes)
   function findMatchForNode(el){
     for(const m of allMatches){
       if(m.side === 'center'){
@@ -569,33 +669,6 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
       }
     }
     return null;
-  }
-
-  function resolveCompetitors(match){
-    function rep(part){
-      if(!part) return 'TBA';
-      if(part.source) {
-        if(part.source.present && part.source.name) return part.source.name;
-        if(part.source.children && part.source.children.length){
-          for(const ch of part.source.children){
-            if(ch && ch.present && ch.name) return ch.name;
-          }
-        }
-        return 'TBA';
-      }
-      if(part.children && part.children.length){
-        for(const ch of part.children){
-          if(!ch) continue;
-          if(ch.present && ch.name) return ch.name;
-          if(ch.children && ch.children.length){
-            for(const ch2 of ch.children){ if(ch2 && ch2.present && ch2.name) return ch2.name; }
-          }
-        }
-      }
-      if(part.present && part.name) return part.name;
-      return 'TBA';
-    }
-    return [rep(match.a), rep(match.b)];
   }
 
   // clickable nodes (only if present)
@@ -621,8 +694,9 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
       formTeamA.value = a;
       formTeamB.value = b;
 
-      formSlotA.value = (match.a && match.a.slot) ? match.a.slot : (match.a && match.a.source && match.a.source.slot ? match.a.source.slot : '');
-      formSlotB.value = (match.b && match.b.slot) ? match.b.slot : (match.b && match.b.source && match.b.source.slot ? match.b.source.slot : '');
+      // NOTE: use robust slot resolution
+      formSlotA.value = getSlotForPart(match.a) || '';
+      formSlotB.value = getSlotForPart(match.b) || '';
 
       modal.style.display='flex';
     });
@@ -636,6 +710,8 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
     teamAEl.textContent = a; teamBEl.textContent = b; scoreA.value=''; scoreB.value='';
     matchSideInput.value = match.side; matchRoundInput.value = match.round; matchIndexInput.value = match.index;
     formTeamA.value = a; formTeamB.value = b;
+    formSlotA.value = getSlotForPart(match.a) || '';
+    formSlotB.value = getSlotForPart(match.b) || '';
     modal.style.display='flex';
   });
   finalRightBox.addEventListener('click', (ev)=>{
@@ -646,6 +722,8 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
     teamAEl.textContent = a; teamBEl.textContent = b; scoreA.value=''; scoreB.value='';
     matchSideInput.value = match.side; matchRoundInput.value = match.round; matchIndexInput.value = match.index;
     formTeamA.value = a; formTeamB.value = b;
+    formSlotA.value = getSlotForPart(match.a) || '';
+    formSlotB.value = getSlotForPart(match.b) || '';
     modal.style.display='flex';
   });
 
