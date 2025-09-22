@@ -1,5 +1,9 @@
 <?php
-    //includo la connesione e apro la sessione
+    /** 
+     * File: 
+     * Auth: 
+     * Desc: 
+    */
     include "../connessione.php";
     include "../function.php";
     if(session_status() === PHP_SESSION_NONE) {

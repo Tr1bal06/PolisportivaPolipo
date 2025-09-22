@@ -400,7 +400,7 @@ include "../navbar.php"; // Inclusione della barra di navigazione
       data.forEach(atto => {
         const sponsorId = `codice${atto.CodiceTorneo}+${atto.Anno}`;
         const numsquad = (atto.NumSquadre === undefined) ? 0 : atto.NumSquadre;
-        const bottoneIscrizzione = `
+        let bottoneIscrizzione = `
                   <button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${atto.CodiceTorneo+atto.Anno}" onclick='apriPopupElimina(${JSON.stringify(atto)})'  >partecipa</button>
               `;
 
@@ -451,6 +451,12 @@ include "../navbar.php"; // Inclusione della barra di navigazione
       console.log(data);
       data.forEach(atto => {
         const sponsorId = `codice${atto.CodiceTorneo}+${atto.Anno}`;
+        const numsquad = (atto.NumSquadre === undefined) ? 0 : atto.NumSquadre;
+        var bottoneIscrizzione = `${atto.NumSquadre} / ${atto.MaxSquadre}`;
+        console.log(atto)
+        if(numsquad === atto.MaxSquadre){
+          bottoneIscrizzione = ` <form action="torneo.php" class="logout" method="POST"><input type="hidden" name="Codice" value="${atto.CodiceTorneo}"><input type="hidden" name="MaxSquadre" value="${atto.MaxSquadre}"></input><input type="hidden" name="Anno" value="${atto.Anno}"></input><button type="submit" style="padding: 0.4rem 1.2rem;" id="bottone${atto.CodiceTorneo+atto.Anno}"  >Tabellone</button>`;
+        }
         const row = `
           <tr>
             <td>${atto.CodiceTorneo}</td>
@@ -458,7 +464,7 @@ include "../navbar.php"; // Inclusione della barra di navigazione
             <td>${atto.Sport}</td>
             <td>${atto.Anno}</td>
             <td><a href="${atto.Regolamento}" target="_blank">Visualizza Regolamento</a></td>
-            <td>${atto.NumSquadre} / ${atto.MaxSquadre}</td>
+            <td>${bottoneIscrizzione} </td>
             <td id="${sponsorId}"></td>
             
           </tr>`;

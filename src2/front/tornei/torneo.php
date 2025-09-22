@@ -1,71 +1,73 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Tabellone Dinamico - Mirror Right (FIX)</title>
-<style>
-  :root{
-    --bg:#061639;
-    --accent:#f6c84c;
-    --node:#c93b3b;
-    --line:#ffffff;
-    --text:#e8f0ff;
-    --muted:rgba(232,240,255,0.6);
-    --node-h:42px;
-    --node-w:170px;
-    --col-w:220px;
-    --gap-vertical:18px;
-    font-family:Inter, "Helvetica Neue", Arial, sans-serif;
-  }
-  html,body{height:100%;margin:0;background: linear-gradient(to bottom right, #4c5c96, #3a4a7d);color:var(--text);}
-  .page{padding:18px;}
-  h1{margin:0 0 12px 0;color:var(--accent);font-size:18px;}
-  .bracket-wrap{position:relative;padding:12px;border-radius:12px;overflow:hidden;}
-  .bracket{
-    display:flex;
-    gap:26px;
-    align-items:flex-start;
-    justify-content:center;
-    position:relative;
-    padding:28px 12px;
-    min-height:560px;
-  }
-  .round{flex:0 0 var(--col-w);min-width:150px;position:relative;z-index:2;}
-  .round .title{color:var(--muted);font-size:12px;margin-bottom:8px;text-transform:uppercase;font-weight:600;}
-  .col-body{position:relative;min-height:420px;}
-  .team-node{
-    position:absolute;height:var(--node-h);width:var(--node-w);display:flex;align-items:center;gap:10px;padding:6px 10px;
-    box-sizing:border-box;border-radius:8px;background:linear-gradient(180deg, #26385d 0%, #364e73 100%);
-    color:var(--text);font-weight:700;font-size:13px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;cursor:pointer;
-    transition:transform .12s ease,box-shadow .12s ease;
-  }
-  .team-node .left-bar{width:6px;height:100%;border-radius:6px;background:var(--node);flex-shrink:0;}
-  .team-node .label{padding-left:8px;}
-  .team-node:hover{transform:translateY(-4px);box-shadow:0 10px 26px rgba(0,0,0,0.55);}
-  .center-col{width:240px;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:3;position:relative;}
-  .trophy-wrap{width:120px;height:120px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(246,200,76,0.12),rgba(246,200,76,0.04));box-shadow:inset 0 3px 12px rgba(246,200,76,0.06);}
-  .trophy-wrap svg{width:160px;height:160px;}
-  .winner-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:12px;}
-  .winner-text{font-size:16px;font-weight:800;color:var(--accent);display:none;}
-  .winner-team{font-size:18px;font-weight:900;color:#fff;display:none;}
-  .center-finalists{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:12px;z-index:4;}
-  .final-team{width:150px;height:34px;border-radius:8px;display:flex;align-items:center;padding:6px;box-sizing:border-box;background:linear-gradient(180deg, #26385d 0%, #364e73 100%);font-weight:800;cursor:pointer;}
-  .svg-lines{position:absolute;left:0;top:0;right:0;bottom:0;z-index:1;pointer-events:none;}
-  .modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:9999;}
-  .modal{width:420px;background-color: #3a4a7d;padding:16px;border-radius:12px;color:var(--text);box-shadow:0 18px 40px rgba(0,0,0,0.6);}
-  .modal h3{margin:0 0 8px 0;color:var(--accent);}
-  .teams{display:flex;gap:10px;margin-bottom:10px;}
-  .team{flex:1;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:center;font-weight:800;}
-  .score-form{display:flex;gap:8px;margin-bottom:10px;align-items:center;}
-  .score-form input[type="number"]{width:80px;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--text);}
-  .actions{display:flex;gap:8px;justify-content:flex-end;}
-  .btn{padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;border:0;}
-  .btn.primary{background:var(--accent);color:#08102a;}
-  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);}
-  @media (max-width:1100px){:root{--node-w:150px;--col-w:160px;} .round{flex:0 0 var(--col-w);}}
-  @media (max-width:720px){.bracket{flex-direction:column;align-items:center;} .center-col{order:-1;margin-bottom:14px;}}
-</style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Tabellone Dinamico - Torneo</title>
+  <style>
+    :root{
+      --bg:#061639;
+      --accent:#f6c84c;
+      --node:#c93b3b;
+      --line:#ffffff;
+      --text:#e8f0ff;
+      --muted:rgba(232,240,255,0.6);
+      --node-h:42px;
+      --node-w:170px;
+      --col-w:220px;
+      --gap-vertical:18px;
+      font-family:Inter, "Helvetica Neue", Arial, sans-serif;
+    }
+    html,body{height:100%;margin:0;background: linear-gradient(to bottom right, #4c5c96, #3a4a7d);color:var(--text);}
+    .page{padding:18px;}
+    h1{margin:0 0 12px 0;color:var(--accent);font-size:18px;}
+    .bracket-wrap{position:relative;padding:12px;border-radius:12px;overflow:hidden;}
+    .bracket{
+      display:flex;
+      gap:26px;
+      align-items:flex-start;
+      justify-content:center;
+      position:relative;
+      padding:28px 12px;
+      min-height:560px;
+    }
+    .round{flex:0 0 var(--col-w);min-width:150px;position:relative;z-index:2;}
+    .round .title{color:var(--muted);font-size:12px;margin-bottom:8px;text-transform:uppercase;font-weight:600;}
+    .col-body{position:relative;min-height:420px;}
+    .team-node{
+      position:absolute;height:var(--node-h);width:var(--node-w);display:flex;align-items:center;gap:10px;padding:6px 10px;
+      box-sizing:border-box;border-radius:8px;background:linear-gradient(180deg, #26385d 0%, #364e73 100%);
+      color:var(--text);font-weight:700;font-size:13px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;cursor:pointer;
+      transition:transform .12s ease,box-shadow .12s ease;
+    }
+    .team-node .left-bar{width:6px;height:100%;border-radius:6px;background:var(--node);flex-shrink:0;}
+    .team-node .label{padding-left:8px;}
+    .team-node:hover{transform:translateY(-4px);box-shadow:0 10px 26px rgba(0,0,0,0.55);}
+    .team-node.muted{ opacity: 0.6; box-shadow: none; border: 1px dashed rgba(255,255,255,0.06); }
+    .team-node.muted .label { color: var(--muted); font-weight:700; }
+    .center-col{width:240px;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:3;position:relative;}
+    .trophy-wrap{width:120px;height:120px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(246,200,76,0.12),rgba(246,200,76,0.04));box-shadow:inset 0 3px 12px rgba(246,200,76,0.06);}
+    .trophy-wrap svg{width:160px;height:160px;}
+    .winner-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:12px;}
+    .winner-text{font-size:16px;font-weight:800;color:var(--accent);display:none;}
+    .winner-team{font-size:18px;font-weight:900;color:#fff;display:none;}
+    .center-finalists{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:12px;z-index:4;}
+    .final-team{width:150px;height:34px;border-radius:8px;display:flex;align-items:center;padding:6px;box-sizing:border-box;background:linear-gradient(180deg, #26385d 0%, #364e73 100%);font-weight:800;cursor:pointer;}
+    .svg-lines{position:absolute;left:0;top:0;right:0;bottom:0;z-index:1;pointer-events:none;}
+    .modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:9999;}
+    .modal{width:420px;background-color: #3a4a7d;padding:16px;border-radius:12px;color:var(--text);box-shadow:0 18px 40px rgba(0,0,0,0.6);}
+    .modal h3{margin:0 0 8px 0;color:var(--accent);}
+    .teams{display:flex;gap:10px;margin-bottom:10px;}
+    .team{flex:1;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:center;font-weight:800;}
+    .score-form{display:flex;gap:8px;margin-bottom:10px;align-items:center;} 
+    .score-form input[type="number"]{width:80px;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--text);}
+    .actions{display:flex;gap:8px;justify-content:flex-end;}
+    .btn{padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;border:0;}
+    .btn.primary{background:var(--accent);color:#08102a;}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);}
+    @media (max-width:1100px){:root{--node-w:150px;--col-w:160px;} .round{flex:0 0 var(--col-w);} }
+    @media (max-width:720px){.bracket{flex-direction:column;align-items:center;} .center-col{order:-1;margin-bottom:14px;}}
+  </style>
 </head>
 <body>
   <div class="page">
@@ -83,12 +85,24 @@
             <div id="teamA" class="team">Team A</div>
             <div id="teamB" class="team">Team B</div>
           </div>
-          <form id="scoreForm">
+
+          <form id="scoreForm" action="../../back/tornei/matchmatching.php" method="POST">
             <div class="score-form">
-              <input id="scoreA" type="number" min="0" placeholder="0" required />
+              <input id="scoreA" name="scoreA" type="number" min="0" placeholder="0" required />
               <span style="color:var(--muted);">-</span>
-              <input id="scoreB" type="number" min="0" placeholder="0" required />
+              <input id="scoreB" name="scoreB" type="number" min="0" placeholder="0" required />
             </div>
+
+            <input type="hidden" name="match_side" id="match_side" value="">
+            <input type="hidden" name="match_round" id="match_round" value="">
+            <input type="hidden" name="match_index" id="match_index" value="">
+            <input type="hidden" name="teamA" id="formTeamA" value="">
+            <input type="hidden" name="teamB" id="formTeamB" value="">
+            <input type="hidden" name="slotA" id="formSlotA" value="">
+            <input type="hidden" name="slotB" id="formSlotB" value="">
+            <input type="hidden" name="EdizioneTorneo" value="<?= $_POST['Codice'] ?>">
+            <input type="hidden" name="AnnoTorneo" value="<?= $_POST['Anno'] ?>">
+
             <div class="actions">
               <button type="button" id="closeModal" class="btn ghost">Annulla</button>
               <button type="submit" class="btn primary">Salva</button>
@@ -101,32 +115,194 @@
   </div>
 
 <script>
-/* ================= CONFIGURAZIONE DI PROVA =================
-   Cambia SLOTS_COUNT (4/8/16) e teamSlots per testare.
-===========================================================*/
-const SLOTS_COUNT = 4; // 4,8 o 16
+/* ================= CONFIG ================= */
+const SLOTS_COUNT = <?= intval($_POST['MaxSquadre']); ?>; // 4,8 o 16
+const EdizioneTorneo = <?= $_POST['Codice'] ?>;
+const AnnoTorneo = '<?= $_POST['Anno'] ?>';
 
-const teamSlots = {
-  1: "Paris",
-  2: "Liverpool",
-  3: "Club Brugge",
-  4: "Aston Villa",
-  5: "Real Madrid",
-  6: "Atleti",
-  7: "PSV",
-  8: "Arsenal",
-  9: "Benfica",
- 10: "Barcellona",
- 11: "B. Dortmund",
- 12: "Lille",
- 13: "Bayern",
- 14: "Leverkusen",
- 15: "Feyenoord",
- 16: "Inter"
-};
+// =================== INIT fetch squads (posizionale + propagazione dei vincitori) ===================
+async function init(EdizioneTorneo, AnnoTorneo) {
+  try {
+    const res = await fetch("../../back/tornei/get_squadre_torneo.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `EdizioneTorneo=${EdizioneTorneo}&AnnoTorneo=${AnnoTorneo}`
+    });
+    const data = await res.json();
 
-let layoutLeft = [];
+    const N = SLOTS_COUNT; // 4,8,16
+    const totalSlots = N * 2 - 1;
+    const maxLevels = Math.log2(N) + 1;
 
+    // levelSizes / levelStarts (1-based slots)
+    const levelSizes = [];
+    const levelStarts = [];
+    let cursor = 1;
+    for (let lvl = 1; lvl <= maxLevels; lvl++) {
+      const size = N / Math.pow(2, lvl - 1);
+      levelSizes[lvl] = size;
+      levelStarts[lvl] = cursor;
+      cursor += size;
+    }
+
+    // normalizza nomi
+    const norm = s => (s === null || s === undefined) ? '' : String(s).trim().toLowerCase();
+    function findSlotForName(map, name) {
+      if (!name) return null;
+      const t = norm(name);
+      for (const k of Object.keys(map)) {
+        const v = map[k];
+        if (v && v !== 'Da definire' && norm(v) === t) return parseInt(k, 10);
+      }
+      return null;
+    }
+
+    // calcola parent slot (side e indexInSide)
+    function parentSlotForSideIndex(r, side, indexInSide) {
+      const parentLevel = r + 1;
+      if (parentLevel > maxLevels) return null;
+      const levelStart = levelStarts[parentLevel];
+      const totalParentsAtLevel = levelSizes[parentLevel];
+      const leftParentsCount = Math.ceil(totalParentsAtLevel / 2);
+      if (side === 'left') {
+        return levelStart + indexInSide;
+      } else {
+        return levelStart + leftParentsCount + indexInSide;
+      }
+    }
+
+    // 1) riempi foglie (Round 1)
+    const teamSlots = {};
+    const round1Matches = data.filter(m => parseInt(m.Round, 10) === 1);
+    round1Matches.forEach((match, idx) => {
+      const slotHome = idx * 2 + 1;
+      const slotAway = idx * 2 + 2;
+      teamSlots[slotHome] = match.SquadraCasa || 'Da definire';
+      teamSlots[slotAway] = match.SquadraOspite || 'Da definire';
+    });
+
+    // fallback "Da definire"
+    for (let i = 1; i <= totalSlots; i++) {
+      if (typeof teamSlots[i] === 'undefined' || teamSlots[i] === null) teamSlots[i] = 'Da definire';
+    }
+
+    // 2) organizza matches by round (mantieni ordine server)
+    const matchesByRound = {};
+    for (const m of data) {
+      const rnum = parseInt(m.Round, 10) || 1;
+      if (!matchesByRound[rnum]) matchesByRound[rnum] = [];
+      matchesByRound[rnum].push(Object.assign({}, m)); // copia per non mutate originali
+    }
+
+    // 3) processa round per round (1..maxLevels-1)
+    for (let r = 1; r <= maxLevels - 1; r++) {
+      const matchesThisRound = matchesByRound[r] || [];
+
+      // calcola parent level e soglia dinamica per dividere i lati correttamente
+      const parentLevel = r + 1;
+      const startParent = levelStarts[parentLevel];
+      const parentsCount = levelSizes[parentLevel];
+      const leftEnd = startParent + Math.floor(parentsCount / 2) - 1; // ultimo slot del lato sinistro in quel livello
+
+      const leftMatches = [];
+      const rightMatches = [];
+      const unknownMatches = [];
+
+      // prima: annota slotA/slotB (se presenti nella map corrente)
+      for (const match of matchesThisRound) {
+        const slotA = findSlotForName(teamSlots, match.SquadraCasa);
+        const slotB = findSlotForName(teamSlots, match.SquadraOspite);
+        match.__slotA = slotA;
+        match.__slotB = slotB;
+
+        const knownSlots = [slotA, slotB].filter(s => s !== null);
+        if (knownSlots.length > 0) {
+          const avg = knownSlots.reduce((a,b)=>a+b,0) / knownSlots.length;
+          if (avg <= leftEnd) leftMatches.push(match);
+          else rightMatches.push(match);
+        } else {
+          unknownMatches.push(match);
+        }
+      }
+
+      // Ordina i gruppi in base alla posizione reale nel tabellone (minSlot)
+      const sortByMinSlot = (a,b) => {
+        const ma = Math.min(a.__slotA || Infinity, a.__slotB || Infinity);
+        const mb = Math.min(b.__slotA || Infinity, b.__slotB || Infinity);
+        return ma - mb;
+      };
+      leftMatches.sort(sortByMinSlot);
+      rightMatches.sort(sortByMinSlot);
+      // unknownMatches rimangono nell'ordine server (o puoi ordinarli per Gruppo se preferisci)
+
+      // processa i gruppi nell'ordine left -> right -> unknown
+      let leftIndex = 0;
+      let rightIndex = 0;
+      const processGroups = [
+        { list: leftMatches, side: 'left' },
+        { list: rightMatches, side: 'right' },
+        { list: unknownMatches, side: 'left' } // fallback
+      ];
+
+      for (const group of processGroups) {
+        for (let i = 0; i < group.list.length; i++) {
+          const match = group.list[i];
+
+          // controlli score (skip se 0-0 o mancanti)
+          const scAraw = match.ScoreCasa;
+          const scBraw = match.ScoreOspite;
+          const scA = (scAraw === null || scAraw === undefined) ? NaN : Number(scAraw);
+          const scB = (scBraw === null || scBraw === undefined) ? NaN : Number(scBraw);
+          const bothZeroOrMissing = ((Number.isFinite(scA) ? scA : 0) === 0) && ((Number.isFinite(scB) ? scB : 0) === 0);
+          if (!Number.isFinite(scA) && !Number.isFinite(scB)) continue;
+          if (bothZeroOrMissing) continue;
+
+          // determina vincitore
+          let winner = null;
+          if (Number.isFinite(scA) && Number.isFinite(scB)) {
+            if (scA > scB) winner = match.SquadraCasa;
+            else if (scB > scA) winner = match.SquadraOspite;
+            else continue;
+          } else if (Number.isFinite(scA)) winner = match.SquadraCasa;
+          else if (Number.isFinite(scB)) winner = match.SquadraOspite;
+          else continue;
+
+          let parentSlot = null;
+          if (group.list === leftMatches) {
+            parentSlot = parentSlotForSideIndex(r, 'left', leftIndex);
+            leftIndex++;
+          } else if (group.list === rightMatches) {
+            parentSlot = parentSlotForSideIndex(r, 'right', rightIndex);
+            rightIndex++;
+          } else {
+            // unknown: metti nel primo slot libero del livello parent
+            const start = levelStarts[parentLevel];
+            for (let s = start; s < start + parentsCount; s++) {
+              if (!teamSlots[s] || teamSlots[s] === 'Da definire') { parentSlot = s; break; }
+            }
+          }
+
+          if (parentSlot) {
+            teamSlots[parentSlot] = winner || 'Da definire';
+          }
+        }
+      } // fine processGroups
+    } // fine foreach round
+
+    // assicurati che tutti gli slot esistano
+    for (let i = 1; i <= totalSlots; i++) {
+      if (typeof teamSlots[i] === 'undefined' || teamSlots[i] === null) teamSlots[i] = 'Da definire';
+    }
+
+    return teamSlots;
+  } catch (err) {
+    console.error("Errore durante init:", err);
+    return {};
+  }
+}
+
+
+// =================== BRACKET BUILD ===================
 const bracketEl = document.getElementById('bracket');
 const svg = document.getElementById('svgLines');
 const modal = document.getElementById('modal');
@@ -135,6 +311,14 @@ const teamBEl = document.getElementById('teamB');
 const scoreA = document.getElementById('scoreA');
 const scoreB = document.getElementById('scoreB');
 const modalMatchLabel = document.getElementById('modalMatchLabel');
+
+const matchSideInput = document.getElementById('match_side');
+const matchRoundInput = document.getElementById('match_round');
+const matchIndexInput = document.getElementById('match_index');
+const formTeamA = document.getElementById('formTeamA');
+const formTeamB = document.getElementById('formTeamB');
+const formSlotA = document.getElementById('formSlotA');
+const formSlotB = document.getElementById('formSlotB');
 
 const nodeH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--node-h')) || 42;
 const nodeW = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--node-w')) || 170;
@@ -160,18 +344,13 @@ function build(slots, slotsMap){
   clearAll();
 
   const half = Math.floor(slots/2);
-  if(!layoutLeft || layoutLeft.length !== half){
-    layoutLeft = [];
-    for(let i=1;i<=half;i++) layoutLeft.push(i);
-  }
-
-  const rounds = Math.log2(slots); // per lato
+  const rounds = Math.log2(slots); // es. slots=8 -> rounds=3 (round1 leaves, round2 parents, round3 parents)
 
   // left columns
   const leftCols = [];
   for(let r=0;r<rounds;r++) leftCols.push(createRound( `Round ${r+1}`));
 
-  // center column (trofeo + winner badge + finalists small boxes)
+  // center column (trofeo)
   const centerCol = document.createElement('div'); centerCol.className='center-col';
   const winnerWrap = document.createElement('div'); winnerWrap.className='winner-wrap';
   const winnerText = document.createElement('div'); winnerText.className='winner-text'; winnerText.textContent = 'WINNER!';
@@ -214,18 +393,18 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
 </svg>`;
   centerCol.appendChild(trophy);
 
-  // finalists small boxes (these are dynamic and clickable)
   const finalistsWrap = document.createElement('div'); finalistsWrap.className='center-finalists';
-  const finalLeftBox = document.createElement('div'); finalLeftBox.className='final-team'; finalLeftBox.style.display='none';
-  const finalRightBox = document.createElement('div'); finalRightBox.className='final-team'; finalRightBox.style.display='none';
+  const finalLeftBox = document.createElement('div'); finalLeftBox.className='final-team';
+  const finalRightBox = document.createElement('div'); finalRightBox.className='final-team';
   finalistsWrap.appendChild(finalLeftBox); finalistsWrap.appendChild(finalRightBox);
   centerCol.appendChild(finalistsWrap);
 
   bracketEl.appendChild(centerCol);
 
-  // right columns (we will create them and append, but for the building logic we will use a reversed copy)
+  // right columns (we will append similarly)
   const rightCols = [];
   for(let r=rounds;r>0;r--) rightCols.push(createRound( `Round ${r}`));
+  const rightColsForBuild = rightCols.slice().reverse(); // now rightColsForBuild[0] matches leftCols[0] semantics
 
   // helper create node
   const nodesBySlot = {};
@@ -238,7 +417,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
     return { el, slot, name:'', present:false, children:[] };
   }
 
-  // layout first column left with layoutLeft order and compute top positions
+  // layout first column left (leafs)
   function layoutFirstLeft(body, order){
     const count = order.length;
     const totalHeight = count * nodeH + (count-1) * gap;
@@ -255,33 +434,28 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
     return arr;
   }
 
+  // leaves / ordering
+  const layoutLeft = [];
+  for(let i=1;i<=half;i++) layoutLeft.push(i);
   const leftLeafs = layoutFirstLeft(leftCols[0], layoutLeft);
 
+  // set center trophy height based on slots
   const colonnaTrofeo  = document.querySelector('.center-col');
+  if(slots === 4) colonnaTrofeo.style.height = '180px';
+  else if(slots === 8) colonnaTrofeo.style.height = '300px';
+  else if(slots === 16) colonnaTrofeo.style.height = '540px';
 
-  if(SLOTS_COUNT === 4) colonnaTrofeo.style.height = '180px';
-  else if(SLOTS_COUNT === 8) colonnaTrofeo.style.height = '300px';
-  else if(SLOTS_COUNT === 16) colonnaTrofeo.style.height = '540px';
-
-  // RIGHT: we need to populate the column *più esterna* (farthest from center),
-  // quindi usiamo una copia reversed di rightCols per il build.
-  const rightColsForBuild = rightCols.slice().reverse();
-
-  // Right ordering of slots (default half+1 .. slots)
+  // layout right leafs (outermost right col)
   const layoutRight = [];
-  for(let i=0;i<half;i++) layoutRight.push(half + 1 + i); // natural order (9..16 for 16 slots)
-
+  for(let i=0;i<half;i++) layoutRight.push(half + 1 + i);
   function layoutFirstRight(body, rightOrder, leftPositions){
     const arr = [];
-    // make sure body height equals left first body height (to align)
     const leftBodyHeight = leftCols[0].style.height || '';
     if(leftBodyHeight) body.style.height = leftBodyHeight;
     for(let i=0;i<rightOrder.length;i++){
       const slot = rightOrder[i];
       const n = makeNode(slot, body, false);
-      // correggiamo: stabiliamo la stessa posizione verticale (top) della corrispondente foglia di sinistra
-      // (non passiamo il round vicino al trofeo, ma il round piu' esterno grazie a rightColsForBuild)
-      const leftNode = leftPositions[i]; // stessa riga verticale: top-to-top (specchia rispetto all'asse verticale)
+      const leftNode = leftPositions[i];
       let top = 0;
       if(leftNode && leftNode.el && leftNode.el.style.top) top = parseFloat(leftNode.el.style.top);
       n.el.style.top = top + 'px';
@@ -290,66 +464,120 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
     }
     return arr;
   }
-
-  // important: pass the *outermost* right column body (rightColsForBuild[0])
   const rightLeafs = layoutFirstRight(rightColsForBuild[0], layoutRight, leftLeafs);
 
-  // populate names from teamSlots, hide absent
+  // populate leaf labels from slotsMap (show Da definire as muted)
   Object.keys(nodesBySlot).forEach(k=>{
     const slot = parseInt(k,10);
-    const name = slotsMap[slot] || '';
     const node = nodesBySlot[k];
-    if(!name){ node.el.style.display='none'; node.present=false; }
-    else { node.el.querySelector('.label').textContent = name; node.name = name; node.present=true; }
+    const name = (slotsMap && typeof slotsMap[slot] !== 'undefined') ? slotsMap[slot] : 'Da definire';
+    node.el.querySelector('.label').textContent = name;
+    node.name = (name && name !== 'Da definire') ? name : '';
+    node.present = (name && name !== 'Da definire');
+    node.el.classList.toggle('muted', name === 'Da definire');
   });
 
-  // build parent levels: for left (inward), for right we must use rightColsForBuild (outer->inner order)
-  function buildParentLevels(cols, leafs, alignLeft){
-    let current = leafs.slice();
-    const levels = [];
-    for(let r=1;r<rounds;r++){
-      const parentArr = [];
-      const body = cols[r]; // cols is expected to be ordered: [round1Body (parents of leaves), round2Body, ...]
-      // set body height so connectors align
-      const totalHeight = current.length * nodeH + (current.length-1)*gap;
-      body.style.height = (totalHeight + 40) + 'px';
-      for(let p=0;p<Math.ceil(current.length/2);p++){
-        const el = document.createElement('div'); el.className='team-node';
-        el.style.width = nodeW + 'px';
-        el.style.left = alignLeft ? '0px' : (colW - nodeW) + 'px';
-        el.innerHTML = `<div class="left-bar"></div><div class="label"></div>`;
-        body.appendChild(el);
-        const childA = current[p*2] || null;
-        const childB = current[p*2+1] || null;
-        const top = (childA && childB) ? ((parseFloat(childA.el.style.top) + parseFloat(childB.el.style.top))/2) : (childA ? parseFloat(childA.el.style.top) : (childB ? parseFloat(childB.el.style.top) : 0));
-        el.style.top = top + 'px';
-        const obj = { el, children:[childA, childB], present:false, name:'' };
-        const nA = childA && childA.present ? childA.name : '';
-        const nB = childB && childB.present ? childB.name : '';
-        if(!nA && !nB){ obj.el.style.display='none'; obj.present=false; }
-        else { obj.present=true; obj.name = nA ? nA : nB; obj.el.querySelector('.label').textContent = obj.name + (nA && nB ? '' : ' (bye)'); }
-        parentArr.push(obj);
-      }
-      levels.push(parentArr);
-      current = parentArr;
-    }
-    return levels;
+  // ====== NEW: build parent levels per level (allocating slot IDs level-wise) ======
+  const levelSizes = [];
+  const levelStarts = [];
+  let cursor = 1;
+  const totalLevels = Math.log2(slots) + 1;
+  for (let lvl = 1; lvl <= totalLevels; lvl++) {
+    const size = slots / Math.pow(2, lvl - 1);
+    levelSizes[lvl] = size;
+    levelStarts[lvl] = cursor;
+    cursor += size;
   }
 
-  // build left parents normally (cols: leftCols)
-  const leftParents = buildParentLevels(leftCols, leftLeafs, true);
-  // build right parents using rightColsForBuild (outermost->inner)
-  const rightParents = buildParentLevels(rightColsForBuild, rightLeafs, false);
+  const leftParentsLevels = []; // array of arrays, index 0 -> parents of leaves (round2), etc.
+  const rightParentsLevels = [];
 
-  // last-level source to feed center finalists
-  const leftFinalSource = leftParents.length ? leftParents[leftParents.length-1][0] : leftLeafs[0];
-  const rightFinalSource = rightParents.length ? rightParents[rightParents.length-1][0] : rightLeafs[0];
+  let currentLeft = leftLeafs.slice();
+  let currentRight = rightLeafs.slice();
 
-  // populate center small boxes (these are dynamic and clickable)
-  if(leftFinalSource && leftFinalSource.present){ finalLeftBox.textContent = leftFinalSource.name; finalLeftBox.style.display='flex'; } else { finalLeftBox.style.display='none'; }
-  if(rightFinalSource && rightFinalSource.present){ finalRightBox.textContent = rightFinalSource.name; finalRightBox.style.display='flex'; } else { finalRightBox.style.display='none'; }
+  for (let r = 1; r < rounds; r++) {
+    const bodyLeft = leftCols[r];
+    const bodyRight = rightColsForBuild[r];
+    const totalHeight = currentLeft.length * nodeH + (currentLeft.length - 1) * gap;
+    bodyLeft.style.height = (totalHeight + 40) + 'px';
+    bodyRight.style.height = (totalHeight + 40) + 'px';
 
-  // collect matches for drawing and modal mapping
+    const parentsLeft = [];
+    for (let p = 0; p < Math.ceil(currentLeft.length / 2); p++) {
+      const el = document.createElement('div'); el.className='team-node';
+      el.style.width = nodeW + 'px';
+      el.style.left = '0px';
+      el.innerHTML = `<div class="left-bar"></div><div class="label"></div>`;
+      bodyLeft.appendChild(el);
+      const childA = currentLeft[p*2] || null;
+      const childB = currentLeft[p*2+1] || null;
+      const top = (childA && childB) ? ((parseFloat(childA.el.style.top) + parseFloat(childB.el.style.top))/2) : (childA ? parseFloat(childA.el.style.top) : (childB ? parseFloat(childB.el.style.top) : 0));
+      el.style.top = top + 'px';
+      parentsLeft.push({ el, children:[childA, childB], name:'', present:false, slot:null });
+    }
+
+    const parentsRight = [];
+    for (let p = 0; p < Math.ceil(currentRight.length / 2); p++) {
+      const el = document.createElement('div'); el.className='team-node';
+      el.style.width = nodeW + 'px';
+      el.style.left = (colW - nodeW) + 'px';
+      el.innerHTML = `<div class="left-bar"></div><div class="label"></div>`;
+      bodyRight.appendChild(el);
+      const childA = currentRight[p*2] || null;
+      const childB = currentRight[p*2+1] || null;
+      const top = (childA && childB) ? ((parseFloat(childA.el.style.top) + parseFloat(childB.el.style.top))/2) : (childA ? parseFloat(childA.el.style.top) : (childB ? parseFloat(childB.el.style.top) : 0));
+      el.style.top = top + 'px';
+      parentsRight.push({ el, children:[childA, childB], name:'', present:false, slot:null });
+    }
+
+    const levelStart = levelStarts[r+1]; // e.g., for r=1 and slots=8 => levelStart = 9
+    for (let i = 0; i < parentsLeft.length; i++) {
+      const slotId = levelStart + i;
+      const obj = parentsLeft[i];
+      obj.slot = slotId;
+      const name = (slotsMap && typeof slotsMap[slotId] !== 'undefined') ? slotsMap[slotId] : 'Da definire';
+      obj.el.querySelector('.label').textContent = name;
+      obj.name = (name && name !== 'Da definire') ? name : '';
+      obj.present = (name && name !== 'Da definire');
+      obj.el.classList.toggle('muted', name === 'Da definire');
+      nodesBySlot[slotId] = obj;
+    }
+    const rightStart = levelStart + parentsLeft.length;
+    for (let j = 0; j < parentsRight.length; j++) {
+      const slotId = rightStart + j;
+      const obj = parentsRight[j];
+      obj.slot = slotId;
+      const name = (slotsMap && typeof slotsMap[slotId] !== 'undefined') ? slotsMap[slotId] : 'Da definire';
+      obj.el.querySelector('.label').textContent = name;
+      obj.name = (name && name !== 'Da definire') ? name : '';
+      obj.present = (name && name !== 'Da definire');
+      obj.el.classList.toggle('muted', name === 'Da definire');
+      nodesBySlot[slotId] = obj;
+    }
+
+    leftParentsLevels.push(parentsLeft);
+    rightParentsLevels.push(parentsRight);
+    currentLeft = parentsLeft.slice();
+    currentRight = parentsRight.slice();
+  }
+
+  // Determine leftFinalSource & rightFinalSource
+  const leftFinalSource = leftParentsLevels.length ? leftParentsLevels[leftParentsLevels.length-1][0] : leftLeafs[0];
+  const rightFinalSource = rightParentsLevels.length ? rightParentsLevels[rightParentsLevels.length-1][0] : rightLeafs[0];
+
+  // populate center small boxes
+  const leftFinalName = (leftFinalSource && leftFinalSource.name) ? leftFinalSource.name : (leftFinalSource && leftFinalSource.slot && slotsMap[leftFinalSource.slot] ? slotsMap[leftFinalSource.slot] : 'Da definire');
+  const rightFinalName = (rightFinalSource && rightFinalSource.name) ? rightFinalSource.name : (rightFinalSource && rightFinalSource.slot && slotsMap[rightFinalSource.slot] ? slotsMap[rightFinalSource.slot] : 'Da definire');
+
+  finalLeftBox.textContent = leftFinalName;
+  finalLeftBox.style.display = 'flex';
+  finalLeftBox.classList.toggle('muted', leftFinalName === 'Da definire');
+
+  finalRightBox.textContent = rightFinalName;
+  finalRightBox.style.display = 'flex';
+  finalRightBox.classList.toggle('muted', rightFinalName === 'Da definire');
+
+  // collect matches
   function collectMatches(levels, leafs, sideName){
     const list = [];
     // leaf pairings
@@ -359,7 +587,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
       const parent = levels[0] ? levels[0][Math.floor(i/2)] : null;
       list.push({ side:sideName, round:0, index:Math.floor(i/2), a,b,parent });
     }
-    // higher rounds
+    // higher rounds per level
     for(let r=1;r<levels.length;r++){
       const lvl = levels[r-1];
       for(let i=0;i<lvl.length;i+=2){
@@ -371,15 +599,65 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
     return list;
   }
 
-  const leftMatches = collectMatches(leftParents, leftLeafs, 'left');
-  const rightMatches = collectMatches(rightParents, rightLeafs, 'right');
+  const leftMatches = collectMatches(leftParentsLevels, leftLeafs, 'left');
+  const rightMatches = collectMatches(rightParentsLevels, rightLeafs, 'right');
 
-  // final center match object (uses small boxes as visible DOM)
-  const finalObjA = { present: !!(leftFinalSource && leftFinalSource.present), name: leftFinalSource ? leftFinalSource.name : '', source: leftFinalSource };
-  const finalObjB = { present: !!(rightFinalSource && rightFinalSource.present), name: rightFinalSource ? rightFinalSource.name : '', source: rightFinalSource };
+  // final center match object
+  const finalObjA = { present: !!(leftFinalSource && leftFinalSource.present), name: leftFinalName === 'Da definire' ? '' : leftFinalName, source: leftFinalSource };
+  const finalObjB = { present: !!(rightFinalSource && rightFinalSource.present), name: rightFinalName === 'Da definire' ? '' : rightFinalName, source: rightFinalSource };
   const finalMatch = { side:'center', round:rounds, index:0, a: finalObjA, b: finalObjB, parent:null };
 
   const allMatches = [...leftMatches, ...rightMatches, finalMatch];
+
+  // ---------- robust helpers to determine name & slot for any "part" ----------
+  function getNameForPart(part) {
+    if (!part) return 'Da definire';
+    // 1) explicit slot in slotsMap
+    if (part.slot) {
+      const nm = (typeof slotsMap !== 'undefined' && slotsMap[part.slot]) ? slotsMap[part.slot] : null;
+      if (nm && nm !== 'Da definire') return nm;
+    }
+    // 2) explicit name property
+    if (part.name && part.name !== '') return part.name;
+    // 3) source (finalObj wrappers)
+    if (part.source) {
+      const s = getNameForPart(part.source);
+      if (s && s !== 'Da definire') return s;
+    }
+    // 4) children recursive
+    if (part.children && Array.isArray(part.children)) {
+      for (const ch of part.children) {
+        if (!ch) continue;
+        const nm = getNameForPart(ch);
+        if (nm && nm !== 'Da definire') return nm;
+      }
+    }
+    return 'Da definire';
+  }
+
+  function getSlotForPart(part) {
+    if (!part) return '';
+    if (part.slot) return part.slot;
+    if (part.source) {
+      const s = getSlotForPart(part.source);
+      if (s) return s;
+    }
+    if (part.children && Array.isArray(part.children)) {
+      for (const ch of part.children) {
+        if (!ch) continue;
+        const s = getSlotForPart(ch);
+        if (s) return s;
+      }
+    }
+    return '';
+  }
+
+  // resolve competitors using helpers
+  function resolveCompetitors(match){
+    const aName = getNameForPart(match.a);
+    const bName = getNameForPart(match.b);
+    return [aName || 'Da definire', bName || 'Da definire'];
+  }
 
   // helper: find match for clicked node element (including center small boxes)
   function findMatchForNode(el){
@@ -396,40 +674,12 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
     return null;
   }
 
-  // resolve competitors names for a match
-  function resolveCompetitors(match){
-    function rep(part){
-      if(!part) return 'TBA';
-      if(part.source) {
-        if(part.source.present && part.source.name) return part.source.name;
-        if(part.source.children && part.source.children.length){
-          for(const ch of part.source.children){
-            if(ch && ch.present && ch.name) return ch.name;
-          }
-        }
-        return 'TBA';
-      }
-      if(part.children && part.children.length){
-        for(const ch of part.children){
-          if(!ch) continue;
-          if(ch.present && ch.name) return ch.name;
-          if(ch.children && ch.children.length){
-            for(const ch2 of ch.children){ if(ch2 && ch2.present && ch2.name) return ch2.name; }
-          }
-        }
-      }
-      if(part.present && part.name) return part.name;
-      return 'TBA';
-    }
-    return [rep(match.a), rep(match.b)];
-  }
-
-  // attach click handlers to leaves and parents
+  // clickable nodes (only if present)
   const clickable = [];
   leftLeafs.forEach(n=>clickable.push(n));
   rightLeafs.forEach(n=>clickable.push(n));
-  leftParents.forEach(lvl=>lvl.forEach(n=>clickable.push(n)));
-  rightParents.forEach(lvl=>lvl.forEach(n=>clickable.push(n)));
+  leftParentsLevels.forEach(lvl=>lvl.forEach(n=>clickable.push(n)));
+  rightParentsLevels.forEach(lvl=>lvl.forEach(n=>clickable.push(n)));
 
   clickable.forEach(n=>{
     if(!n || !n.el) return;
@@ -439,20 +689,33 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
       const [a,b] = resolveCompetitors(match);
       modalMatchLabel.textContent = `Match ${match.side} r${match.round} i${match.index}`;
       teamAEl.textContent = a; teamBEl.textContent = b; scoreA.value=''; scoreB.value='';
+
+      matchSideInput.value = match.side;
+      matchRoundInput.value = match.round;
+      matchIndexInput.value = match.index;
+
+      formTeamA.value = a;
+      formTeamB.value = b;
+
+      // NOTE: use robust slot resolution
+      formSlotA.value = getSlotForPart(match.a) || '';
+      formSlotB.value = getSlotForPart(match.b) || '';
+
       modal.style.display='flex';
-      modal.dataset.match = JSON.stringify({side:match.side, round:match.round, index:match.index});
     });
   });
 
-  // click handlers for center small boxes (finalists)
   finalLeftBox.addEventListener('click', (ev)=>{
     ev.stopPropagation();
     const match = findMatchForNode(finalLeftBox); if(!match) return;
     const [a,b] = resolveCompetitors(match);
     modalMatchLabel.textContent = `Finale`;
     teamAEl.textContent = a; teamBEl.textContent = b; scoreA.value=''; scoreB.value='';
+    matchSideInput.value = match.side; matchRoundInput.value = match.round; matchIndexInput.value = match.index;
+    formTeamA.value = a; formTeamB.value = b;
+    formSlotA.value = getSlotForPart(match.a) || '';
+    formSlotB.value = getSlotForPart(match.b) || '';
     modal.style.display='flex';
-    modal.dataset.match = JSON.stringify({side:match.side, round:match.round, index:match.index});
   });
   finalRightBox.addEventListener('click', (ev)=>{
     ev.stopPropagation();
@@ -460,61 +723,17 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
     const [a,b] = resolveCompetitors(match);
     modalMatchLabel.textContent = `Finale`;
     teamAEl.textContent = a; teamBEl.textContent = b; scoreA.value=''; scoreB.value='';
+    matchSideInput.value = match.side; matchRoundInput.value = match.round; matchIndexInput.value = match.index;
+    formTeamA.value = a; formTeamB.value = b;
+    formSlotA.value = getSlotForPart(match.a) || '';
+    formSlotB.value = getSlotForPart(match.b) || '';
     modal.style.display='flex';
-    modal.dataset.match = JSON.stringify({side:match.side, round:match.round, index:match.index});
   });
 
   document.getElementById('closeModal').addEventListener('click', ()=> modal.style.display='none');
   modal.addEventListener('click', (ev)=>{ if(ev.target === modal) modal.style.display='none'; });
 
-  // submit scores
-  document.getElementById('scoreForm').addEventListener('submit', (ev)=>{
-    ev.preventDefault();
-    const aVal = parseInt(scoreA.value || '0',10);
-    const bVal = parseInt(scoreB.value || '0',10);
-    if(isNaN(aVal) || isNaN(bVal)) return;
-    const dat = JSON.parse(modal.dataset.match || 'null'); if(!dat && dat!==null) return;
-    let match = null;
-    for(const m of allMatches){
-      if(m.side === 'center'){ match = m; break; } // center final case
-      if(m.side === dat.side && m.round === dat.round && m.index === dat.index){ match = m; break; }
-    }
-    if(!match) return;
-    const [nameA, nameB] = resolveCompetitors(match);
-    let winner = null;
-    if(aVal > bVal) winner = nameA;
-    else if(bVal > aVal) winner = nameB;
-    else { alert("Pareggio: inserisci punteggio vincente."); return; }
-
-    // advance winner
-    if(match.side === 'left' || match.side === 'right'){
-      if(match.parent){
-        match.parent.present = true;
-        match.parent.name = winner;
-        match.parent.el.style.display = '';
-        match.parent.el.querySelector('.label').textContent = winner;
-      } else {
-        // final feeder: this is last side round -> put into center final boxes
-        if(match.side === 'left'){
-          finalObjA.present = true; finalObjA.name = winner; finalObjA.source = match.a || match.b || match;
-          finalLeftBox.textContent = winner; finalLeftBox.style.display='flex';
-        } else {
-          finalObjB.present = true; finalObjB.name = winner; finalObjB.source = match.a || match.b || match;
-          finalRightBox.textContent = winner; finalRightBox.style.display='flex';
-        }
-      }
-    } else if(match.side === 'center'){
-      // final decided -> mostra WINNER sopra il trofeo e la squadra
-      winnerText.style.display = 'block';
-      winnerTeam.style.display = 'block';
-      winnerTeam.textContent = winner;
-    }
-
-    modal.style.display='none';
-    drawLines();
-  });
-
-  // draw squarish white L-lines behind nodes
+  // draw lines
   function drawLines(){
     while(svg.firstChild) svg.removeChild(svg.firstChild);
     const br = bracketEl.getBoundingClientRect();
@@ -541,7 +760,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
           const d = `M ${startX} ${startY} L ${midX} ${startY} L ${midX} ${endY} L ${endX} ${endY}`;
           path.setAttribute('d', d);
           path.setAttribute('stroke', 'var(--line)');
-          path.setAttribute('stroke-width', visible ? '3' : '1.4');
+          path.setAttribute('stroke-width', visible ? '3' : '1.2');
           path.setAttribute('fill','none');
           path.setAttribute('stroke-linecap','round');
           path.setAttribute('stroke-linejoin','round');
@@ -554,7 +773,7 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
     drawList(leftMatches, true);
     drawList(rightMatches, false);
 
-    // draw connections from last left/right sources to trophy
+    // connections to trophy
     const trophyEl = centerCol.querySelector('.trophy-wrap');
     if(leftFinalSource && leftFinalSource.el && trophyEl){
       const a = rect(leftFinalSource.el); const t = rect(trophyEl);
@@ -578,13 +797,14 @@ Created by potrace 1.10, written by Peter Selinger 2001-2011
     }
   }
 
-  // initial draw
   setTimeout(()=>{ drawLines(); window.addEventListener('resize', drawLines); }, 80);
 }
 
-// run builder
-build(SLOTS_COUNT, teamSlots);
-
+// run
+init(EdizioneTorneo, AnnoTorneo).then(teamSlots => {
+  console.log('teamSlots', teamSlots);
+  build(SLOTS_COUNT, teamSlots);
+});
 </script>
 </body>
 </html>

@@ -1,10 +1,15 @@
 <?php
+    /** 
+     * File: 
+     * Auth: 
+     * Desc: 
+    */
     include '../connessione.php';
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
     
     //controllo l'utente sia autorizzato ad eseguire le seguenti operazioni
     $permessi = ['admin','Allenatore'];
@@ -14,6 +19,7 @@
     //controllo di aver ricevuto una richiesta post
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         //inizio la transazione
+        $conn->begin_transaction();
         try{
                 // Recupera il giorno selezionato
             $sport = htmlentities($_POST['sport']);
@@ -31,6 +37,7 @@
 
             foreach($port as $value) {
                 if($value['NomeSport'] == $sport) {
+                    throw new Exception("Sport già presente!",11010); 
                     error('../../front/persone/utente.php', 'Sport già presente!');
                 }
             }   
@@ -38,14 +45,22 @@
             $stmt = $conn->prepare("INSERT INTO RICHIESTE_ALL(Codice, Sport, Motivo, Stato, CodApprovante,Tipo)
             VALUES (?,?,?,'NonConfermato',NULL,'Insegnamento');");
             $stmt->bind_param("iss",$codiceAllenatore,$sport, $mot); 
-            if($stmt->execute()) {
-                success('../../front/persone/utente.php', 'Registrazione della richiesta completata');
-            }else {
-                error('../../front/persone/utente.php', 'Registrazione della richiesta fallita!');
-            }
+            $stmt->execute();
+        
+            $conn->commit();
         }catch(Exception $e){
-            error('../../front/persone/utente.php', 'Registrazione della richiesta fallita!');
+            $conn->rollback();
+            $default = "Registrazione della richiesta fallita!";
+
+            $codiciGestiti = [11010];
+
+            if (in_array($e->getCode(), $codiciGestiti, true)) {
+                $default = $e->getMessage();
+            }
+            error('../../front/persone/utente.php' , $default);
+
         }
+        success('../../front/persone/utente.php', 'Registrazione della richiesta completata');
         
     }
 ?>

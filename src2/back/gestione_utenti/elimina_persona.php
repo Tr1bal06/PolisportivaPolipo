@@ -1,19 +1,21 @@
 <?php
-
+    /** 
+     * File: elimina_persone.php
+     * Auth: Jin
+     * Desc: eliina una persona con tutti i suoi dati
+    */
     include '../connessione.php';
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
 
     $permessi = ['admin'];
 
     if(!controllo($_SESSION['ruolo'], $permessi)) {
        error('../../front/404.php', 'Accesso negato');
     }
-
-    
 
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
 

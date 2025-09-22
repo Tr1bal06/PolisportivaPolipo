@@ -1,11 +1,15 @@
 <?php
-
+    /** 
+     * File: aggiungi_persona.php
+     * Auth: Jin
+     * Desc: Esegue il sign-up
+    */
     include '../connessione.php';
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
 
     $permessi = ['admin'];
 
@@ -71,9 +75,7 @@
         error('../../front/persone/persone.php', 'Inserimento fallito!');
     }
     
-    //header('../../front/persone/persone.php');
-    //exit();
     success('../../front/persone/persone.php', 'Inserimento Avvenuto con successo!');
-    // fatto da jin
+    
     // Un utente appena registrato non possiede nessuna carica, essa verrà assegnata dall'admin
 ?>

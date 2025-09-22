@@ -1,16 +1,16 @@
 <?php
     /**
-     * File: handler_assemblea.php
+     * File: handler_signup.php
      * Auth: Jin
-     * Desc: questo file ha il compito di gestire la registrazione di un nuovo utente
+     * Desc: questo file esegue il sign-up dell'utente
      */
     
     include '../connessione.php';
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
     
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
         //Salvo le variabili che mi interessano
@@ -79,7 +79,5 @@
     
     header('location: ../../front/login.php');
     exit();
-
-    // fatto da jin
     // Un utente appena registrato non possiede nessuna carica, essa verrà assegnata dall'admin
 ?>

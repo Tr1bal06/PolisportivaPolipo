@@ -1,12 +1,16 @@
 <?php
-
+    /** 
+     * File: handler_recupero_password.php
+     * Auth: Jin
+     * Desc: file per la creazione dell'OTP
+    */
     include '../connessione.php';
     include '../function.php';
-
+    include '../../function_mailer.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
 
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
         //Salvo le variabili che mi interessano
@@ -41,17 +45,23 @@
     }
 
     $otp = rand(100000 , 900000)+ rand(10,1000)-rand(10,100);
-    $to = $mail;
-    $subject = 'Recupero della password';
-    $message = 'Ciao, inserire questa OTP: '. $otp .' per il recupero della password';
-    $headers = "From: polipopolisportiva5id@altervista.org\r\n";
-    $headers .= "X-Mailer: PHP/" . phpversion();
+    $to[] = $mail;
 
-    //Controllo se la mail sia usabile
-    if (!mail($to, $subject, $message, $headers)) {
-        error('../../front/recover.php','Email non valido per il recupero!');
-    }
+    $titolo = "Recupero della password ";
+    $contenuto = 'Ciao, inserire questa OTP: '. $otp .' per il recupero della password';
 
+    
+    $conn->begin_transaction();
+    try{
+        inviaMail($to, $titolo, $contenuto);
+        
+        $conn->commit();
+    } catch (Exception $e) {
+        $conn->rollback();
+        
+        error('../../front/recover.php','mail inesistente!');
+        
+    }   
     $hash = password_hash($otp, PASSWORD_DEFAULT);
 
     //Insert in recupero
