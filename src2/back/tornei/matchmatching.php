@@ -54,7 +54,8 @@
 
         $stmt = $conn->prepare("SELECT is_updated , Round , Gruppo , SquadraCasa , SquadraOspite , ScoreCasa, ScoreOspite
                                  FROM PARTITA_TORNEO
-                                 WHERE EdizioneTorneo = ? AND AnnoTorneo = ?");
+                                 WHERE EdizioneTorneo = ? AND AnnoTorneo = ? 
+                                 ORDER BY Gruppo ");
         $stmt->bind_param("is",$codTorneo,$Anno);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -69,7 +70,7 @@
             foreach ($rows as $r) {
                 $gruppi[$r['Gruppo']][] = $r;
             }
-var_dump($gruppi);
+                
             // Trovo i vincitori di ciascun gruppo dell’ultimo round
             $winnersByGroup = [];
             foreach ($gruppi as $gruppo => $partite) {
@@ -86,9 +87,7 @@ var_dump($gruppi);
                     }
                 }
             }
-            $winnersByGroup = array_replace(array_fill_keys(array_keys($gruppi), []), $winnersByGroup);
-var_dump($winnersByGroup);
-            die();
+            
             // Ora genero il nuovo round
             $nextRound = $maxRound + 1;
             $insert = $conn->prepare("
@@ -105,8 +104,10 @@ var_dump($winnersByGroup);
             for ($i = 0; $i < count($oldGroups); $i += 2) {
 
                 $merged = array_merge($oldGroups[$i], $oldGroups[$i+1] ?? []);
+                $merged = array_unique($merged); // rimuove duplicati
                 $newGroups[] = $merged;
             }
+            
             
             // Ora ho i gruppi del prossimo round, che ripartono da 1
             foreach ($newGroups as $newIdx => $squadre) {
@@ -125,6 +126,7 @@ var_dump($winnersByGroup);
                             $nextRound,
                             $gruppoNew
                         );
+                        
                         $insert->execute();
                     }
                 }
