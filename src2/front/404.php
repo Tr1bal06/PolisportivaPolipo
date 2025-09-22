@@ -79,7 +79,7 @@
     <div class="container">
         <h1>Polipo non trovato</h1>
         <img src="/ProgettoUDA/assets/polipoFebbre.png" alt="Polipo" class="octopus">
-        <a href="/ProgettoUDA/index/index.html">
+        <a href="../front/public/Studiova-1.0.0/html/index.html">
   <button>Torna alla Home</button>
 </a>
 
