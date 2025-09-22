@@ -1,10 +1,15 @@
 <?php
+    /** 
+     * File: 
+     * Auth: 
+     * Desc: 
+    */
     include "../connessione.php";
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
     //Preparo il sistema a ricevere una risposta di tipo JSON
     header('Content-Type: application/json');
 

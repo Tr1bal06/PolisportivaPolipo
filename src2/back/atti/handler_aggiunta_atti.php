@@ -1,11 +1,16 @@
 <?php
+    /** 
+     * File: 
+     * Auth: 
+     * Desc: 
+    */
     include '../connessione.php';
     include '../function.php';
     require '../../vendor/autoload.php';  
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
 
     $permessi = ['Consigliere', 'admin'];
     if(!controllo($_SESSION['ruolo'], $permessi)) {
@@ -91,8 +96,6 @@
         if($result) {
             $numero = intval(explode("-",(  $result->fetch_assoc())['NumProtocollo'])[1]);
             
-        }else{
-            throw new Exception("Errore");
         }
         
         $numero++;
@@ -112,5 +115,5 @@
         error("../../front/atti/atti.php","Inserimento fallito");
     }
     success("../../front/atti/atti.php","Atto inserito correttamente");
-    //made by Tha_Losco
+   
 ?>

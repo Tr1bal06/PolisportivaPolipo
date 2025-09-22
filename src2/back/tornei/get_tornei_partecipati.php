@@ -1,10 +1,15 @@
 <?php
+    /**
+     * File: 
+     * Auth: Teox5
+     * Desc: 
+     */
     include "../connessione.php";
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
 
     //Comunico al sistema che riceverà una risposta JSON
     header('Content-Type: application/json');
@@ -89,5 +94,5 @@
     http_response_code(200);
 
     $conn->close();
-    //made by Tha_Losco
+    
 ?>
