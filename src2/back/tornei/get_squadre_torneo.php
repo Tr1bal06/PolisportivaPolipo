@@ -29,7 +29,8 @@
 
     $stmt1 = $conn->prepare("SELECT *
                              FROM PARTITA_TORNEO
-                             WHERE EdizioneTorneo = ? AND AnnoTorneo = ?");
+                             WHERE EdizioneTorneo = ? AND AnnoTorneo = ?
+                             ORDER BY Round , Gruppo");
     $stmt1->bind_param("is", $codice,$anno );
     $stmt1->execute();
     $result = $stmt1->get_result();
