@@ -4,4 +4,4 @@
 db/
 sessions/
 .env
-./src2/back/credenziali.json
+/src2/back/credenziali.json
