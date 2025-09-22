@@ -234,7 +234,9 @@ $_SESSION['error_message'] = null;
     </form>
     <div class="bottoni">
       <button class="home" onclick="window.location.href='login.php'">Vai al Login</button>
-      <button class="home linea" onclick="window.location.href='../index/index.html'">Torna alla Home</button>
+      <button class="home linea" onclick="window.location.href='../front/public/Studiova-1.0.0/html/index.html'">
+  Torna alla Home
+</button>
     </div>
     <? if (isset($errorMessage)) { ?>
       <h3 style="color:red;"><?= $errorMessage ?></h3>
