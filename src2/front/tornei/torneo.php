@@ -145,9 +145,7 @@ async function init(EdizioneTorneo, AnnoTorneo) {
       cursor += size;
     }
 
-    const half = N / 2; // numero foglie per lato
-
-    // helper per cercare slot per nome (normalizza)
+    // normalizza nomi
     const norm = s => (s === null || s === undefined) ? '' : String(s).trim().toLowerCase();
     function findSlotForName(map, name) {
       if (!name) return null;
@@ -159,15 +157,13 @@ async function init(EdizioneTorneo, AnnoTorneo) {
       return null;
     }
 
-    // helper: calcola slot parent per lato (left or right) e indice nel lato
-    // r = round number (1-based), side = 'left'|'right', indexInSide zero-based
+    // calcola parent slot (side e indexInSide)
     function parentSlotForSideIndex(r, side, indexInSide) {
       const parentLevel = r + 1;
       if (parentLevel > maxLevels) return null;
       const levelStart = levelStarts[parentLevel];
-      const totalParentsAtLevel = levelSizes[parentLevel]; // es: levelSizes[2] = 4
-      const leftParentsCount = Math.ceil(totalParentsAtLevel / 2); // o totalParentsAtLevel/2 (entrambe vanno bene)
-      // assegna: left occupy [levelStart .. levelStart+leftParentsCount-1]
+      const totalParentsAtLevel = levelSizes[parentLevel];
+      const leftParentsCount = Math.ceil(totalParentsAtLevel / 2);
       if (side === 'left') {
         return levelStart + indexInSide;
       } else {
@@ -175,7 +171,7 @@ async function init(EdizioneTorneo, AnnoTorneo) {
       }
     }
 
-    // 1) riempi foglie (Round 1) in ordine ricevuto
+    // 1) riempi foglie (Round 1)
     const teamSlots = {};
     const round1Matches = data.filter(m => parseInt(m.Round, 10) === 1);
     round1Matches.forEach((match, idx) => {
@@ -195,51 +191,62 @@ async function init(EdizioneTorneo, AnnoTorneo) {
     for (const m of data) {
       const rnum = parseInt(m.Round, 10) || 1;
       if (!matchesByRound[rnum]) matchesByRound[rnum] = [];
-      matchesByRound[rnum].push(m);
+      matchesByRound[rnum].push(Object.assign({}, m)); // copia per non mutate originali
     }
 
-    // 3) processa round per round (1..maxLevels-1) ma suddividendo per lato
+    // 3) processa round per round (1..maxLevels-1)
     for (let r = 1; r <= maxLevels - 1; r++) {
       const matchesThisRound = matchesByRound[r] || [];
 
-      // dividiamo i match in left/right/unknown basandoci sui slot correnti
+      // calcola parent level e soglia dinamica per dividere i lati correttamente
+      const parentLevel = r + 1;
+      const startParent = levelStarts[parentLevel];
+      const parentsCount = levelSizes[parentLevel];
+      const leftEnd = startParent + Math.floor(parentsCount / 2) - 1; // ultimo slot del lato sinistro in quel livello
+
       const leftMatches = [];
       const rightMatches = [];
       const unknownMatches = [];
 
+      // prima: annota slotA/slotB (se presenti nella map corrente)
       for (const match of matchesThisRound) {
         const slotA = findSlotForName(teamSlots, match.SquadraCasa);
         const slotB = findSlotForName(teamSlots, match.SquadraOspite);
+        match.__slotA = slotA;
+        match.__slotB = slotB;
 
-        // se uno dei due è riconosciuto sul lato sinistro => left
-        if ((slotA && slotA <= half) || (slotB && slotB <= half)) {
-          leftMatches.push(match);
-        } else if ((slotA && slotA > half) || (slotB && slotB > half)) {
-          rightMatches.push(match);
+        const knownSlots = [slotA, slotB].filter(s => s !== null);
+        if (knownSlots.length > 0) {
+          const avg = knownSlots.reduce((a,b)=>a+b,0) / knownSlots.length;
+          if (avg <= leftEnd) leftMatches.push(match);
+          else rightMatches.push(match);
         } else {
-          // non identificabile (es. entrambe "Da definire") -> rimandiamo a unknown
           unknownMatches.push(match);
         }
       }
 
-      // processa prima left, poi right, poi unknown
-      const processList = [
-        { list: leftMatches, side: 'left' },
-        { list: rightMatches, side: 'right' },
-        { list: unknownMatches, side: 'left' } // unknown li mettiamo a sinistra per fallback (o puoi dividerli)
-      ];
+      // Ordina i gruppi in base alla posizione reale nel tabellone (minSlot)
+      const sortByMinSlot = (a,b) => {
+        const ma = Math.min(a.__slotA || Infinity, a.__slotB || Infinity);
+        const mb = Math.min(b.__slotA || Infinity, b.__slotB || Infinity);
+        return ma - mb;
+      };
+      leftMatches.sort(sortByMinSlot);
+      rightMatches.sort(sortByMinSlot);
+      // unknownMatches rimangono nell'ordine server (o puoi ordinarli per Gruppo se preferisci)
 
-      // numero di parent totali al livello successivo
-      const parentLevel = r + 1;
-      const totalParentsAtLevel = levelSizes[parentLevel];
-      const leftParentsCount = Math.ceil(totalParentsAtLevel / 2);
-
-      // iterazione su ciascuna lista
+      // processa i gruppi nell'ordine left -> right -> unknown
       let leftIndex = 0;
       let rightIndex = 0;
-      for (const group of processList) {
-        for (let idx = 0; idx < group.list.length; idx++) {
-          const match = group.list[idx];
+      const processGroups = [
+        { list: leftMatches, side: 'left' },
+        { list: rightMatches, side: 'right' },
+        { list: unknownMatches, side: 'left' } // fallback
+      ];
+
+      for (const group of processGroups) {
+        for (let i = 0; i < group.list.length; i++) {
+          const match = group.list[i];
 
           // controlli score (skip se 0-0 o mancanti)
           const scAraw = match.ScoreCasa;
@@ -255,12 +262,11 @@ async function init(EdizioneTorneo, AnnoTorneo) {
           if (Number.isFinite(scA) && Number.isFinite(scB)) {
             if (scA > scB) winner = match.SquadraCasa;
             else if (scB > scA) winner = match.SquadraOspite;
-            else continue; // pareggio non gestito
+            else continue;
           } else if (Number.isFinite(scA)) winner = match.SquadraCasa;
           else if (Number.isFinite(scB)) winner = match.SquadraOspite;
           else continue;
 
-          // calcola parent slot secondo il lato e indice
           let parentSlot = null;
           if (group.list === leftMatches) {
             parentSlot = parentSlotForSideIndex(r, 'left', leftIndex);
@@ -269,21 +275,18 @@ async function init(EdizioneTorneo, AnnoTorneo) {
             parentSlot = parentSlotForSideIndex(r, 'right', rightIndex);
             rightIndex++;
           } else {
-            // unknown: preferiamo assegnare alla prima posizione libera nella level successiva
-            // controllo prima area left, poi right
-            // cerco primo slot in [levelStarts[parentLevel] .. levelStarts[parentLevel]+totalParentsAtLevel-1] che sia 'Da definire'
+            // unknown: metti nel primo slot libero del livello parent
             const start = levelStarts[parentLevel];
-            let found = null;
-            for (let s = start; s < start + totalParentsAtLevel; s++) {
-              if (!teamSlots[s] || teamSlots[s] === 'Da definire') { found = s; break; }
+            for (let s = start; s < start + parentsCount; s++) {
+              if (!teamSlots[s] || teamSlots[s] === 'Da definire') { parentSlot = s; break; }
             }
-            parentSlot = found;
           }
 
-          if (!parentSlot) continue;
-          teamSlots[parentSlot] = winner || 'Da definire';
+          if (parentSlot) {
+            teamSlots[parentSlot] = winner || 'Da definire';
+          }
         }
-      }
+      } // fine processGroups
     } // fine foreach round
 
     // assicurati che tutti gli slot esistano
