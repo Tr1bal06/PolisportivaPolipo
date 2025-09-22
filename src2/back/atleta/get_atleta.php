@@ -15,12 +15,18 @@
         session_start();
     }
                 
-    $permessi = ['Atleta','Allenatore', 'admin'];
+    $permessi = ['Atleta','Allenatore', 'admin', 'user'];
 
     if(!controllo($_SESSION['ruolo'], $permessi)) { 
         error('../../front/404.php', 'Accesso negato');
     }
+
+    $permessi = ['Atleta','Allenatore', 'admin'];
+
     $codiceAtleta = $_SESSION['caricheCodici']['Atleta'];
+    if(!controllo($_SESSION['ruolo'], $permessi)) { 
+         header('Location: ' .'../../front/persone/utente.php');
+    }
 
     $stmt1 = $conn->prepare("SELECT NomeSport , Tipo
                 FROM ISCRIZIONE

@@ -9,9 +9,14 @@
     header('Content-Type: application/json');
 
     //controllo l'utente sia autorizzato ad eseguire le seguenti operazioni
-    $permessi = ['Allenatore', 'admin'];
+    $permessi = ['Allenatore', 'admin', 'user'];
     if(!controllo($_SESSION['ruolo'], $permessi)) { 
         error('../../front/404.php', 'Accesso negato');
+    }
+
+    $permessi = ['Allenatore', 'admin'];
+    if(!controllo($_SESSION['ruolo'], $permessi)) { 
+         header('Location: ' .'../../front/persone/utente.php');
     }
 
     $codiceAllenatore = $_SESSION['caricheCodici']['Allenatore'];
