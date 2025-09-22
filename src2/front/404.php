@@ -78,8 +78,8 @@
 <body>
     <div class="container">
         <h1>Polipo non trovato</h1>
-        <img src="/ProgettoUDA/assets/polipoFebbre.png" alt="Polipo" class="octopus">
-        <a href="/ProgettoUDA/index/index.html">
+        <img src="/assets/polipoFebbre.png" alt="Polipo" class="octopus">
+        <a href="/index/index.html">
   <button>Torna alla Home</button>
 </a>
 
