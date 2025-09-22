@@ -21,12 +21,12 @@
 
     if($_SERVER['REQUEST_METHOD']=='POST'){
         
-        $scoreCasa = htmlentities($_POST['scoreCasa']);
-        $scoreOspite = htmlentities($_POST['scoreOspite']);
-        $codTorneo = htmlentities($_POST['CodiceTorneo']);
-        $Anno = htmlentities($_POST['Anno']);
-        $casa = htmlentities($_POST['casa']);
-        $ospite = htmlentities($_POST['ospite']);
+        $scoreCasa = htmlentities($_POST['scoreA']);
+        $scoreOspite = htmlentities($_POST['scoreB']);
+        $codTorneo = htmlentities($_POST['EdizioneTorneo']);
+        $Anno = htmlentities($_POST['AnnoTorneo']);
+        $casa = htmlentities($_POST['teamA']);
+        $ospite = htmlentities($_POST['teamB']);
     }
 
     $conn->begin_transaction();
