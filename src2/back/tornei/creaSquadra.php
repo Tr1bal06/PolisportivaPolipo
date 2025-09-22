@@ -3,7 +3,7 @@
     /**
      * File: creaSquadra
      * Auth: Jin
-     * 
+     * Desc: crea le squadre
      */
     include '../connessione.php';
     include '../function.php';

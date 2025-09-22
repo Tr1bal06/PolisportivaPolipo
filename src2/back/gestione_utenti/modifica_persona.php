@@ -1,11 +1,16 @@
 <?php 
+    /** 
+     * File: modifica_persona.php
+     * Auth: Jin
+     * Desc: modifica l'anagrafica dell'utente
+    */
     include "../connessione.php";
     include '../function.php';
 
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
                 
     $permessi = ['user'];
 

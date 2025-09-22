@@ -1,11 +1,15 @@
 <?php
-
+    /** 
+     * File: handler_controllo_password.php
+     * Auth: Jin
+     * Desc: File che controlla l'otp per il cambio password
+    */
     include '../connessione.php';
     include '../function.php';
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
     
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
 

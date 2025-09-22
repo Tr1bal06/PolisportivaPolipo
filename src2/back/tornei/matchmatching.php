@@ -21,18 +21,18 @@
 
     if($_SERVER['REQUEST_METHOD']=='POST'){
         
-        $scoreCasa = htmlentities($_POST['scoreCasa']);
-        $scoreOspite = htmlentities($_POST['scoreOspite']);
-        $codTorneo = htmlentities($_POST['CodiceTorneo']);
-        $Anno = htmlentities($_POST['Anno']);
-        $casa = htmlentities($_POST['casa']);
-        $ospite = htmlentities($_POST['ospite']);
+        $scoreCasa = htmlentities($_POST['scoreA']);
+        $scoreOspite = htmlentities($_POST['scoreB']);
+        $codTorneo = htmlentities($_POST['EdizioneTorneo']);
+        $Anno = htmlentities($_POST['AnnoTorneo']);
+        $casa = htmlentities($_POST['teamA']);
+        $ospite = htmlentities($_POST['teamB']);
     }
 
     $conn->begin_transaction();
 
     try{
-        $check = $conn->prepare("SELECT is_updated
+        $check = $conn->prepare("SELECT is_updated ,Round
                                  FROM PARTITA_TORNEO
                                  WHERE EdizioneTorneo = ? AND AnnoTorneo = ? AND SquadraCasa = ? AND SquadraOspite = ?");
         $check->bind_param("isss",$codTorneo,$Anno,$casa,$ospite);
@@ -44,17 +44,61 @@
         if($controllo == 1) {
             throw new Exception("Modifica illegale!",20020);
         }
+        $max = $conn->prepare("SELECT MaxSquadre
+                                 FROM EDIZIONE_TORNEO
+                                 WHERE CodiceTorneo = ? AND Anno= ?");
+        $max->bind_param("is",$codTorneo,$Anno);
+        $max->execute();
+        $result = $max->get_result();
+        $row = $result->fetch_assoc();
+        $maxSquadre = $row['MaxSquadre'];
 
         $update = $conn->prepare("UPDATE PARTITA_TORNEO
                                   SET ScoreCasa = ?, ScoreOspite = ?, is_updated = 1
                                   WHERE EdizioneTorneo = ? AND AnnoTorneo = ? AND SquadraCasa = ? AND SquadraOspite = ?");
+        if($maxSquadre == 16) {
+            $check->bind_param("isss",$codTorneo,$Anno,$ospite,$casa);
+            $check->execute();
+            $result = $check->get_result();
+            $row = $result->fetch_assoc();
+            $round = $row['Round'];
+            if($round == 4) {
+                $update->bind_param("iiisss", $scoreCasa, $scoreOspite, $codTorneo, $Anno, $ospite, $casa);
+                $update->execute();
+            }
+            
+        }
+        if($maxSquadre == 8) {
+            $check->bind_param("isss",$codTorneo,$Anno,$ospite,$casa);
+            $check->execute();
+            $result = $check->get_result();
+            $row = $result->fetch_assoc();
+            $round = $row['Round'];
+            if($round == 3) {
+                $update->bind_param("iiisss", $scoreCasa, $scoreOspite, $codTorneo, $Anno, $ospite, $casa);
+                $update->execute();
+            }
+            
+        }
+        if($maxSquadre == 4) {
+            $check->bind_param("isss",$codTorneo,$Anno,$ospite,$casa);
+            $check->execute();
+            $result = $check->get_result();
+            $row = $result->fetch_assoc();
+            $round = $row['Round'];
+            if($round == 2) {
+                $update->bind_param("iiisss", $scoreCasa, $scoreOspite, $codTorneo, $Anno, $ospite, $casa);
+                $update->execute();
+            }
+            
+        }
         $update->bind_param("iiisss", $scoreCasa, $scoreOspite, $codTorneo, $Anno, $casa, $ospite);
         $update->execute();
 
-
         $stmt = $conn->prepare("SELECT is_updated , Round , Gruppo , SquadraCasa , SquadraOspite , ScoreCasa, ScoreOspite
                                  FROM PARTITA_TORNEO
-                                 WHERE EdizioneTorneo = ? AND AnnoTorneo = ?");
+                                 WHERE EdizioneTorneo = ? AND AnnoTorneo = ? 
+                                 ORDER BY Gruppo ");
         $stmt->bind_param("is",$codTorneo,$Anno);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -69,44 +113,68 @@
             foreach ($rows as $r) {
                 $gruppi[$r['Gruppo']][] = $r;
             }
+            
+            $maxRound = 0;
 
-            // Trovo i vincitori per ogni gruppo e round massimo
-            $winners = [];
+            foreach ($gruppi as $gruppo) {
+                foreach ($gruppo as $match) {
+                    if ($match['Round'] > $maxRound) {
+                        $maxRound = $match['Round'];
+                    }
+                }
+            }
+            // Trovo i vincitori di ciascun gruppo dell’ultimo round
+            $topTeams = [];
             foreach ($gruppi as $gruppo => $partite) {
-                // Prendo tutte le partite dell'ultimo round
-                $maxRound = max(array_column($partite, 'Round'));
-                $ultimoRound = array_filter($partite, fn($p) => $p['Round'] == $maxRound);
+
+                 $ultimoRound = [];
+
+                // Calcolo il round massimo
+                foreach ($partite as $match) {
+                    if ($match["Round"] == $maxRound) {
+                        $ultimoRound[] = $match;
+                    }
+                }
 
                 foreach ($ultimoRound as $match) {
-                    if ($match['ScoreCasa'] > $match['ScoreOspite']) {
-                        $winner = $match['SquadraCasa'];
-                    } elseif ($match['ScoreCasa'] < $match['ScoreOspite']) {
-                        $winner = $match['SquadraOspite'];
+                    if ($match['ScoreCasa'] >= $match['ScoreOspite']) {
+                        $topTeams[] = $match['SquadraCasa'];
                     } else {
-                        $winner = $match['SquadraCasa']; // pareggio -> passa Casa
+                        $topTeams[] = $match['SquadraOspite'];
                     }
-                    $winners[$gruppo][] = $winner;
                 }
             }
-
+           
             // Ora genero il nuovo round
             $nextRound = $maxRound + 1;
-            $insert = $conn->prepare("INSERT INTO PARTITA_TORNEO (SquadraCasa, SquadraOspite, EdizioneTorneo, AnnoTorneo, ScoreCasa, ScoreOspite, Round, Gruppo) VALUES (?, ?, ?, ?, 0, 0, ?, ?)");
+            $insert = $conn->prepare("INSERT INTO PARTITA_TORNEO(SquadraCasa, SquadraOspite, EdizioneTorneo, AnnoTorneo, ScoreCasa, ScoreOspite, Round, Gruppo) 
+                                        VALUES (?, ?, ?, ?, 0, 0, ?, ?)");
 
-            foreach ($winners as $gruppo => $squadre) {
-                for ($i = 0; $i < count($squadre); $i += 2) {
-                    if (isset($squadre[$i+1])) {
-                        $insert->bind_param("ssisis",$squadre[$i], $squadre[$i+1], $codTorneo, $Anno, $nextRound, $gruppo);
-                        $insert->execute();
+            // Ora ho i gruppi del prossimo round, che ripartono da 1
+            $count = 1;
+            $gruppo = 1;
+            for ($i = 0; $i < count($topTeams); $i += 2) {
+                
+                if (isset($topTeams[$i+1])) {
+                    $teamA = $topTeams[$i];
+                    $teamB = $topTeams[$i+1];
+                    
+                    $insert->bind_param("ssisis", $teamA,$teamB,$codTorneo,$Anno,$nextRound,$gruppo); 
+                    $insert->execute();
+                    if($count == 2) {
+                        $count = 0;
+                        $gruppo++;
                     }
+                    $count++;
                 }
             }
+            
         }
 
         $conn->commit();
     }catch(Exception $e){
         $conn->rollback();
-        $default = "Aggiornamento score fallito fallita!";
+        $default = "Aggiornamento score fallita!";
 
         $codiciGestiti = [20020];
 

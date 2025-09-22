@@ -1,13 +1,17 @@
 <?php
-
+    /** 
+     * File: handler_disponibilita.php
+     * Auth: Jin
+     * Desc: Funzionalità dell'admin per assegnare le cariche
+    */
     include '../connessione.php';
     include '../function.php';
 
     require '../../vendor/autoload.php';  
     if (session_status() == PHP_SESSION_NONE) {
-    // Avvia la sessione
-    session_start();
-}
+        // Avvia la sessione
+        session_start();
+    }
 
     use Google\Client;
     use Google\Service\Drive;
@@ -51,7 +55,7 @@
                 if($parti[1] == strtolower($carica)) {
                     
                     if($value['DataFine']> $oggi) {
-                        error('../../front/persone/persone.php', 'Carica già presente');
+                        throw new Exception("Carica già presente",12010);   
                     }
                 }
             }
@@ -185,7 +189,7 @@
                     break;
 
                 default:
-                    throw new Exception("Tipo di carica non riconosciuto: $nomeCarica");
+                    throw new Exception("Tipo di carica non riconosciuto: $nomeCarica",12020);
             }
 
             $stmt->execute();
@@ -390,8 +394,15 @@
 
         } catch (Exception $e) {
             $conn->rollback();
-            
-            error('../../front/persone/persone.php', 'Assegnazione fallita!');
+            $default = "Assegnazione fallita!";
+
+            $codiciGestiti = [12010,12020];
+
+            if (in_array($e->getCode(), $codiciGestiti, true)) {
+                $default = $e->getMessage();
+            }
+            error('../../front/persone/persone.php' , $default);
+
         }
         $_SESSION['ruoli'][] = $nomeCarica;
         success('../../front/persone/persone.php', 'Assegnazione carica avvenuta con successo!');
